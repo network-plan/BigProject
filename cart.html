@@ -25,6 +25,14 @@
 	<script src="jquery-3.6.4.min.js"></script>
 	<!-- 購物車畫面javascript -->
 	<script src="cart_js.js"></script>
+	<style>
+		.check_title {
+			font-size: 20px;
+			font-weight: bold;
+			margin-top: 20px;
+			color: #f0ad4e;
+		}
+	</style>
 </head><!--/head-->
 
 <body>
@@ -261,15 +269,15 @@
 		<div class="container">
 			<div class="heading">
 				<h3>確認訂單</h3>
-				<p>配送方式、時間和費用</p>
-				<p>滿1000元免運費 其餘台灣本島運費60元 離島100元 國外200元</p>
+				<p>配送方式、時間和費用(滿1000免運費)</p>
 			</div>
 			<div class="row">
 				<div class="col-sm-6">
 					<div class="chose_area">
 						<ul class="user_option">
+							<h3 class="check_title">專屬折扣碼</h3>
 							<li>
-								<input type="checkbox" id="coupon" onchecked="toggleCouponInput()">
+								<input type="checkbox" id="coupon">
 								<!-- <label>Use Coupon Code</label> -->
 								<label for="coupon">使用折扣碼</label>
 								<!-- 折扣碼輸入框 -->
@@ -278,45 +286,49 @@
 									<button id="applyCoupon">驗證</button>
 								</div>
 							</li>
-							<li>
-								<input type="checkbox">
-								<!-- <label>Sent To Chang-hua Gift Store</label> -->
-								<label>寄送至彰化小禮坊商店</label>
-							</li>
 						</ul>
-						<ul class="user_info">
+						<ul id="send-way">
+							<h3 class="check_title">配送方式</h3>
+								<li>
+									<input type="radio" name="send-way" value="0">
+									<!-- <label>Sent To Chang-hua Gift Store</label> -->
+									<label>寄送至彰化小禮坊商店  +0元</label>
+								</li>
+								<li>
+									<input type="radio" name="send-way" value="1">
+									<!-- <label>Sent To Home</label> -->
+									<label>宅配到家 +50元</label>
+								</li>
+								<li>
+									<input type="radio" name="send-way" value="2">
+									<!-- <label>Sent To Home Tomorrow</label> -->
+									<label>宅配到家-隔日到貨 +100元</label>
+								</li>
+							</ul>
+						<!-- 聯絡電話（永遠顯示） -->
+						<ul class="contact-info" style="display: none;">
+							<h3 class="check_title">配送資訊</h3>
 							<li class="single_field">
-								<!-- <label>Country:</label> -->
-								<label>城市：</label>
-								<select>
-									<!-- <option>overseas</option>
-									<option>Taiwan</option> -->
-									<option>海外</option>
-									<option>台灣</option>
-								</select>
-								
-							</li>
-							<li class="single_field">
-								<label>Region / State:</label>
-								<select>
-									<option>Select</option>
-									<option>Dhaka</option>
-									<option>London</option>
-									<option>Dillih</option>
-									<option>Lahore</option>
-									<option>Alaska</option>
-									<option>Canada</option>
-									<option>Dubai</option>
-								</select>
-							
-							</li>
-							<li class="single_field zip-field">
-								<label>Zip Code:</label>
+								<p>聯絡電話：</p>
 								<input type="text">
 							</li>
 						</ul>
-						<a class="btn btn-default update" href="">Get Quotes</a>
-						<a class="btn btn-default check_out" href="">Continue</a>
+
+						<!-- 地區與郵遞區號（僅在選擇宅配時顯示） -->
+						<ul class="user_info delivery-info" style="display: none;">
+							<li class="single_field">
+								<label>地區：</label>
+								<select id="country">
+									<option>海外 +200元</option>
+									<option>台灣本島 +0元</option>
+									<option>台灣離島 +50元</option>
+								</select>
+							</li>
+							<li class="single_field zip-field">
+								<label>郵遞區號：</label>
+								<input type="text">
+							</li>
+						</ul>
 					</div>
 				</div>
 				<div class="col-sm-6">

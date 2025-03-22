@@ -19,8 +19,28 @@ $(document).ready(function() {
         }else{
             alert('優惠卷代碼錯誤');
             $('#couponCode').val('');
+            $('#coupon').prop('checked',false);
+            $('#couponInputWrapper').slideUp();
             return;
         }
+    });
+    // 取得寄送方式
+    $(document).ready(function() {
+        // 監聽寄送方式的變化
+        $('input[name="send-way"]').change(function() {
+            var selectedValue = $('input[name="send-way"]:checked').val();
+    
+            // 顯示聯絡電話（無論選擇哪個寄送方式都要顯示）
+            $('.contact-info').slideDown();
+    
+            if (selectedValue === '1' || selectedValue === '2') {
+                // 如果選擇宅配，顯示地區與郵遞區號選項
+                $('.delivery-info').slideDown();
+            } else {
+                // 隱藏地區與郵遞區號（但聯絡電話仍保留）
+                $('.delivery-info').slideUp();
+            }
+        });
     });
     
 });
