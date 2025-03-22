@@ -22,9 +22,13 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+	<script src="jquery-3.6.4.min.js"></script>
+	<!-- 購物車畫面javascript -->
+	<script src="cart_js.js"></script>
 </head><!--/head-->
 
 <body>
+	
 	<header id="header"><!--header-->
 		<div class="header_top"><!--header_top-->
 			<div class="container">
@@ -129,7 +133,6 @@
 										<li><a href="blog-single.html">Blog Single</a></li>
                                     </ul>
                                 </li> 
-								<!-- 刪掉404頁面選項 -->
 								<li><a href="contact-us.html">Contact</a></li>
 							</ul>
 						</div>
@@ -171,8 +174,8 @@
 							<td></td>
 						</tr>
 					</thead>
-					<!-- <tbody>
-						<tr>
+					<tbody>
+						<!-- <tr>
 							<td class="cart_product">
 								<a href=""><img src="images/cart/one.png" alt=""></a>
 							</td>
@@ -247,8 +250,8 @@
 							<td class="cart_delete">
 								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
 							</td>
-						</tr>
-					</tbody> -->
+						</tr> -->
+					</tbody>
 				</table>
 			</div>
 		</div>
@@ -257,38 +260,39 @@
 	<section id="do_action">
 		<div class="container">
 			<div class="heading">
-				<h3>What would you like to do next?</h3>
-				<p>Choose if you have a discount code or reward points you want to use or would like to estimate your delivery cost.</p>
+				<h3>確認訂單</h3>
+				<p>配送方式、時間和費用</p>
+				<p>滿1000元免運費 其餘台灣本島運費60元 離島100元 國外200元</p>
 			</div>
 			<div class="row">
 				<div class="col-sm-6">
 					<div class="chose_area">
 						<ul class="user_option">
 							<li>
-								<input type="checkbox">
-								<label>Use Coupon Code</label>
+								<input type="checkbox" id="coupon" onchecked="toggleCouponInput()">
+								<!-- <label>Use Coupon Code</label> -->
+								<label for="coupon">使用折扣碼</label>
+								<!-- 折扣碼輸入框 -->
+								<div id="couponInputWrapper" style="display: none; margin-top: 8px;">
+									<input type="text" id="couponCode" placeholder="請輸入折扣碼">
+									<button id="applyCoupon">驗證</button>
+								</div>
 							</li>
 							<li>
 								<input type="checkbox">
-								<label>Use Gift Voucher</label>
-							</li>
-							<li>
-								<input type="checkbox">
-								<label>Estimate Shipping & Taxes</label>
+								<!-- <label>Sent To Chang-hua Gift Store</label> -->
+								<label>寄送至彰化小禮坊商店</label>
 							</li>
 						</ul>
 						<ul class="user_info">
 							<li class="single_field">
-								<label>Country:</label>
+								<!-- <label>Country:</label> -->
+								<label>城市：</label>
 								<select>
-									<option>United States</option>
-									<option>Bangladesh</option>
-									<option>UK</option>
-									<option>India</option>
-									<option>Pakistan</option>
-									<option>Ucrane</option>
-									<option>Canada</option>
-									<option>Dubai</option>
+									<!-- <option>overseas</option>
+									<option>Taiwan</option> -->
+									<option>海外</option>
+									<option>台灣</option>
 								</select>
 								
 							</li>
@@ -330,6 +334,7 @@
 			</div>
 		</div>
 	</section><!--/#do_action-->
+	
 
 	<footer id="footer"><!--Footer-->
 		<div class="footer-top">
