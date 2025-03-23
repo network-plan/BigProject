@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Cart | E-Shopper</title>
+	<title>Cart | 彰化小禮坊</title><!-- <title>Cart | Chang-hua Gift House</title> -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="css/prettyPhoto.css" rel="stylesheet">
@@ -22,9 +22,22 @@
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+	<script src="js/jquery-3.6.4.min.js"></script>
+	<!-- 購物車畫面javascript -->
+	<script src="js/cart_js.js"></script>
+	<style>
+		.check_title {
+			font-size: 20px;
+			font-weight: bold;
+			margin-top: 20px;
+			color: #f0ad4e;
+		}
+		
+	</style>
 </head><!--/head-->
 
 <body>
+	
 	<header id="header"><!--header-->
 		<div class="header_top"><!--header_top-->
 			<div class="container">
@@ -32,8 +45,8 @@
 					<div class="col-sm-6">
 						<div class="contactinfo">
 							<ul class="nav nav-pills">
-								<li><a href=""><i class="fa fa-phone"></i> +2 95 01 88 821</a></li>
-								<li><a href=""><i class="fa fa-envelope"></i> info@domain.com</a></li>
+								<li><a href=""><i class="fa fa-phone"></i> +04 1234567</a></li>
+								<li><a href=""><i class="fa fa-envelope"></i> hello@gm.ncue.edu.tw</a></li>
 							</ul>
 						</div>
 					</div>
@@ -62,35 +75,34 @@
 						<div class="btn-group pull-right">
 							<div class="btn-group">
 								<button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-									USA
+									<!-- language -->
+									語言
 									<span class="caret"></span>
 								</button>
+								<!-- <ul class="dropdown-menu">
+									<li><a href="">Chinese</a></li>
+									<li><a href="">USA</a></li>
+								</ul> -->
 								<ul class="dropdown-menu">
-									<li><a href="">Canada</a></li>
-									<li><a href="">UK</a></li>
+									<li><a href="">中文</a></li>
+									<li><a href="">英文</a></li>
 								</ul>
 							</div>
 							
-							<div class="btn-group">
-								<button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-									DOLLAR
-									<span class="caret"></span>
-								</button>
-								<ul class="dropdown-menu">
-									<li><a href="">Canadian Dollar</a></li>
-									<li><a href="">Pound</a></li>
-								</ul>
-							</div>
+							<!-- 刪除dollar -->
 						</div>
 					</div>
 					<div class="col-sm-8">
 						<div class="shop-menu pull-right">
 							<ul class="nav navbar-nav">
-								<li><a href=""><i class="fa fa-user"></i> Account</a></li>
-								<li><a href=""><i class="fa fa-star"></i> Wishlist</a></li>
-								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li>
-								<li><a href="cart.html" class="active"><i class="fa fa-shopping-cart"></i> Cart</a></li>
-								<li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li>
+								<!-- <li><a href=""><i class="fa fa-user"></i> Account</a></li> -->
+								<li><a href=""><i class="fa fa-user"></i> 帳號</a></li>
+								<!-- <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li> -->
+								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> 查看訂單</a></li>
+								<!-- <li><a href="cart.html" class="active"><i class="fa fa-shopping-cart"></i> Cart</a></li> -->
+								<li><a href="cart.html" class="active"><i class="fa fa-shopping-cart"></i> 購物車</a></li>
+								<!-- <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li> -->
+								<li><a href="login.html"><i class="fa fa-lock"></i> 登入</a></li>
 							</ul>
 						</div>
 					</div>
@@ -128,7 +140,6 @@
 										<li><a href="blog-single.html">Blog Single</a></li>
                                     </ul>
                                 </li> 
-								<li><a href="404.html">404</a></li>
 								<li><a href="contact-us.html">Contact</a></li>
 							</ul>
 						</div>
@@ -147,22 +158,30 @@
 		<div class="container">
 			<div class="breadcrumbs">
 				<ol class="breadcrumb">
-				  <li><a href="#">Home</a></li>
-				  <li class="active">Shopping Cart</li>
+				  <!-- <li><a href="index.html">Home</a></li>  -->
+				  <li><a href="index.html">回首頁</a></li> 
+				  <!-- <li class="active">Shopping Cart</li> -->
+				  <li class="active">購物車</li>
 				</ol>
 			</div>
 			<div class="table-responsive cart_info">
 				<table class="table table-condensed">
 					<thead>
 						<tr class="cart_menu">
-							<td class="image">Item</td>
-							<td class="description"></td>
-							<td class="price">Price</td>
-							<td class="quantity">Quantity</td>
-							<td class="total">Total</td>
+							<!-- <td class="image">Item</td> -->
+							<td class="image">商品</td>
+							<!-- <td class="description">name</td> -->
+							<td class="description">品名</td>
+							<!-- <td class="price">Price</td> -->
+							<td class="price">價格</td>
+							<!-- <td class="quantity">Quantity</td> -->
+							<td class="quantity">數量</td>
+							<!-- <td class="total">Total</td> -->
+							<td class="total">總金額</td>
 							<td></td>
 						</tr>
 					</thead>
+					<!-- 商品資訊 -->
 					<tbody>
 						<tr>
 							<td class="cart_product">
@@ -177,9 +196,9 @@
 							</td>
 							<td class="cart_quantity">
 								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href=""> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-									<a class="cart_quantity_down" href=""> - </a>
+									<a class="cart_quantity_up" href="#"> + </a>
+									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="1">
+									<a class="cart_quantity_down" href="#"> - </a>
 								</div>
 							</td>
 							<td class="cart_total">
@@ -189,7 +208,7 @@
 								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
 							</td>
 						</tr>
-
+						
 						<tr>
 							<td class="cart_product">
 								<a href=""><img src="images/cart/two.png" alt=""></a>
@@ -203,9 +222,9 @@
 							</td>
 							<td class="cart_quantity">
 								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href=""> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-									<a class="cart_quantity_down" href=""> - </a>
+									<a class="cart_quantity_up" href="#"> + </a>
+									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="2">
+									<a class="cart_quantity_down" href="#"> - </a>
 								</div>
 							</td>
 							<td class="cart_total">
@@ -215,6 +234,7 @@
 								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
 							</td>
 						</tr>
+						
 						<tr>
 							<td class="cart_product">
 								<a href=""><img src="images/cart/three.png" alt=""></a>
@@ -228,9 +248,9 @@
 							</td>
 							<td class="cart_quantity">
 								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href=""> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2">
-									<a class="cart_quantity_down" href=""> - </a>
+									<a class="cart_quantity_up" href="#"> + </a>
+									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="3">
+									<a class="cart_quantity_down" href="#"> - </a>
 								</div>
 							</td>
 							<td class="cart_total">
@@ -239,7 +259,7 @@
 							<td class="cart_delete">
 								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
 							</td>
-						</tr>
+						</tr>						
 					</tbody>
 				</table>
 			</div>
@@ -249,79 +269,92 @@
 	<section id="do_action">
 		<div class="container">
 			<div class="heading">
-				<h3>What would you like to do next?</h3>
-				<p>Choose if you have a discount code or reward points you want to use or would like to estimate your delivery cost.</p>
+				<h3>確認訂單</h3>
+				<p>配送方式、時間和費用(滿1000免運費)</p>
 			</div>
 			<div class="row">
 				<div class="col-sm-6">
 					<div class="chose_area">
 						<ul class="user_option">
+							<h3 class="check_title">專屬折扣碼</h3>
 							<li>
-								<input type="checkbox">
-								<label>Use Coupon Code</label>
-							</li>
-							<li>
-								<input type="checkbox">
-								<label>Use Gift Voucher</label>
-							</li>
-							<li>
-								<input type="checkbox">
-								<label>Estimate Shipping & Taxes</label>
+								<input type="checkbox" id="coupon">
+								<!-- <label>Use Coupon Code</label> -->
+								<label for="coupon">使用折扣碼</label>
+								<!-- 折扣碼輸入框 -->
+								<div id="couponInputWrapper" style="display: none; margin-top: 8px;">
+									<input type="text" id="couponCode" placeholder="請輸入折扣碼">
+									<button id="applyCoupon">驗證</button>
+								</div>
 							</li>
 						</ul>
-						<ul class="user_info">
+						<ul id="send-way">
+							<h3 class="check_title">配送方式</h3>
+								<li>
+									<input type="radio" name="send-way" value="0">
+									<!-- <label>Sent To Chang-hua Gift Store</label> -->
+									<label>寄送至彰化小禮坊商店  +0元</label>
+								</li>
+								<li>
+									<input type="radio" name="send-way" value="1">
+									<!-- <label>Sent To Home</label> -->
+									<label>宅配到家 +50元</label>
+								</li>
+								<li>
+									<input type="radio" name="send-way" value="2">
+									<!-- <label>Sent To Home Tomorrow</label> -->
+									<label>宅配到家-隔日到貨 +100元</label>
+								</li>
+							</ul>
+						<!-- 聯絡電話（永遠顯示） -->
+						<ul class="contact-info" style="display: none;">
+							<h3 class="check_title">配送資訊</h3>
 							<li class="single_field">
-								<label>Country:</label>
-								<select>
-									<option>United States</option>
-									<option>Bangladesh</option>
-									<option>UK</option>
-									<option>India</option>
-									<option>Pakistan</option>
-									<option>Ucrane</option>
-									<option>Canada</option>
-									<option>Dubai</option>
-								</select>
-								
-							</li>
-							<li class="single_field">
-								<label>Region / State:</label>
-								<select>
-									<option>Select</option>
-									<option>Dhaka</option>
-									<option>London</option>
-									<option>Dillih</option>
-									<option>Lahore</option>
-									<option>Alaska</option>
-									<option>Canada</option>
-									<option>Dubai</option>
-								</select>
-							
-							</li>
-							<li class="single_field zip-field">
-								<label>Zip Code:</label>
+								<p>聯絡電話：</p>
 								<input type="text">
 							</li>
 						</ul>
-						<a class="btn btn-default update" href="">Get Quotes</a>
-						<a class="btn btn-default check_out" href="">Continue</a>
+
+						<!-- 地區與郵遞區號（僅在選擇宅配時顯示） -->
+						<ul class="user_info delivery-info" style="display: none;">
+							<li class="single_field">
+								<label>地區：</label>
+								<select id="country">
+									<option>海外 +200元</option>
+									<option>台灣本島 +0元</option>
+									<option>台灣離島 +50元</option>
+								</select>
+							</li>
+							<li class="single_field zip-field">
+								<label>郵遞區號：</label>
+								<input type="text">
+							</li>
+						</ul>
 					</div>
 				</div>
 				<div class="col-sm-6">
 					<div class="total_area">
 						<ul>
-							<li>Cart Sub Total <span>$59</span></li>
-							<li>Eco Tax <span>$2</span></li>
-							<li>Shipping Cost <span>Free</span></li>
-							<li>Total <span>$61</span></li>
+							<h3 class="check_title">訂單明細</h3>
+							<!-- <li>Cart Item Total <span>0 NTD</span></li> -->
+							<li>購物車物品總價 <span>0 NTD</span></li>
+							<!-- <li>Shipping Cost <span>2 NTD</span></li> -->
+							<li>運費 <span>2 NTD</span></li>
+							<!-- <li>Shipping discount <span>- 2 NTD</span></li> -->
+							<li>運費減免 <span>- 2 NTD</span></li>
+							<!-- <li>coupon discount<span>- 60 NTD</span></li> -->
+							<li>優惠卷減免<span>- 60 NTD</span></li>
+							<hr/>
+							<!-- <li>Total <span>65 NTD</span></li> -->
+							<li>總金額 <span>65 NTD</span></li>
 						</ul>
-							<a class="btn btn-default update" href="">Update</a>
-							<a class="btn btn-default check_out" href="">Check Out</a>
+							<a class="btn btn-default update" href="">確認訂單並送出</a>
 					</div>
 				</div>
 			</div>
 		</div>
 	</section><!--/#do_action-->
+	
 
 	<footer id="footer"><!--Footer-->
 		<div class="footer-top">
@@ -329,152 +362,88 @@
 				<div class="row">
 					<div class="col-sm-2">
 						<div class="companyinfo">
-							<h2><span>e</span>-shopper</h2>
-							<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit,sed do eiusmod tempor</p>
+							<h2><span>彰化</span>小禮坊</h2>
+							<p>用購買支持在地小農</p>
 						</div>
 					</div>
 					<div class="col-sm-7">
 						<div class="col-sm-3">
 							<div class="video-gallery text-center">
-								<a href="#">
+								<a href="images/home/iframe1.jpg">
 									<div class="iframe-img">
-										<img src="images/home/iframe1.png" alt="" />
+										<img src="images/home/iframe1.jpg" alt="" />
 									</div>
 									<div class="overlay-icon">
 										<i class="fa fa-play-circle-o"></i>
 									</div>
 								</a>
-								<p>Circle of Hands</p>
-								<h2>24 DEC 2014</h2>
+								<p>鯨魚魚</p>
+								<h2>01 JULY 2024</h2>
 							</div>
 						</div>
 						
 						<div class="col-sm-3">
 							<div class="video-gallery text-center">
-								<a href="#">
+								<a href="images/home/iframe2.jpg">
 									<div class="iframe-img">
-										<img src="images/home/iframe2.png" alt="" />
+										<img src="images/home/iframe2.jpg" alt="" />
 									</div>
 									<div class="overlay-icon">
 										<i class="fa fa-play-circle-o"></i>
 									</div>
 								</a>
-								<p>Circle of Hands</p>
-								<h2>24 DEC 2014</h2>
+								<p>南瓜辰</p>
+								<h2>17 OCT 2024</h2>
 							</div>
 						</div>
 						
 						<div class="col-sm-3">
 							<div class="video-gallery text-center">
-								<a href="#">
+								<a href="images/home/iframe3.jpg">
 									<div class="iframe-img">
-										<img src="images/home/iframe3.png" alt="" />
+										<img src="images/home/iframe3.jpg" alt="" />
 									</div>
 									<div class="overlay-icon">
 										<i class="fa fa-play-circle-o"></i>
 									</div>
 								</a>
-								<p>Circle of Hands</p>
-								<h2>24 DEC 2014</h2>
+								<p>台灣阿虹</p>
+								<h2>06 JUNE 2024</h2>
 							</div>
 						</div>
 						
 						<div class="col-sm-3">
 							<div class="video-gallery text-center">
-								<a href="#">
+								<a href="images/home/iframe4.jpg">
 									<div class="iframe-img">
-										<img src="images/home/iframe4.png" alt="" />
+										<img src="images/home/iframe4.jpg" alt="" />
 									</div>
 									<div class="overlay-icon">
 										<i class="fa fa-play-circle-o"></i>
 									</div>
 								</a>
-								<p>Circle of Hands</p>
-								<h2>24 DEC 2014</h2>
+								<p>Rory</p>
+								<h2>30 FEB 2023</h2>
 							</div>
 						</div>
 					</div>
 					<div class="col-sm-3">
 						<div class="address">
 							<img src="images/home/map.png" alt="" />
-							<p>505 S Atlantic Ave Virginia Beach, VA(Virginia)</p>
+							<p>Taiwan</p>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 		
-		<div class="footer-widget">
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-2">
-						<div class="single-widget">
-							<h2>Service</h2>
-							<ul class="nav nav-pills nav-stacked">
-								<li><a href="">Online Help</a></li>
-								<li><a href="">Contact Us</a></li>
-								<li><a href="">Order Status</a></li>
-								<li><a href="">Change Location</a></li>
-								<li><a href="">FAQ’s</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-sm-2">
-						<div class="single-widget">
-							<h2>Quock Shop</h2>
-							<ul class="nav nav-pills nav-stacked">
-								<li><a href="">T-Shirt</a></li>
-								<li><a href="">Mens</a></li>
-								<li><a href="">Womens</a></li>
-								<li><a href="">Gift Cards</a></li>
-								<li><a href="">Shoes</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-sm-2">
-						<div class="single-widget">
-							<h2>Policies</h2>
-							<ul class="nav nav-pills nav-stacked">
-								<li><a href="">Terms of Use</a></li>
-								<li><a href="">Privecy Policy</a></li>
-								<li><a href="">Refund Policy</a></li>
-								<li><a href="">Billing System</a></li>
-								<li><a href="">Ticket System</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-sm-2">
-						<div class="single-widget">
-							<h2>About Shopper</h2>
-							<ul class="nav nav-pills nav-stacked">
-								<li><a href="">Company Information</a></li>
-								<li><a href="">Careers</a></li>
-								<li><a href="">Store Location</a></li>
-								<li><a href="">Affillate Program</a></li>
-								<li><a href="">Copyright</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-sm-3 col-sm-offset-1">
-						<div class="single-widget">
-							<h2>About Shopper</h2>
-							<form action="#" class="searchform">
-								<input type="text" placeholder="Your email address" />
-								<button type="submit" class="btn btn-default"><i class="fa fa-arrow-circle-o-right"></i></button>
-								<p>Get the most recent updates from <br />our site and be updated your self...</p>
-							</form>
-						</div>
-					</div>
-					
-				</div>
-			</div>
+		
 		</div>
 		
 		<div class="footer-bottom">
 			<div class="container">
 				<div class="row">
-					<p class="pull-left">Copyright © 2013 E-SHOPPER Inc. All rights reserved.</p>
-					<p class="pull-right">Designed by <span><a target="_blank" href="http://www.themeum.com">Themeum</a></span></p>
+					<p class="pull-left">Copyright © 2025 彰化小禮坊 Inc. All rights reserved.</p>
 				</div>
 			</div>
 		</div>
