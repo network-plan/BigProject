@@ -295,12 +295,12 @@
 					<div class="product-details"><!--product-details-->
 						<div class="col-sm-5">
 							<div class="view-product">
-								<img src="images/product-details/1.jpg" alt="" />
+								<img src="images/product-details/test_img1.jpg" alt="" />
 								<h3>ZOOM</h3>
 							</div>
-							<div id="similar-product" class="carousel slide" data-ride="carousel">
+							<!-- <div id="similar-product" class="carousel slide" data-ride="carousel">
 
-								<!-- Wrapper for slides -->
+								 Wrapper for slides 目前只有一個商品圖，若同個商品有多個照片，可考慮加上
 								<div class="carousel-inner">
 									<div class="item active">
 										<a href=""><img src="images/product-details/similar1.jpg" alt=""></a>
@@ -318,16 +318,16 @@
 										<a href=""><img src="images/product-details/similar3.jpg" alt=""></a>
 									</div>
 
-								</div>
+								</div> -->
 
 								<!-- Controls -->
-								<a class="left item-control" href="#similar-product" data-slide="prev">
+								<!-- <a class="left item-control" href="#similar-product" data-slide="prev">
 									<i class="fa fa-angle-left"></i>
 								</a>
 								<a class="right item-control" href="#similar-product" data-slide="next">
 									<i class="fa fa-angle-right"></i>
 								</a>
-							</div>
+							</div> -->
 						</div>
 						<div class="col-sm-7">
 							<div class="product-information"><!--/product-information-->
@@ -338,11 +338,12 @@
 									<span>TWD $100</span>
 									<button type="button" class="btn btn-fefault cart">
 										<i class="fa fa-shopping-cart"></i>
-										Add to cart
+										加入購物車
 									</button>
 								</span>
-								<p><b>存貨狀態:</b>有庫存</p><!---->
-								<p><b>商品描述:</b>描述的內容</p>
+								<p><b>存貨狀態:</b>這裡放庫存數量</p><!---->
+								<p><b>商品簡述:</b></p>
+								<p>這裡放商品簡述</p>
 							</div><!--/product-information-->
 						</div>
 					</div><!--/product-details-->
@@ -350,15 +351,17 @@
 					<div class="category-tab shop-details-tab"><!--category-tab-->
 						<div class="col-sm-12">
 							<ul class="nav nav-tabs">
-								<li><a href="#details" data-toggle="tab">Details</a></li>
-								<li><a href="#companyprofile" data-toggle="tab">Company Profile</a></li>
-								<li><a href="#tag" data-toggle="tab">Tag</a></li>
-								<li class="active"><a href="#reviews" data-toggle="tab">Reviews (5)</a></li>
+								<li class="active"><a href="#details" data-toggle="tab">商品詳細介紹</a></li>
+								<!-- <li><a href="#companyprofile" data-toggle="tab">Company Profile</a></li>
+								<li><a href="#tag" data-toggle="tab">Tag</a></li> -->
+								<li ><a href="#reviews" data-toggle="tab">評論區</a></li>
 							</ul>
 						</div>
 						<div class="tab-content">
-							<div class="tab-pane fade" id="details">
-								<div class="col-sm-3">
+							
+							<div class="tab-pane fade active in" id="details">
+								這裡是放商品詳細敘述
+								<!-- <div class="col-sm-3">
 									<div class="product-image-wrapper">
 										<div class="single-products">
 											<div class="productinfo text-center">
@@ -409,10 +412,10 @@
 											</div>
 										</div>
 									</div>
-								</div>
+								</div> -->
 							</div>
 
-							<div class="tab-pane fade" id="companyprofile">
+							<!-- <div class="tab-pane fade" id="companyprofile">
 								<div class="col-sm-3">
 									<div class="product-image-wrapper">
 										<div class="single-products">
@@ -520,9 +523,9 @@
 										</div>
 									</div>
 								</div>
-							</div>
+							</div> -->
 
-							<div class="tab-pane fade active in" id="reviews">
+							<div class="tab-pane fade" id="reviews">
 								<div class="col-sm-12">
 									<ul>
 										<li><a href=""><i class="fa fa-user"></i>EUGEN</a></li>
