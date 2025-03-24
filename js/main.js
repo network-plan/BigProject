@@ -29,9 +29,7 @@ $(document).ready(function(){
 		});
 	});
 });
-<<<<<<< HEAD
-=======
-=======
+
 /*price range*/
 
  $('#sl2').slider();
@@ -62,5 +60,4 @@ $(document).ready(function(){
 		});
 	});
 });
->>>>>>> 0f7811897bd918e11a45204b062f9905bc9ca8ce
->>>>>>> 1ca8e84b2de3e2b920a9128e1ae8cb5fef4360b9
+
