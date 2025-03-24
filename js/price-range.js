@@ -386,9 +386,7 @@
 
 	$.fn.slider.Constructor = Slider;
 
-<<<<<<< HEAD
-=======
-=======
+
 /* =========================================================
  * bootstrap-slider.js v2.0.0
  * http://www.eyecon.ro/bootstrap-slider
@@ -776,6 +774,5 @@
 
 	$.fn.slider.Constructor = Slider;
 
->>>>>>> 0f7811897bd918e11a45204b062f9905bc9ca8ce
->>>>>>> 1ca8e84b2de3e2b920a9128e1ae8cb5fef4360b9
+
 }( window.jQuery );
