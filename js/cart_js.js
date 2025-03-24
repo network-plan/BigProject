@@ -64,6 +64,10 @@ $(document).ready(function() {
             $(this).closest("tr").remove();
         }
     });
-    
+    //購物車後商品叉叉刪除
+    $(".cart_quantity_delete").click(function(e) {
+        e.preventDefault();
+        $(this).closest("tr").remove();
+    });
     
 });
