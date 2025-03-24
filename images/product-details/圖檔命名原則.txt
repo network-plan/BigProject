@@ -1,0 +1,3 @@
+第一個商品 
+主要圖img1 
+次要圖similar1_1, similar1_2, ...
