@@ -11,7 +11,7 @@ git push origin branch1
 
 以下列出可能會用到的指令：
 git checkout main
-Git remote add origin https://github.com/network-plan/BigProject.git
+Git remote add origin https://github.com/RoryH093/NCUE_test2.git
 Git branch -M branch1
 
 我的想法是：
