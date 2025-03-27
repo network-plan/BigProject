@@ -2,135 +2,135 @@
 include('db_connection.php');
 
 // 處理新增商品
-if (isset($_POST['action']) && $_POST['action'] == 'add') {
-    $name = $_POST['name'];
-    $description = $_POST['description'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
+    $product_id = $_POST['product_id'];
+    $product_name = $_POST['product_name'];
+    $short_description = $_POST['short_description'];
+    $full_description = $_POST['full_description'];
     $price = $_POST['price'];
-    $image_url = $_POST['image_url'];
+    $stock = $_POST['stock'];
+    $category = $_POST['category'];
 
-    $sql = "INSERT INTO products (name, description, price, image_url) VALUES (?, ?, ?, ?)";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssds", $name, $description, $price, $image_url);
-    $stmt->execute();
+    $sql = "INSERT INTO product_info (product_id, product_name, short_description, full_description, price, stock, category)
+            VALUES ('$product_id', '$product_name', '$short_description', '$full_description', '$price', '$stock', '$category')";
 
-    echo "商品已成功新增！<br>";
-    echo "<a href='admin.php'>返回商品管理頁面</a>";
+    if ($conn->query($sql) === TRUE) {
+        echo "商品新增成功!";
+    } else {
+        echo "錯誤: " . $sql . "<br>" . $conn->error;
+    }
 }
 
-// 處理編輯商品
-if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
-    $product_id = $_GET['id'];
-    $sql = "SELECT * FROM products WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $product_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $product = $result->fetch_assoc();
+// 處理更新商品
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
+    $product_id = $_POST['product_id'];
+    $product_name = $_POST['product_name'];
+    $short_description = $_POST['short_description'];
+    $full_description = $_POST['full_description'];
+    $price = $_POST['price'];
+    $stock = $_POST['stock'];
+    $category = $_POST['category'];
 
-    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        $name = $_POST['name'];
-        $description = $_POST['description'];
-        $price = $_POST['price'];
-        $image_url = $_POST['image_url'];
+    $sql = "UPDATE product_info SET product_name='$product_name', short_description='$short_description', full_description='$full_description',
+            price='$price', stock='$stock', category='$category' WHERE product_id='$product_id'";
 
-        $sql = "UPDATE products SET name = ?, description = ?, price = ?, image_url = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssdsi", $name, $description, $price, $image_url, $product_id);
-        $stmt->execute();
-
-        echo "商品已更新！<br>";
-        echo "<a href='admin.php'>返回商品管理頁面</a>";
+    if ($conn->query($sql) === TRUE) {
+        echo "商品更新成功!";
+    } else {
+        echo "錯誤: " . $sql . "<br>" . $conn->error;
     }
 }
 
 // 處理刪除商品
-if (isset($_GET['action']) && $_GET['action'] == 'delete' && isset($_GET['id'])) {
-    $product_id = $_GET['id'];
-    $sql = "DELETE FROM products WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $product_id);
-    $stmt->execute();
+if (isset($_GET['delete'])) {
+    $product_id = $_GET['delete'];
+    $sql = "DELETE FROM product_info WHERE product_id='$product_id'";
 
-    echo "商品已刪除！<br>";
-    echo "<a href='admin.php'>返回商品管理頁面</a>";
-}
-
-// 預設顯示商品列表
-if (!isset($_GET['action']) || $_GET['action'] == 'list') {
-    $sql = "SELECT * FROM products";
-    $result = $conn->query($sql);
-
-    echo "<h1>商品列表</h1>";
-    echo "<a href='admin.php?action=add_form'>新增商品</a><br><br>";
-
-    if ($result->num_rows > 0) {
-        while ($row = $result->fetch_assoc()) {
-            echo "<div>";
-            echo "<h2>" . $row['name'] . "</h2>";
-            echo "<p>" . $row['description'] . "</p>";
-            echo "<p>價格: $" . $row['price'] . "</p>";
-            echo "<img src='" . $row['image_url'] . "' alt='" . $row['name'] . "' width='100'><br><br>";
-            echo "<a href='admin.php?action=edit&id=" . $row['id'] . "'>編輯</a> | ";
-            echo "<a href='admin.php?action=delete&id=" . $row['id'] . "'>刪除</a>";
-            echo "</div><hr>";
-        }
+    if ($conn->query($sql) === TRUE) {
+        echo "商品刪除成功!";
     } else {
-        echo "目前沒有商品";
+        echo "錯誤: " . $sql . "<br>" . $conn->error;
     }
 }
 
-// 顯示新增商品表單
-if (isset($_GET['action']) && $_GET['action'] == 'add_form') {
-    ?>
-    <h1>新增商品</h1>
-    <form method="POST" action="admin.php">
-        <input type="hidden" name="action" value="add">
-        <label for="name">商品名稱：</label><br>
-        <input type="text" id="name" name="name" required><br><br>
+// 取得所有商品
+$result = $conn->query("SELECT * FROM product_info");
 
-        <label for="description">商品描述：</label><br>
-        <textarea id="description" name="description" required></textarea><br><br>
-
-        <label for="price">價格：</label><br>
-        <input type="number" step="0.01" id="price" name="price" required><br><br>
-
-        <label for="image_url">商品圖片URL：</label><br>
-        <input type="text" id="image_url" name="image_url" required><br><br>
-
-        <input type="submit" value="新增商品">
-    </form>
-    <?php
+if (!$result) {
+    die("查詢錯誤: " . $conn->error);  // 顯示 SQL 查詢錯誤
 }
 
-// 顯示編輯商品表單
-if (isset($_GET['action']) && $_GET['action'] == 'edit' && isset($_GET['id'])) {
-    $product_id = $_GET['id'];
-    $sql = "SELECT * FROM products WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $product_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $product = $result->fetch_assoc();
-    ?>
-    <h1>編輯商品</h1>
-    <form method="POST" action="admin.php?action=edit&id=<?php echo $product['id']; ?>">
-        <input type="hidden" name="action" value="edit">
-        <label for="name">商品名稱：</label><br>
-        <input type="text" id="name" name="name" value="<?php echo $product['name']; ?>" required><br><br>
+?>
 
-        <label for="description">商品描述：</label><br>
-        <textarea id="description" name="description" required><?php echo $product['description']; ?></textarea><br><br>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>商品管理系統</title>
+</head>
+<body>
+    <h1>商品管理系統</h1>
 
-        <label for="price">價格：</label><br>
-        <input type="number" step="0.01" id="price" name="price" value="<?php echo $product['price']; ?>" required><br><br>
+    <!-- 新增商品表單 -->
+    <h2>新增商品</h2>
+    <form action="admin_product.php" method="POST">
+        <label for="product_id">商品編號:</label><br>
+        <input type="text" id="product_id" name="product_id" required><br><br>
 
-        <label for="image_url">商品圖片URL：</label><br>
-        <input type="text" id="image_url" name="image_url" value="<?php echo $product['image_url']; ?>" required><br><br>
+        <label for="product_name">商品名稱:</label><br>
+        <input type="text" id="product_name" name="product_name" required><br><br>
 
-        <input type="submit" value="更新商品">
+        <label for="short_description">簡短描述:</label><br>
+        <textarea id="short_description" name="short_description" required></textarea><br><br>
+
+        <label for="full_description">詳細描述:</label><br>
+        <textarea id="full_description" name="full_description" required></textarea><br><br>
+
+        <label for="price">價格:</label><br>
+        <input type="number" id="price" name="price" required><br><br>
+
+        <label for="stock">庫存:</label><br>
+        <input type="number" id="stock" name="stock" required><br><br>
+
+        <label for="category">類別:</label><br>
+        <input type="text" id="category" name="category" required><br><br>
+
+        <input type="submit" name="create" value="新增商品">
     </form>
-    <?php
-}
 
+    <!-- 商品列表 -->
+    <h2>商品列表</h2>
+    <table border="1">
+        <tr>
+            <th>商品編號</th>
+            <th>商品名稱</th>
+            <th>簡短描述</th>
+            <th>價格</th>
+            <th>庫存</th>
+            <th>類別</th>
+            <th>操作</th>
+        </tr>
+        <?php while ($row = $result->fetch_assoc()): ?>
+        <tr>
+            <td><?php echo $row['product_id']; ?></td>
+            <td><?php echo $row['product_name']; ?></td>
+            <td><?php echo $row['short_description']; ?></td>
+            <td><?php echo $row['price']; ?></td>
+            <td><?php echo $row['stock']; ?></td>
+            <td><?php echo $row['category']; ?></td>
+            <td>
+                <!-- 修改商品 -->
+                <a href="admin_product.php?edit=<?php echo $row['product_id']; ?>">修改</a> |
+                <!-- 刪除商品 -->
+                <a href="admin_product.php?delete=<?php echo $row['product_id']; ?>" onclick="return confirm('確定要刪除這個商品嗎？')">刪除</a>
+            </td>
+        </tr>
+        <?php endwhile; ?>
+    </table>
+
+</body>
+</html>
+
+<?php
 $conn->close();
 ?>
