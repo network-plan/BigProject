@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     if ($_POST['table'] == 'product_info') {
         $stmt = $conn->prepare("UPDATE product_info SET product_name=?, short_description=?, full_description=?, price=?, stock=?, category=? WHERE product_id=?");
-        $stmt->bind_param("sssdisi", $_POST['product_name'], $_POST['short_description'], $_POST['full_description'], $_POST['price'], $_POST['stock'], $_POST['category'], $_POST['product_id']);
+        $stmt->bind_param("sssiiss", $_POST['product_name'], $_POST['short_description'], $_POST['full_description'], $_POST['price'], $_POST['stock'], $_POST['category'], $_POST['product_id']); 
     } elseif ($_POST['table'] == 'product_img') {
         $stmt = $conn->prepare("UPDATE product_img SET product_id=?, img_url=? WHERE img_id=?");
         $stmt->bind_param("sss", $_POST['product_id'], $_POST['img_url'], $_POST['img_id']);
@@ -122,6 +122,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>資料庫管理系統</title>
     <link href="css/db_admin_style.css" rel="stylesheet">
+    <script src="js/db_admin_function.js"></script>
 </head>
 
 <body>
@@ -181,7 +182,7 @@ try {
                         <td><?= $row['stock']; ?></td>
                         <td><?= $row['category']; ?></td>
                         <td>
-                            <button onclick="editProduct('<?= htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>')">修改</button>
+                        <button onclick="editProduct('<?= htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>')">修改</button>
                             <a href="?delete=<?= $row['product_id']; ?>&table=product_info" onclick="return confirm('確定要刪除這個商品嗎？')">刪除</a>
                         </td>
                     </tr>
@@ -399,7 +400,7 @@ try {
 
     </div>
 
-    <script>
+    <!-- <script>
         function editProduct(product) {
             const data = JSON.parse(product);
             document.getElementById("edit_product_id").value = data.product_id;
@@ -459,7 +460,7 @@ try {
             document.getElementById("edit_review_rating").value = data.rating;
             document.getElementById("edit_review_content").value = data.content;
         }
-    </script>
+    </script> -->
 </body>
 
 </html>
