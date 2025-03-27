@@ -15,6 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
     } elseif ($_POST['table'] == 'members') {
         $stmt = $conn->prepare("INSERT INTO members (member_id, username, email, password, phone, register_date) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("ssssds", $_POST['member_id'], $_POST['username'], $_POST['email'], $_POST['password'], $_POST['phone'], $_POST['register_date']);
+    } elseif ($_POST['table'] == 'orders') {
+        $stmt = $conn->prepare("INSERT INTO orders (order_id, member_id, username, order_date, total_price, status) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("isssds", $_POST['order_id'], $_POST['member_id'], $_POST['username'], $_POST['order_date'], $_POST['total_price'], $_POST['status']);
+    } elseif ($_POST['table'] == 'reviews') {
+        $stmt = $conn->prepare("INSERT INTO reviews (review_id, user_id, username, rating, content) VALUES (?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssi", $_POST['review_id'], $_POST['user_id'], $_POST['username'], $_POST['rating'], $_POST['content']);
     }
 
     if ($stmt->execute()) {
@@ -36,6 +42,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     } elseif ($_POST['table'] == 'members') {
         $stmt = $conn->prepare("UPDATE members SET username=?, email=?, password=?, phone=?, register_date=? WHERE member_id=?");
         $stmt->bind_param("ssssds", $_POST['username'], $_POST['email'], $_POST['password'], $_POST['phone'], $_POST['register_date'], $_POST['member_id']);
+    } elseif ($_POST['table'] == 'orders') {
+        $stmt = $conn->prepare("UPDATE orders SET member_id=?, username=?, order_date=?, total_price=?, status=? WHERE order_id=?");
+        $stmt->bind_param("sssdsi", $_POST['member_id'], $_POST['username'], $_POST['order_date'], $_POST['total_price'], $_POST['status'], $_POST['order_id']);
+    } elseif ($_POST['table'] == 'reviews') {
+        $stmt = $conn->prepare("UPDATE reviews SET user_id=?, username=?, rating=?, content=? WHERE review_id=?");
+        $stmt->bind_param("ssis", $_POST['user_id'], $_POST['username'], $_POST['rating'], $_POST['content'], $_POST['review_id']);
     }
 
     if ($stmt->execute()) {
@@ -57,6 +69,12 @@ if (isset($_GET['delete']) && isset($_GET['table'])) {
     } elseif ($_GET['table'] == 'members') {
         $stmt = $conn->prepare("DELETE FROM members WHERE member_id=?");
         $stmt->bind_param("s", $_GET['delete']);
+    } elseif ($_GET['table'] == 'orders') {
+        $stmt = $conn->prepare("DELETE FROM orders WHERE order_id=?");
+        $stmt->bind_param("i", $_GET['delete']);
+    } elseif ($_GET['table'] == 'reviews') {
+        $stmt = $conn->prepare("DELETE FROM reviews WHERE review_id=?");
+        $stmt->bind_param("s", $_GET['delete']);
     }
 
     if ($stmt->execute()) {
@@ -77,6 +95,10 @@ try {
         $result = $conn->query("SELECT * FROM product_img");
     } elseif ($current_table == 'members') {
         $result = $conn->query("SELECT * FROM members");
+    } elseif ($current_table == 'orders') {
+        $result = $conn->query("SELECT * FROM orders");
+    } elseif ($current_table == 'reviews') {
+        $result = $conn->query("SELECT * FROM reviews");
     }
 
     // 檢查查詢是否成功
@@ -100,75 +122,6 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>資料庫管理系統</title>
     <link href="css/db_admin_style.css" rel="stylesheet">
-    <!-- <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-        }
-
-        .container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .table-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .table-selector button {
-            padding: 10px;
-            background-color: <?= $current_table == 'product_info' ? '#4CAF50' : '#f1f1f1' ?>;
-            color: <?= $current_table == 'product_info' ? 'white' : 'black' ?>;
-            border: none;
-            cursor: pointer;
-        }
-
-        .table-selector button:nth-child(2) {
-            background-color: <?= $current_table == 'product_img' ? '#4CAF50' : '#f1f1f1' ?>;
-            color: <?= $current_table == 'product_img' ? 'white' : 'black' ?>;
-        }
-
-        .table-selector button:last-child {
-            background-color: <?= $current_table == 'members' ? '#4CAF50' : '#f1f1f1' ?>;
-            color: <?= $current_table == 'members' ? 'white' : 'black' ?>;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
-            background-color: #f4f4f4;
-        }
-
-        .success {
-            color: green;
-        }
-
-        .error {
-            color: red;
-        }
-
-        form input,
-        form textarea {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 5px;
-        }
-    </style> -->
 </head>
 
 <body>
@@ -185,6 +138,13 @@ try {
             <button
                 onclick="location.href='?table=members'"
                 class="<?= $current_table == 'members' ? 'active' : '' ?>">會員資訊</button>
+            <button
+                onclick="location.href='?table=orders'"
+                class="<?= $current_table == 'orders' ? 'active' : '' ?>">訂單資訊</button>
+            <button
+                onclick="location.href='?table=reviews'"
+                class="<?= $current_table == 'reviews' ? 'active' : '' ?>">評論資訊</button>
+
         </div>
 
         <?php if ($current_table == 'product_info'): ?>
@@ -318,23 +278,125 @@ try {
                     </tr>
                 <?php endforeach; ?>
             </table>
-
-            <h2>修改會員</h2>
+        
+        <h2>修改會員</h2>
+        <form method="POST">
+            <input type="hidden" name="table" value="members">
+            <input type="text" name="member_id" id="edit_member_id" placeholder="會員編號" readonly required>
+            <input type="text" name="username" id="edit_username" placeholder="使用者名稱" required>
+            <input type="email" name="email" id="edit_email" placeholder="電子郵件" required>
+            <div class="password-container">
+                <input type="password" name="password" id="edit_password" placeholder="密碼" required>
+                <button type="button" id="toggle_password_visibility" onclick="togglePasswordVisibility()">顯示密碼</button>
+            </div>
+            <input type="text" name="phone" id="edit_phone" placeholder="電話" required>
+            <input type="date" name="register_date" id="edit_register_date" placeholder="註冊日期" required>
+            <input type="submit" name="update" value="更新會員">
+        </form>
+        
+        <?php elseif ($current_table == 'orders'): ?>
+            <h2>新增訂單</h2>
             <form method="POST">
-                <input type="hidden" name="table" value="members">
-                <input type="text" name="member_id" id="edit_member_id" placeholder="會員編號" readonly required>
-                <input type="text" name="username" id="edit_username" placeholder="使用者名稱" required>
-                <input type="email" name="email" id="edit_email" placeholder="電子郵件" required>
-                <div class="password-container">
-                    <input type="password" name="password" id="edit_password" placeholder="密碼" required>
-                    <button type="button" id="toggle_password_visibility" onclick="togglePasswordVisibility()">顯示密碼</button>
-                </div>
-                <input type="text" name="phone" id="edit_phone" placeholder="電話" required>
-                <input type="date" name="register_date" id="edit_register_date" placeholder="註冊日期" required>
-                <input type="submit" name="update" value="更新會員">
+                <input type="hidden" name="table" value="orders">
+                <input type="number" name="order_id" placeholder="訂單編號" required>
+                <input type="text" name="member_id" placeholder="會員編號" required>
+                <input type="text" name="username" placeholder="使用者名稱" required>
+                <input type="date" name="order_date" placeholder="訂單日期" required>
+                <input type="number" name="total_price" placeholder="總金額" required>
+                <input type="text" name="status" placeholder="訂單狀態" required>
+                <input type="submit" name="create" value="新增訂單">
+            </form>
+
+            <h2>訂單列表</h2>
+            <table>
+                <tr>
+                    <th>訂單編號</th>
+                    <th>會員編號</th>
+                    <th>使用者名稱</th>
+                    <th>訂單日期</th>
+                    <th>總金額</th>
+                    <th>狀態</th>
+                    <th>操作</th>
+                </tr>
+                <?php foreach ($rows as $row): ?>
+                    <tr>
+                        <td><?= $row['order_id']; ?></td>
+                        <td><?= $row['member_id']; ?></td>
+                        <td><?= $row['username']; ?></td>
+                        <td><?= $row['order_date']; ?></td>
+                        <td><?= $row['total_price']; ?></td>
+                        <td><?= $row['status']; ?></td>
+                        <td>
+                            <button onclick="editOrder('<?= htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>')">修改</button>
+                            <a href="?delete=<?= $row['order_id']; ?>&table=orders" onclick="return confirm('確定要刪除這個訂單嗎？')">刪除</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+
+            <h2>修改訂單</h2>
+            <form method="POST">
+                <input type="hidden" name="table" value="orders">
+                <input type="number" name="order_id" id="edit_order_id" placeholder="訂單編號" readonly required>
+                <input type="text" name="member_id" id="edit_order_member_id" placeholder="會員編號" required>
+                <input type="text" name="username" id="edit_order_username" placeholder="使用者名稱" required>
+                <input type="date" name="order_date" id="edit_order_date" placeholder="訂單日期" required>
+                <input type="number" name="total_price" id="edit_order_total_price" placeholder="總金額" required>
+                <input type="text" name="status" id="edit_order_status" placeholder="訂單狀態" required>
+                <input type="submit" name="update" value="更新訂單">
+            </form>
+                     
+        <?php elseif ($current_table == 'reviews'): ?>
+            <h2>新增評論</h2>
+            <form method="POST">
+                <input type="hidden" name="table" value="reviews">
+                <input type="text" name="review_id" placeholder="評論編號" required>
+                <input type="text" name="user_id" placeholder="使用者編號" required>
+                <input type="text" name="username" placeholder="使用者名稱" required>
+                <input type="number" name="rating" placeholder="評分" min="1" max="5" required>
+                <textarea name="content" placeholder="評論內容" required></textarea>
+                <input type="submit" name="create" value="新增評論">
+            </form>
+
+            <h2>評論列表</h2>
+            <table>
+                <tr>
+                    <th>評論編號</th>
+                    <th>使用者編號</th>
+                    <th>使用者名稱</th>
+                    <th>評分</th>
+                    <th>評論內容</th>
+                    <th>操作</th>
+                </tr>
+                <?php foreach ($rows as $row): ?>
+                    <tr>
+                        <td><?= $row['review_id']; ?></td>
+                        <td><?= $row['user_id']; ?></td>
+                        <td><?= $row['username']; ?></td>
+                        <td><?= $row['rating']; ?></td>
+                        <td><?= $row['content']; ?></td>
+                        <td>
+                            <button onclick="editReview('<?= htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>')">修改</button>
+                            <a href="?delete=<?= $row['review_id']; ?>&table=reviews" onclick="return confirm('確定要刪除這個評論嗎？')">刪除</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+
+            <h2>修改評論</h2>
+            <form method="POST">
+                <input type="hidden" name="table" value="reviews">
+                <input type="text" name="review_id" id="edit_review_id" placeholder="評論編號" readonly required>
+                <input type="text" name="user_id" id="edit_review_user_id" placeholder="使用者編號" required>
+                <input type="text" name="username" id="edit_review_username" placeholder="使用者名稱" required>
+                <input type="number" name="rating" id="edit_review_rating" placeholder="評分" min="1" max="5" required>
+                <textarea name="content" id="edit_review_content" placeholder="評論內容" required></textarea>
+                <input type="submit" name="update" value="更新評論">
             </form>
 
         <?php endif; ?>
+
+
     </div>
 
     <script>
@@ -377,6 +439,25 @@ try {
                 passwordInput.type = 'password';
                 toggleButton.textContent = '顯示密碼';
             }
+        }
+
+        function editOrder(order) {
+            const data = JSON.parse(order);
+            document.getElementById("edit_order_id").value = data.order_id;
+            document.getElementById("edit_order_member_id").value = data.member_id;
+            document.getElementById("edit_order_username").value = data.username;
+            document.getElementById("edit_order_date").value = data.order_date;
+            document.getElementById("edit_order_total_price").value = data.total_price;
+            document.getElementById("edit_order_status").value = data.status;
+        }
+
+        function editReview(review) {
+            const data = JSON.parse(review);
+            document.getElementById("edit_review_id").value = data.review_id;
+            document.getElementById("edit_review_user_id").value = data.user_id;
+            document.getElementById("edit_review_username").value = data.username;
+            document.getElementById("edit_review_rating").value = data.rating;
+            document.getElementById("edit_review_content").value = data.content;
         }
     </script>
 </body>
