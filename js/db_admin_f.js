@@ -1,6 +1,9 @@
 // 編輯商品資訊的函數
-function editProduct(product) {
-    const data = JSON.parse(product);
+function editProduct(productData) {
+    
+    // Remove any control characters before parsing
+    productData = productData.replace(/[\x00-\x1F\x7F]/g, ''); 
+    const data = JSON.parse(productData);
     document.getElementById("edit_product_id").value = data.product_id;
     document.getElementById("edit_product_name").value = data.product_name;
     document.getElementById("edit_short_description").value = data.short_description;
