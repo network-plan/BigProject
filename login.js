@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const usernameInputs = document.querySelectorAll('.input-box input[type="text"]');
     const passwordInputs = document.querySelectorAll('.input-box input[type="password"]');
     const registerForm = document.querySelector('.form-box.register form');
+    const emailInput = document.querySelector('.input-box input[type="email"]');
     
     // 為每個使用者名稱輸入框添加即時驗證
     usernameInputs.forEach(input => {
@@ -46,6 +47,12 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // 電子郵件驗證
+    emailInput.addEventListener('input', function() {
+        validateEmail(this);
+    });
+    
 
     function validateUsername(input) {
         const errorElement = input.parentElement.querySelector('.error-message');
@@ -89,6 +96,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorElement.textContent = '兩次輸入的密碼不一致';
             }
         }
+    }
+
+    function validateEmail(input) {
+        const errorElement = input.parentElement.querySelector('.error-message');
+        const email = input.value.trim();
+        
+        errorElement.textContent = '';
+        
+        if (email.length > 0) {
+            if (!isValidEmail(email)) {
+                errorElement.textContent = '請輸入有效的電子郵件地址';
+            }
+        }
+    }
+
+    function isValidEmail(email) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
     }
 
     // 原有的表單提交驗證
@@ -144,11 +169,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log('註冊表單驗證通過');
     });
-
-    // 電子郵件驗證函數
-    function isValidEmail(email) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    }
     
 });
