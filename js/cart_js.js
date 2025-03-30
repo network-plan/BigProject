@@ -71,3 +71,58 @@ $(document).ready(function() {
     });
     
 });
+
+// 電話驗證相關代碼
+document.addEventListener('DOMContentLoaded', function() {
+    // 找到電話輸入框
+    const phoneInput = document.querySelector('input[type="tel"]');
+    if (!phoneInput) return;
+
+    // 為電話輸入框添加外層容器
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'flex';
+    wrapper.style.alignItems = 'center';
+    wrapper.style.gap = '8px';
+    phoneInput.parentElement.insertBefore(wrapper, phoneInput);
+    wrapper.appendChild(phoneInput);
+
+    // 創建錯誤信息元素
+    const errorSpan = document.createElement('span');
+    errorSpan.style.color = '#dc2626';
+    errorSpan.style.fontSize = '12px';
+    errorSpan.style.display = 'none';
+    wrapper.appendChild(errorSpan);
+
+    // 驗證函數
+    function validatePhone() {
+        const phone = phoneInput.value.trim();
+        const phoneRegex = /^09\d{8}$/;
+
+        if (!phone) {
+            showError('手機號碼為必填');
+        } else if (phone.length > 12) {
+            showError('手機號碼不能超過12個字');
+        } else if (!phoneRegex.test(phone)) {
+            showError('請輸入正確的手機號碼格式');
+        } else {
+            hideError();
+        }
+    }
+
+    // 顯示錯誤
+    function showError(message) {
+        errorSpan.textContent = message;
+        errorSpan.style.display = 'block';
+        phoneInput.style.borderColor = '#dc2626';
+    }
+
+    // 隱藏錯誤
+    function hideError() {
+        errorSpan.style.display = 'none';
+        phoneInput.style.borderColor = '';
+    }
+
+    // 添加事件監聽
+    phoneInput.addEventListener('input', validatePhone);
+    phoneInput.addEventListener('blur', validatePhone);
+});
