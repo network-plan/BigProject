@@ -61,7 +61,9 @@ $(document).ready(function() {
             inputField.val(currentValue - 1);
         } else {
             // 如果數量小於等於 1，則刪除該商品
-            $(this).closest("tr").remove();
+            if(confirm("確定要刪除這個商品嗎？")) {
+                $(this).closest("tr").remove();
+            }
         }
     });
     //購物車後商品叉叉刪除
@@ -69,7 +71,6 @@ $(document).ready(function() {
         e.preventDefault();
         $(this).closest("tr").remove();
     });
-    
 });
 
 // 電話驗證相關代碼
