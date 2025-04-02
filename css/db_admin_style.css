@@ -1,0 +1,52 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: auto;
+    padding: 20px;
+}
+.container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+.table-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+.table-selector button {
+    padding: 10px;
+    background-color: #f1f1f1;
+    color: black;
+    border: none;
+    cursor: pointer;
+}
+.table-selector button.active {
+    background-color: #4CAF50;
+    color: white;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+th {
+    background-color: #f4f4f4;
+}
+.success {
+    color: green;
+}
+.error {
+    color: red;
+}
+form input, form textarea {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 5px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+}

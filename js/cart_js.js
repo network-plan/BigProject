@@ -71,9 +71,6 @@ $(document).ready(function() {
         e.preventDefault();
         $(this).closest("tr").remove();
     });
-    
-
-
 });
 
 // 電話驗證相關代碼
