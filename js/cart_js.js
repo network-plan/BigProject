@@ -41,12 +41,14 @@ $(document).ready(function() {
             $('.delivery-info').slideUp();
         }
     });
-
+    //商品數量變化
+    // 點擊 "+" 按鈕
     $(".cart_quantity_up").click(function(e) {
         e.preventDefault();  // 防止跳轉到其他頁面
         var inputField = $(this).siblings(".cart_quantity_input");  // 獲取對應的數量輸入框
         var currentValue = parseInt(inputField.val());  // 取得當前的數量
         inputField.val(currentValue + 1);  // 增加數量
+        changePrice($(this).closest("tr"), currentValue + 1);  // 更新總價
     });
 
     //商品數量變化
@@ -65,12 +67,106 @@ $(document).ready(function() {
                 $(this).closest("tr").remove();
             }
         }
+        changePrice($(this).closest("tr"), currentValue - 1);// 更新總價
+    });
+    //商品數量變化
+    // 點擊數量輸入框
+    $(".cart_quantity_input").change(function(e) {
+        e.preventDefault();
+        var inputField = $(this);
+        var currentValue = parseInt(inputField.val());
+        // 如果數量小於 1，則設置為 1
+        if (currentValue < 1) {
+            inputField.val(1);
+        }
+        changePrice($(this).closest("tr"), currentValue); // 更新總價
     });
     //購物車後商品叉叉刪除
     $(".cart_quantity_delete").click(function(e) {
         e.preventDefault();
         $(this).closest("tr").remove();
     });
+    //數量價錢變動後動作定義
+    function changePrice(row, quantity) {
+        var priceText = row.find(".cart_price p").text(); // 獲取價格
+        var price = priceText.replace(/[^0-9.]/g, ''); // 去除 "$" 並轉數字
+        var totalPrice = (price * quantity); // 計算總價
+        row.find(".cart_total_price").text(`$${totalPrice}`); // 更新總價顯示
+        updateTotalPrice();
+    }
+    // 計算購物車總價
+    function updateTotalPrice() {
+        var total = 0;
+        $(".cart_total_price").each(function () {
+            var itemTotal = parseFloat($(this).text().replace(/[^0-9.]/g, '')); // 取出數字部分
+            total += itemTotal; // 加總
+        });
+        $(".total_area li:first span").text(`${total}    NTD`); // 更新購物車總價
+        updateDiscount(); // 更新優惠卷
+        updateShippingCost(); // 更新運費，滿1000免運
+        updatemoney(); // 更新總價
+    }
+    updateTotalPrice(); // 初始計算總價
+    
+    //計算運費總價
+    function updateShippingCost() {
+        var shippingCost = 0;
+        //滿1000免運
+        var totalprice=parseFloat($(".total_area li:first span").text().replace(/[^0-9.]/g, ''));
+        if(totalprice>=1000){
+            shippingCost = 0; // 滿1000免運
+        }else{
+            //運送方式
+            // 0: 到店取貨, 1: 宅配, 2: 隔日到貨
+            if ($('input[name="send-way"]:checked').val() === '0') {
+                shippingCost = 0; // 到店取運費
+            }else if ($('input[name="send-way"]:checked').val() === '1') {
+                shippingCost = 50; // 宅配運費
+            } else if ($('input[name="send-way"]:checked').val() === '2') {
+                shippingCost = 100; // 隔日到貨運費
+            }
+            // 地區運費
+            var regionValue = $('#country').val();  // 偵測選中的地區
+            if (regionValue === '0') {
+                shippingCost += 0; // 台灣本島運費
+            } else if (regionValue === '1') {
+                shippingCost += 50; // 台灣離島運費
+            } else if (regionValue === '2') {
+                shippingCost += 200; // 海外運費
+            }
+        }
+        $(".total_area li:eq(1) span").text(`${shippingCost} NTD`); // 更新運費顯示
+        updatemoney(); // 更新總價
+    }
+    updateShippingCost(); // 初始計算運費
+    // 更新運費
+    $('input[name="send-way"]').change(updateShippingCost);
+    $("#country").change(updateShippingCost);
+    //優惠卷減免
+    function updateDiscount() {
+        var discount = 0; // 取得總價
+        var couponCode = $('#couponCode').val();
+        if ((couponCode === 'S1254006' || couponCode === 'S1254051' || couponCode === 'S1122003')) {
+            discount = parseInt(parseFloat($(".total_area li:first span").text().replace(/[^0-9.]/g, ''))*0.1); //用優惠卷打9折
+        } 
+        $(".total_area li:eq(2) span").text(`${discount} NTD`); // 更新優惠卷顯示
+        updatemoney(); // 更新總價
+    }
+    updateDiscount(); // 初始計算優惠卷
+    // 更新優惠卷
+    $('#applyCoupon').click(updateDiscount);
+    
+    //計算商品總價明細
+    function updatemoney() {
+        var total = 0;
+        var itemTotal=parseInt($(".total_area li:first span").text().replace(/[^0-9.]/g, '')); // 取出數字部分
+        var shippingCost=parseInt($(".total_area li:eq(1) span").text().replace(/[^0-9.]/g, '')); // 取出數字部分
+        var discount=parseInt($(".total_area li:eq(2) span").text().replace(/[^0-9.]/g, '')); // 取出數字部分
+        total = itemTotal + shippingCost - discount; // 計算總價
+        $(".total_area li:last span").text(`${total} NTD`); // 更新總價顯示
+        $(".total_area li:last span").css("font-weight", "bold"); // 設定總價加粗
+    }
+    updatemoney(); // 初始計算總價
 });
 
 // 電話驗證相關代碼

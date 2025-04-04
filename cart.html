@@ -282,7 +282,7 @@
 							<li>
 								<input type="checkbox" id="coupon">
 								<!-- <label>Use Coupon Code</label> -->
-								<label for="coupon">使用折扣碼</label>
+								<label name="coupon">使用折扣碼</label>
 								<!-- 折扣碼輸入框 -->
 								<div id="couponInputWrapper" style="display: none; margin-top: 8px;">
 									<input type="text" id="couponCode" placeholder="請輸入折扣碼">
@@ -323,19 +323,21 @@
 						<!-- 地區與郵遞區號（僅在選擇宅配時顯示） -->
 						<ul class="user_info delivery-info" style="display: none;">
 							<li class="single_field">
-								<div class="region-box">
+								<div class="region-box" name="region">
 									<label>地區：</label>
 									<select id="country">
-										<option>海外 +200元</option>
-										<option>台灣本島 +0元</option>
-										<option>台灣離島 +50元</option>
+										<option value="0" name="region">台灣本島 +0元</option>
+										<option value="1" name="region">台灣離島 +50元</option>
+										<option value="2" name="region">海外 +200元</option>
 									</select>
 								</div>
 							</li>
-							<li class="single_field zip-field">
+							<!-- single_field -->
+							<li class="zip-field">
+								<br/>
 								<div class="zip-box">
-									<label>郵遞區號：</label>
-									<input type="text">
+									<label>地址：</label>
+									<input type="text" size="50" placeholder="請輸入地址">
 								</div>
 							</li>
 						</ul>
@@ -348,9 +350,7 @@
 							<!-- <li>Cart Item Total <span>0 NTD</span></li> -->
 							<li>購物車物品總價 <span>0 NTD</span></li>
 							<!-- <li>Shipping Cost <span>2 NTD</span></li> -->
-							<li>運費 <span>2 NTD</span></li>
-							<!-- <li>Shipping discount <span>- 2 NTD</span></li> -->
-							<li>運費減免 <span>- 2 NTD</span></li>
+							<li>運費 <span>0 NTD</span></li>
 							<!-- <li>coupon discount<span>- 60 NTD</span></li> -->
 							<li>優惠卷減免<span>- 60 NTD</span></li>
 							<hr/>
@@ -382,53 +382,41 @@
 									<div class="iframe-img">
 										<img src="images/home/iframe1.jpg" alt="" />
 									</div>
-									<div class="overlay-icon">
-										<i class="fa fa-play-circle-o"></i>
-									</div>
 								</a>
 								<p>鯨魚魚</p>
 								<h2>01 JULY 2024</h2>
 							</div>
 						</div>
-						
+
 						<div class="col-sm-3">
 							<div class="video-gallery text-center">
 								<a href="images/home/iframe2.jpg">
 									<div class="iframe-img">
 										<img src="images/home/iframe2.jpg" alt="" />
 									</div>
-									<div class="overlay-icon">
-										<i class="fa fa-play-circle-o"></i>
-									</div>
 								</a>
 								<p>南瓜辰</p>
 								<h2>17 OCT 2024</h2>
 							</div>
 						</div>
-						
+
 						<div class="col-sm-3">
 							<div class="video-gallery text-center">
 								<a href="images/home/iframe3.jpg">
 									<div class="iframe-img">
 										<img src="images/home/iframe3.jpg" alt="" />
 									</div>
-									<div class="overlay-icon">
-										<i class="fa fa-play-circle-o"></i>
-									</div>
 								</a>
 								<p>台灣阿虹</p>
 								<h2>06 JUNE 2024</h2>
 							</div>
 						</div>
-						
+
 						<div class="col-sm-3">
 							<div class="video-gallery text-center">
 								<a href="images/home/iframe4.jpg">
 									<div class="iframe-img">
 										<img src="images/home/iframe4.jpg" alt="" />
-									</div>
-									<div class="overlay-icon">
-										<i class="fa fa-play-circle-o"></i>
 									</div>
 								</a>
 								<p>Rory</p>
@@ -445,18 +433,15 @@
 				</div>
 			</div>
 		</div>
-		
-		
-		</div>
-		
 		<div class="footer-bottom">
 			<div class="container">
 				<div class="row">
 					<p class="pull-left">Copyright © 2025 彰化小禮坊 Inc. All rights reserved.</p>
+					
 				</div>
 			</div>
 		</div>
-		
+
 	</footer><!--/Footer-->
 	
 
