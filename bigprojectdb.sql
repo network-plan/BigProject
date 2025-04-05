@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-03-28 16:22:45
+-- 產生時間： 2025-04-05 10:22:52
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.0.30
 
@@ -41,9 +41,8 @@ CREATE TABLE `members` (
 --
 
 INSERT INTO `members` (`member_id`, `username`, `email`, `password`, `phone`, `register_date`) VALUES
-('1', 'name1111', 'email1111@gmail.com', 'password1', 912345, '0000-00-00'),
-('2', 'name2', 'email2@gmail.com', '123', 9, '2025-03-13'),
-('3', 'name3', 'email3@gmail.com', '33333', 912345678, '2025-03-08');
+('1', 'name123', 'email123@gmail.com', 'password123', 900123123, '2025-04-05'),
+('2', 'name456', 'email456@gmail.com', 'password456', 900456456, '2025-04-05');
 
 -- --------------------------------------------------------
 
