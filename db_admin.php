@@ -113,120 +113,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>資料庫管理系統</title>
     <link href="css/db_admin_style.css" rel="stylesheet">
-    <script>
-    // 將 JavaScript 函數直接內嵌，以避免外部引用問題
-    function escapeHtml(unsafe) {
-        return unsafe
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-    
-    function editProduct(productData) {
-        try {
-            // 確保是字符串形式的JSON
-            const product = typeof productData === 'string' ? JSON.parse(productData) : productData;
-            
-            // 設置表單的值
-            document.getElementById('edit_product_id').value = product.product_id;
-            document.getElementById('edit_product_name').value = product.product_name;
-            document.getElementById('edit_short_description').value = product.short_description;
-            document.getElementById('edit_full_description').value = product.full_description;
-            document.getElementById('edit_price').value = product.price;
-            document.getElementById('edit_stock').value = product.stock;
-            document.getElementById('edit_category').value = product.category;
-            
-            // 滾動到修改表單
-            document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
-        } catch (e) {
-            console.error("解析產品數據時發生錯誤:", e);
-            alert("無法載入產品數據，請稍後再試");
-        }
-    }
-    
-    function editImage(imageData) {
-        try {
-            const image = typeof imageData === 'string' ? JSON.parse(imageData) : imageData;
-            document.getElementById('edit_img_id').value = image.img_id;
-            document.getElementById('edit_product_id_img').value = image.product_id;
-            document.getElementById('edit_img_url').value = image.img_url;
-            
-            // 滾動到修改表單
-            document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
-        } catch (e) {
-            console.error("解析圖片數據時發生錯誤:", e);
-            alert("無法載入圖片數據，請稍後再試");
-        }
-    }
-    
-    function editMember(memberData) {
-        try {
-            const member = typeof memberData === 'string' ? JSON.parse(memberData) : memberData;
-            document.getElementById('edit_member_id').value = member.member_id;
-            document.getElementById('edit_username').value = member.username;
-            document.getElementById('edit_email').value = member.email;
-            document.getElementById('edit_password').value = member.password;
-            document.getElementById('edit_phone').value = member.phone;
-            document.getElementById('edit_register_date').value = member.register_date;
-            
-            // 滾動到修改表單
-            document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
-        } catch (e) {
-            console.error("解析會員數據時發生錯誤:", e);
-            alert("無法載入會員數據，請稍後再試");
-        }
-    }
-    
-    function editOrder(orderData) {
-        try {
-            const order = typeof orderData === 'string' ? JSON.parse(orderData) : orderData;
-            document.getElementById('edit_order_id').value = order.order_id;
-            document.getElementById('edit_order_member_id').value = order.member_id;
-            document.getElementById('edit_order_username').value = order.username;
-            document.getElementById('edit_order_date').value = order.order_date;
-            document.getElementById('edit_order_total_price').value = order.total_price;
-            document.getElementById('edit_order_status').value = order.status;
-            
-            // 滾動到修改表單
-            document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
-        } catch (e) {
-            console.error("解析訂單數據時發生錯誤:", e);
-            alert("無法載入訂單數據，請稍後再試");
-        }
-    }
-    
-    function editReview(reviewData) {
-        try {
-            const review = typeof reviewData === 'string' ? JSON.parse(reviewData) : reviewData;
-            document.getElementById('edit_review_id').value = review.review_id;
-            document.getElementById('edit_review_user_id').value = review.user_id;
-            document.getElementById('edit_review_username').value = review.username;
-            document.getElementById('edit_review_rating').value = review.rating;
-            document.getElementById('edit_review_content').value = review.content;
-            
-            // 滾動到修改表單
-            document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
-        } catch (e) {
-            console.error("解析評論數據時發生錯誤:", e);
-            alert("無法載入評論數據，請稍後再試");
-        }
-    }
-    
-    function togglePasswordVisibility() {
-        const passwordField = document.getElementById('edit_password');
-        const toggleBtn = document.getElementById('toggle_password_visibility');
-        
-        if (passwordField.type === 'password') {
-            passwordField.type = 'text';
-            toggleBtn.textContent = '隱藏密碼';
-        } else {
-            passwordField.type = 'password';
-            toggleBtn.textContent = '顯示密碼';
-        }
-    }
-</script>
+    <script src="js/db_admin_f.js"></script>
 </head>
 
 <body>
@@ -282,7 +169,6 @@ try {
                         <td><?= htmlspecialchars($row['stock']); ?></td>
                         <td><?= htmlspecialchars($row['category']); ?></td>
                         <td>
-                            <!-- 修正: 使用單引號包裹JSON字符串 -->
                             <button onclick='editProduct(<?= json_encode($row); ?>)'>修改</button>
                             <a href="?delete=<?= urlencode($row['product_id']); ?>&table=product_info" onclick="return confirm('確定要刪除這個商品嗎？')">刪除</a>
                         </td>
@@ -324,7 +210,6 @@ try {
                         <td><?= htmlspecialchars($row['product_id']); ?></td>
                         <td><?= htmlspecialchars($row['img_url']); ?></td>
                         <td>
-                            <!-- 修正: 使用單引號包裹JSON字符串 -->
                             <button onclick='editImage(<?= json_encode($row); ?>)'>修改</button>
                             <a href="?delete=<?= urlencode($row['img_id']); ?>&table=product_img" onclick="return confirm('確定要刪除這個圖片嗎？')">刪除</a>
                         </td>
@@ -369,7 +254,6 @@ try {
                         <td><?= htmlspecialchars($row['phone']); ?></td>
                         <td><?= htmlspecialchars($row['register_date']); ?></td>
                         <td>
-                            <!-- 修正: 使用單引號包裹JSON字符串 -->
                             <button onclick='editMember(<?= json_encode($row); ?>)'>修改</button>
                             <a href="?delete=<?= urlencode($row['member_id']); ?>&table=members" onclick="return confirm('確定要刪除這個會員嗎？')">刪除</a>
                         </td>
@@ -422,7 +306,6 @@ try {
                         <td><?= htmlspecialchars($row['total_price']); ?></td>
                         <td><?= htmlspecialchars($row['status']); ?></td>
                         <td>
-                            <!-- 修正: 使用單引號包裹JSON字符串 -->
                             <button onclick='editOrder(<?= json_encode($row); ?>)'>修改</button>
                             <a href="?delete=<?= urlencode($row['order_id']); ?>&table=orders" onclick="return confirm('確定要刪除這個訂單嗎？')">刪除</a>
                         </td>
@@ -469,7 +352,6 @@ try {
                         <td><?= htmlspecialchars($row['rating']); ?></td>
                         <td><?= htmlspecialchars($row['content']); ?></td>
                         <td>
-                            <!-- 修正: 使用單引號包裹JSON字符串 -->
                             <button onclick='editReview(<?= json_encode($row); ?>)'>修改</button>
                             <a href="?delete=<?= urlencode($row['review_id']); ?>&table=reviews" onclick="return confirm('確定要刪除這個評論嗎？')">刪除</a>
                         </td>
