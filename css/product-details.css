@@ -1,0 +1,97 @@
+.bd {
+    font: 13px / 1.231 arial,helvetica,clean,sans-serif;
+    color: #666;
+    font-family: Arial, Helvetica, Sans-Serif;
+    word-break: normal;
+    word-wrap: break-word;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.title-box h3 {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.bd .section.guide-score {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.rating-box {
+    font: 13px / 1.231 arial,helvetica,clean,sans-serif;
+    color: #666;
+    font-family: Arial, Helvetica, Sans-Serif;
+    word-break: normal;
+    word-wrap: break-word;
+    margin: 0;
+    padding: 0;
+}
+
+.star_rating {
+    word-break: normal;
+    word-wrap: break-word;
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+    font-size: inherit;
+    font-style: inherit;
+    font-weight: inherit;
+    display: none;
+}
+
+.star_rating:checked + label {
+    color: #ffd700;
+}
+
+.rating {
+    border: none;
+    float: left;
+}
+
+.rating > input {
+    display: none;
+}
+
+.rating > label:before {
+    margin: 5px;
+    font-size: 1.25em;
+    font-family: FontAwesome;
+    display: inline-block;
+    content: "\f005";
+}
+
+.rating > label {
+    color: #ddd;
+    float: right;
+}
+
+.rating > input:checked ~ label,
+.rating:not(:checked) > label:hover,
+.rating:not(:checked) > label:hover ~ label {
+    color: #FFD700;
+}
+
+.rating > input:checked + label:hover,
+.rating > input:checked ~ label:hover,
+.rating > label:hover ~ input:checked ~ label,
+.rating > input:checked ~ label:hover ~ label {
+    color: #FFED85;
+}
+
+/* base CSS */
+@import "https://jci.book.com.tw/css/min/reset_mod.css";
+@import "https://jci.book.com.tw/css/b960_24.css";
+@import "https://jci.book.com.tw/css/mod/mod_skin.css";
+@import "https://jci.book.com.tw/css/iconfont/icon_01.css";
+@import "https://jci.book.com.tw/css/header/header.css";
+@import "https://jci.book.com.tw/css/header/header-v2.css";
+/* project CSS*/
+@import "https://jci.book.com.tw/css/books/home/home.css";
+@import "https://jci.book.com.tw/css/books/product/type_2011.css";
+@import "https://jci.book.com.tw/css/books/product/type_2011_color.css";
+@import "https://jci.book.com.tw/css/books/product/books.css";
