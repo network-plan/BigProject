@@ -1,14 +1,14 @@
-body {
+/* body {
     font-family: Arial, sans-serif;
     max-width: 800px;
     margin: auto;
     padding: 20px;
-}
-.container {
+} */
+/* .container {
     display: flex;
     flex-direction: column;
     gap: 20px;
-}
+} */
 .table-selector {
     display: flex;
     gap: 10px;
