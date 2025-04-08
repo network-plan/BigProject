@@ -59,7 +59,7 @@ $(document).ready(function() {
         var priceText = row.find(".cart_price p").text(); // 獲取價格
         var price = priceText.replace(/[^0-9.]/g, ''); // 去除 "$" 並轉數字
         var totalPrice = (price * quantity); // 計算總價
-        row.find(".cart_total_price").text(`$${totalPrice}`); // 更新總價顯示
+        row.find(".cart_total_price").text(`NT$${totalPrice}`); // 更新總價顯示
         updateTotalPrice();
     }
 
