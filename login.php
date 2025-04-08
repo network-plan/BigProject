@@ -1,5 +1,56 @@
+<?php
+include('db_connection.php');
+
+// 啟用錯誤報告
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+// 測試資料庫連接
+if (isset($conn)) {
+    echo "<!-- 資料庫連接成功 -->";
+} else {
+    echo "<!-- 資料庫連接失敗 -->";
+}
+
+// 專門用於註冊的處理邏輯
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username'])) {
+    try {
+        // 輸出除錯信息
+        file_put_contents('debug.log', print_r($_POST, true), FILE_APPEND);
+        
+        // 收集表單數據
+        $username = $_POST['register_username'];
+        $email = $_POST['register_email'];
+        $password = $_POST['register_password'];
+        $phone = $_POST['register_tel'];
+        date_default_timezone_set("Asia/Taipei");
+        $register_date = date("Y-m-d H:i:s");
+        
+        // 取得新會員ID
+        $stmt_id = $conn->prepare("SELECT COALESCE(MAX(member_id), 0) + 1 AS new_id FROM members");
+        $stmt_id->execute();
+        $result_id = $stmt_id->get_result();
+        $row = $result_id->fetch_assoc();
+        $new_member_id = $row['new_id'];
+        
+        // 寫入資料庫
+        $stmt = $conn->prepare("INSERT INTO members (member_id, username, email, password, phone, register_date) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("isssss", $new_member_id, $username, $email, $password, $phone, $register_date);
+        
+        $success = $stmt->execute();
+        if ($success) {
+            echo "<script>alert('註冊成功！');</script>";
+        } else {
+            echo "<script>alert('註冊失敗: " . $stmt->error . "');</script>";
+        }
+    } catch (Exception $e) {
+        file_put_contents('error.log', $e->getMessage(), FILE_APPEND);
+        echo "<script>alert('發生錯誤: " . $e->getMessage() . "');</script>";
+    }
+}
+?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -168,30 +219,35 @@
 				</div>
 				<!--註冊-->
 				<div class="form-box register">
-					<form action="#" id="input_form">
-						<h1>註冊</h1>
-						<div class="input-box">
-							<input type="text" id="account_input" placeholder="請輸入使用者名稱" required  minlength="4" maxlength="10">
-							<i class='bx bxs-user'></i>
-							<span class="error-message"></span>
-						</div>
-						<div class="input-box">
-							<input type="email" id="email_input" placeholder="請輸入電子郵件地址" required>
-							<i class='bx bxs-envelope' ></i>
-							<span class="error-message"></span>
-						</div>
-						<div class="input-box">
-							<input type="password" id="pwd_input" placeholder="請輸入密碼" required maxlength="10">
-							<i class='bx bxs-lock-alt' ></i>
-							<span class="error-message"></span>
-						</div>
-						<div class="input-box">
-							<input type="password" id="pwd2_input" placeholder="確認密碼" required maxlength="10">
-							<i class='bx bxs-lock-alt' ></i>
-							<span class="error-message"></span>
-						</div>
-						<button type="submit" class="btn">註冊</button>
-					</form>
+                <form action="login.php" method="POST" id="input_form">
+                    <h1>註冊</h1>
+                    <div class="input-box">
+                        <input type="text" id="account_input" name="register_username" placeholder="請輸入使用者名稱" required minlength="4" maxlength="10">
+                        <i class='bx bxs-user'></i>
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="input-box">
+                        <input type="email" id="email_input" name="register_email" placeholder="請輸入電子郵件地址" required>
+                        <i class='bx bxs-envelope'></i>
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="input-box">
+                        <input type="tel" id="tel_input" name="register_tel" placeholder="請輸入電話號碼" required>
+                        <i class='bx bxs-envelope'></i>
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="input-box">
+                        <input type="password" id="pwd_input" name="register_password" placeholder="請輸入密碼" required maxlength="16">
+                        <i class='bx bxs-lock-alt'></i>
+                        <span class="error-message"></span>
+                    </div>
+                    <div class="input-box">
+                        <input type="password" id="pwd2_input" placeholder="確認密碼" required maxlength="16">
+                        <i class='bx bxs-lock-alt'></i>
+                        <span class="error-message"></span>
+                    </div>
+                    <button type="submit" class="btn" name="register">註冊</button>
+                </form>
 				</div>
 				<!--HI-->
 				<div class="toggle-box">
@@ -304,11 +360,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
-    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script> -->
     <!--additional method - for checkbox .. ,require_from_group method ...-->
-    <script src="//jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
-    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/localization/messages_zh_TW.js "></script>
+    <!-- <script src="//jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/localization/messages_zh_TW.js "></script> -->
 </body>
 </html>
+<?php $conn->close();?>

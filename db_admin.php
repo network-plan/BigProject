@@ -32,13 +32,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     if ($_POST['table'] == 'product_info') {
         $stmt = $conn->prepare("UPDATE product_info SET product_name=?, short_description=?, full_description=?, price=?, stock=?, category=? WHERE product_id=?");
-        $stmt->bind_param("sssiiss", $_POST['product_name'], $_POST['short_description'], $_POST['full_description'], $_POST['price'], $_POST['stock'], $_POST['category'], $_POST['product_id']);
+        $stmt->bind_param("sssdiss", $_POST['product_name'], $_POST['short_description'], $_POST['full_description'], $_POST['price'], $_POST['stock'], $_POST['category'], $_POST['product_id']);
     } elseif ($_POST['table'] == 'product_img') {
         $stmt = $conn->prepare("UPDATE product_img SET product_id=?, img_url=? WHERE img_id=?");
         $stmt->bind_param("sss", $_POST['product_id'], $_POST['img_url'], $_POST['img_id']);
     } elseif ($_POST['table'] == 'members') {
         $stmt = $conn->prepare("UPDATE members SET username=?, email=?, password=?, phone=?, register_date=? WHERE member_id=?");
-        $stmt->bind_param("ssssds", $_POST['username'], $_POST['email'], $_POST['password'], $_POST['phone'], $_POST['register_date'], $_POST['member_id']);
+        $stmt->bind_param("ssssss", $_POST['username'], $_POST['email'], $_POST['password'], $_POST['phone'], $_POST['register_date'], $_POST['member_id']);
     } elseif ($_POST['table'] == 'orders') {
         $stmt = $conn->prepare("UPDATE orders SET member_id=?, username=?, order_date=?, total_price=?, status=? WHERE order_id=?");
         $stmt->bind_param("sssdsi", $_POST['member_id'], $_POST['username'], $_POST['order_date'], $_POST['total_price'], $_POST['status'], $_POST['order_id']);
@@ -162,21 +162,21 @@ try {
                 </tr>
                 <?php foreach ($rows as $row): ?>
                     <tr>
-                        <td><?= $row['product_id']; ?></td>
-                        <td><?= $row['product_name']; ?></td>
-                        <td><?= $row['short_description']; ?></td>
-                        <td><?= $row['price']; ?></td>
-                        <td><?= $row['stock']; ?></td>
-                        <td><?= $row['category']; ?></td>
+                        <td><?= htmlspecialchars($row['product_id']); ?></td>
+                        <td><?= htmlspecialchars($row['product_name']); ?></td>
+                        <td><?= htmlspecialchars($row['short_description']); ?></td>
+                        <td><?= htmlspecialchars($row['price']); ?></td>
+                        <td><?= htmlspecialchars($row['stock']); ?></td>
+                        <td><?= htmlspecialchars($row['category']); ?></td>
                         <td>
-                            <button onclick="editProduct('<?= htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>')">修改</button>
-                            <a href="?delete=<?= $row['product_id']; ?>&table=product_info" onclick="return confirm('確定要刪除這個商品嗎？')">刪除</a>
+                            <button onclick='editProduct(<?= json_encode($row); ?>)'>修改</button>
+                            <a href="?delete=<?= urlencode($row['product_id']); ?>&table=product_info" onclick="return confirm('確定要刪除這個商品嗎？')">刪除</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
             <h2>修改商品</h2>
-            <form method="POST">
+            <form method="POST" name="update">
                 <input type="hidden" name="table" value="product_info">
                 <input type="text" name="product_id" id="edit_product_id" placeholder="商品編號" readonly required>
                 <input type="text" name="product_name" id="edit_product_name" placeholder="商品名稱" required>
@@ -206,18 +206,18 @@ try {
                 </tr>
                 <?php foreach ($rows as $row): ?>
                     <tr>
-                        <td><?= $row['img_id']; ?></td>
-                        <td><?= $row['product_id']; ?></td>
-                        <td><?= $row['img_url']; ?></td>
+                        <td><?= htmlspecialchars($row['img_id']); ?></td>
+                        <td><?= htmlspecialchars($row['product_id']); ?></td>
+                        <td><?= htmlspecialchars($row['img_url']); ?></td>
                         <td>
-                            <button onclick="editImage('<?= htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>')">修改</button>
-                            <a href="?delete=<?= $row['img_id']; ?>&table=product_img" onclick="return confirm('確定要刪除這個圖片嗎？')">刪除</a>
+                            <button onclick='editImage(<?= json_encode($row); ?>)'>修改</button>
+                            <a href="?delete=<?= urlencode($row['img_id']); ?>&table=product_img" onclick="return confirm('確定要刪除這個圖片嗎？')">刪除</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
             <h2>修改圖片</h2>
-            <form method="POST">
+            <form method="POST" name="update">
                 <input type="hidden" name="table" value="product_img">
                 <input type="text" name="img_id" id="edit_img_id" placeholder="圖片編號" readonly required>
                 <input type="text" name="product_id" id="edit_product_id_img" placeholder="商品編號" required>
@@ -248,20 +248,20 @@ try {
                 </tr>
                 <?php foreach ($rows as $row): ?>
                     <tr>
-                        <td><?= $row['member_id']; ?></td>
-                        <td><?= $row['username']; ?></td>
-                        <td><?= $row['email']; ?></td>
-                        <td><?= $row['phone']; ?></td>
-                        <td><?= $row['register_date']; ?></td>
+                        <td><?= htmlspecialchars($row['member_id']); ?></td>
+                        <td><?= htmlspecialchars($row['username']); ?></td>
+                        <td><?= htmlspecialchars($row['email']); ?></td>
+                        <td><?= htmlspecialchars($row['phone']); ?></td>
+                        <td><?= htmlspecialchars($row['register_date']); ?></td>
                         <td>
-                            <button onclick="editMember('<?= htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>')">修改</button>
-                            <a href="?delete=<?= $row['member_id']; ?>&table=members" onclick="return confirm('確定要刪除這個會員嗎？')">刪除</a>
+                            <button onclick='editMember(<?= json_encode($row); ?>)'>修改</button>
+                            <a href="?delete=<?= urlencode($row['member_id']); ?>&table=members" onclick="return confirm('確定要刪除這個會員嗎？')">刪除</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
             <h2>修改會員</h2>
-            <form method="POST">
+            <form method="POST" name="update">
                 <input type="hidden" name="table" value="members">
                 <input type="text" name="member_id" id="edit_member_id" placeholder="會員編號" readonly required>
                 <input type="text" name="username" id="edit_username" placeholder="使用者名稱" required>
@@ -299,21 +299,21 @@ try {
                 </tr>
                 <?php foreach ($rows as $row): ?>
                     <tr>
-                        <td><?= $row['order_id']; ?></td>
-                        <td><?= $row['member_id']; ?></td>
-                        <td><?= $row['username']; ?></td>
-                        <td><?= $row['order_date']; ?></td>
-                        <td><?= $row['total_price']; ?></td>
-                        <td><?= $row['status']; ?></td>
+                        <td><?= htmlspecialchars($row['order_id']); ?></td>
+                        <td><?= htmlspecialchars($row['member_id']); ?></td>
+                        <td><?= htmlspecialchars($row['username']); ?></td>
+                        <td><?= htmlspecialchars($row['order_date']); ?></td>
+                        <td><?= htmlspecialchars($row['total_price']); ?></td>
+                        <td><?= htmlspecialchars($row['status']); ?></td>
                         <td>
-                            <button onclick="editOrder('<?= htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>')">修改</button>
-                            <a href="?delete=<?= $row['order_id']; ?>&table=orders" onclick="return confirm('確定要刪除這個訂單嗎？')">刪除</a>
+                            <button onclick='editOrder(<?= json_encode($row); ?>)'>修改</button>
+                            <a href="?delete=<?= urlencode($row['order_id']); ?>&table=orders" onclick="return confirm('確定要刪除這個訂單嗎？')">刪除</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
             <h2>修改訂單</h2>
-            <form method="POST">
+            <form method="POST" name="update">
                 <input type="hidden" name="table" value="orders">
                 <input type="number" name="order_id" id="edit_order_id" placeholder="訂單編號" readonly required>
                 <input type="text" name="member_id" id="edit_order_member_id" placeholder="會員編號" required>
@@ -346,20 +346,20 @@ try {
                 </tr>
                 <?php foreach ($rows as $row): ?>
                     <tr>
-                        <td><?= $row['review_id']; ?></td>
-                        <td><?= $row['user_id']; ?></td>
-                        <td><?= $row['username']; ?></td>
-                        <td><?= $row['rating']; ?></td>
-                        <td><?= $row['content']; ?></td>
+                        <td><?= htmlspecialchars($row['review_id']); ?></td>
+                        <td><?= htmlspecialchars($row['user_id']); ?></td>
+                        <td><?= htmlspecialchars($row['username']); ?></td>
+                        <td><?= htmlspecialchars($row['rating']); ?></td>
+                        <td><?= htmlspecialchars($row['content']); ?></td>
                         <td>
-                            <button onclick="editReview('<?= htmlspecialchars(json_encode($row), ENT_QUOTES, 'UTF-8'); ?>')">修改</button>
-                            <a href="?delete=<?= $row['review_id']; ?>&table=reviews" onclick="return confirm('確定要刪除這個評論嗎？')">刪除</a>
+                            <button onclick='editReview(<?= json_encode($row); ?>)'>修改</button>
+                            <a href="?delete=<?= urlencode($row['review_id']); ?>&table=reviews" onclick="return confirm('確定要刪除這個評論嗎？')">刪除</a>
                         </td>
                     </tr>
                 <?php endforeach; ?>
             </table>
             <h2>修改評論</h2>
-            <form method="POST">
+            <form method="POST" name="update">
                 <input type="hidden" name="table" value="reviews">
                 <input type="text" name="review_id" id="edit_review_id" placeholder="評論編號" readonly required>
                 <input type="text" name="user_id" id="edit_review_user_id" placeholder="使用者編號" required>
@@ -368,9 +368,7 @@ try {
                 <textarea name="content" id="edit_review_content" placeholder="評論內容" required></textarea>
                 <input type="submit" name="update" value="更新評論">
             </form>
-        <?php endif; ?>
+            <?php endif; ?>
     </div>
 </body>
-
 </html>
-<?php $conn->close(); ?>
