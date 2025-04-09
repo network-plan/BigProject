@@ -1,5 +1,5 @@
 <?php
-$conn = mysqli_connect('localhost', 'root', 'root123456', 'bigprojectdb'); // 將 $link 改為 $conn
+$conn = mysqli_connect('localhost', 'root', 'root123456', 'group_05'); // 將 $link 改為 $conn
 
 if (!$conn) {
     echo "連結錯誤代碼: " . mysqli_connect_errno() . "<br>"; // 顯示錯誤代碼
