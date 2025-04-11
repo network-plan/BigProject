@@ -193,7 +193,7 @@ try {
 								<!-- <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li> -->
 								<li><a href="cart.html"><i class="fa fa-shopping-cart"></i> 購物車</a></li>
 								<!-- <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li> -->
-								<li><a href="login.html"><i class="fa fa-lock"></i> 登入</a></li>
+								<li><a href="login.php"><i class="fa fa-lock"></i> 登入</a></li>
 							</ul>
 						</div>
 					</div>
