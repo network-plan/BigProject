@@ -112,7 +112,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>登入 | 彰化小禮坊</title>
+    <title>資料庫管理 | 彰化小禮坊</title>
 	<link href="css/db_admin_style.css" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/font-awesome.min.css" rel="stylesheet">
