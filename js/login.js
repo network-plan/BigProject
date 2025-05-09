@@ -145,16 +145,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 登入表單驗證
     loginForm.addEventListener('submit', function(e) {
-        e.preventDefault();
+        //e.preventDefault();
         const username = this.querySelector('input[type="text"]').value;
         const password = this.querySelector('input[type="password"]').value;
         
         if (username.length < 4 || username.length > 10) {
+            e.preventDefault();
             alert('使用者名稱必須介於4-10個字之間');
             return;
         }
         
         if (password.length < 6) {
+            e.preventDefault();
             alert('密碼長度至少需要6個字符');
             return;
         }
@@ -204,6 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         console.log('註冊表單驗證通過');
+        
     });
     
 });
