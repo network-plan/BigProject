@@ -73,7 +73,7 @@ if (isset($conn)) {
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="logo pull-left">
-                            <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                            <a href="index.php"><img src="images/home/logo.png" alt="" /></a>
                         </div>
                         <div class="btn-group pull-right">
                             <div class="btn-group">
@@ -131,7 +131,7 @@ if (isset($conn)) {
                             <ul class="nav navbar-nav collapse navbar-collapse">
 
                                 <!-- <li><a href="index.html" class="active">Home</a></li> -->
-                                <li><a href="index.html" class="active">首頁</a></li>
+                                <li><a href="index.php" class="active">首頁</a></li>
                                 <!-- <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a> -->
                                 <li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">

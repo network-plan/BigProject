@@ -136,7 +136,7 @@ if (isset($conn)) {
                                 <li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <!-- <li><a href="shop.html">Products</a></li> -->
-                                        <li><a href="shop.html">商品</a></li>
+                                        <li><a href="shop.php">商品</a></li>
                                         <!-- <li><a href="checkout.html">Checkout</a></li> -->
                                         <li><a href="checkout.html">歷史訂單</a></li>
                                         <!-- <li><a href="cart.html">Cart</a></li> -->
@@ -215,11 +215,38 @@ if (isset($conn)) {
                 <div class="col-sm-9 padding-right">
                     <div class="features_items"><!--features_items-->
                         <h2 class="title text-center">特色項目</h2>
-                        
+
                         <?php
-                        $sql = "SELECT product_info.product_id, product_info.product_name, product_info.price, product_img.img_url FROM product_info LEFT JOIN product_img ON product_info.product_id = product_img.product_id";
+                        // 設定每頁顯示的商品數量
+                        $items_per_page = 6;
+
+                        // 獲取當前頁碼，如果沒有則預設為第1頁
+                        $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+                        if ($current_page < 1) $current_page = 1;
+
+                        // 計算查詢的起始位置
+                        $offset = ($current_page - 1) * $items_per_page;
+
+                        // 計算總商品數和總頁數
+                        $count_sql = "SELECT COUNT(*) as total FROM product_info";
+                        $count_result = mysqli_query($conn, $count_sql) or die("SQL錯誤：" . mysqli_error($conn));
+                        $count_row = mysqli_fetch_assoc($count_result);
+                        $total_items = $count_row['total'];
+                        $total_pages = ceil($total_items / $items_per_page);
+
+                        // 確保當前頁不超過總頁數
+                        if ($current_page > $total_pages && $total_pages > 0) {
+                            $current_page = $total_pages;
+                        }
+
+                        // 查詢當前頁的商品，加入LIMIT子句限制結果數量
+                        $sql = "SELECT product_info.product_id, product_info.product_name, product_info.price, product_img.img_url 
+                FROM product_info 
+                LEFT JOIN product_img ON product_info.product_id = product_img.product_id
+                LIMIT $offset, $items_per_page";
                         $result = mysqli_query($conn, $sql) or die("SQL錯誤：" . mysqli_error($conn));
 
+                        // 顯示商品
                         while ($row = mysqli_fetch_assoc($result)) {
                             echo '<div class="col-sm-4">';
                             echo '<div class="product-image-wrapper">';
@@ -241,14 +268,52 @@ if (isset($conn)) {
                         }
                         ?>
 
-                        
                     </div><!--features_items-->
-                    <ul class="pagination">
-                            <li class="active"><a href="">1</a></li>
-                            <li><a href="">2</a></li>
-                            <li><a href="">3</a></li>
-                            <li><a href="">&raquo;</a></li>
+
+                    <!-- 動態生成分頁導航 -->
+                    <?php if ($total_pages > 1): ?>
+                        <ul class="pagination">
+                            <!-- 第一頁按鈕 -->
+                            <?php if ($current_page > 1): ?>
+                                <li><a href="?page=1" title="第一頁"><i class="fa fa-angle-double-left"></i></a></li>
+                            <?php else: ?>
+                                <li class="disabled"><a href="#"><i class="fa fa-angle-double-left"></i></a></li>
+                            <?php endif; ?>
+
+                            <!-- 上一頁連結 -->
+                            <?php if ($current_page > 1): ?>
+                                <li><a href="?page=<?php echo $current_page - 1; ?>" title="上一頁">&laquo;</a></li>
+                            <?php else: ?>
+                                <li class="disabled"><a href="#">&laquo;</a></li>
+                            <?php endif; ?>
+
+                            <!-- 頁碼連結 -->
+                            <?php
+                            // 決定顯示的頁碼範圍
+                            $start_page = max(1, $current_page - 2);
+                            $end_page = min($total_pages, $current_page + 2);
+
+                            for ($i = $start_page; $i <= $end_page; $i++): ?>
+                                <li <?php if ($i == $current_page) echo 'class="active"'; ?>>
+                                    <a href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                </li>
+                            <?php endfor; ?>
+
+                            <!-- 下一頁連結 -->
+                            <?php if ($current_page < $total_pages): ?>
+                                <li><a href="?page=<?php echo $current_page + 1; ?>" title="下一頁">&raquo;</a></li>
+                            <?php else: ?>
+                                <li class="disabled"><a href="#">&raquo;</a></li>
+                            <?php endif; ?>
+
+                            <!-- 最後一頁按鈕 -->
+                            <?php if ($current_page < $total_pages): ?>
+                                <li><a href="?page=<?php echo $total_pages; ?>" title="最後一頁"><i class="fa fa-angle-double-right"></i></a></li>
+                            <?php else: ?>
+                                <li class="disabled"><a href="#"><i class="fa fa-angle-double-right"></i></a></li>
+                            <?php endif; ?>
                         </ul>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
