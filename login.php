@@ -1,3 +1,4 @@
+
 <?php
 include('db_connection.php');
 
@@ -15,8 +16,7 @@ if (isset($conn)) {
 // 專門用於註冊的處理邏輯
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username'])) {
     try {
-        // 輸出除錯信息
-        file_put_contents('debug.log', print_r($_POST, true), FILE_APPEND);
+        
         
         // 收集表單數據
         $username = $_POST['register_username'];
@@ -49,6 +49,48 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username']))
     }
 }
 ?>
+<?php
+
+session_start();
+include('db_connection.php');
+
+//專門用於登入的處理邏輯
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
+	
+	// 輸出除錯信息
+	file_put_contents('debug.log', print_r($_POST, true), FILE_APPEND);
+	
+	$username = $_POST['login_username'];
+	$password = $_POST['login_password'];
+
+	// 查詢資料表確認帳號密碼是否存在
+	$stmt = $conn->prepare("SELECT username,password FROM members WHERE username = ? AND password = ?");
+	$stmt->bind_param("ss", $username, $password);
+	$stmt->execute();
+	$result = $stmt->get_result();
+	if ($result->num_rows > 0) {
+		// 登入成功
+		
+		$_SESSION['username'] = $username;
+
+		// 檢查是否為管理者
+		if ($username === 'admin' && $password === 'admin123456') {
+			$_SESSION['role'] = 'admin';
+		} else {
+			$_SESSION['role'] = 'user';
+		}
+		echo "<!-- 登入成功，轉址中 -->";
+		header("Location: index.php");
+		exit();
+	} else {
+		echo "<script>alert('帳號或密碼錯誤');</script>";
+	}
+
+}
+	
+?>
+
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -198,15 +240,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username']))
 		<div class="container">
 			<div class="container_login">
 				<div class="form-box login">
-					<form action="#" id="login_form">
+					<form method="POST" action="login.php" id="login_form">
 						<h1>登入</h1>
 						<div class="input-box">
-							<input type="text"  id="account_login" placeholder="請輸入使用者名稱" required minlength="4" maxlength="10">
+							<input type="text"  id="account_login" name="login_username" placeholder="請輸入使用者名稱" required minlength="4" maxlength="10">
 							<i class='bx bxs-user'></i>
 							<span class="error-message"></span>
 						</div>
 						<div class="input-box">
-							<input type="password" id="pwd_login" placeholder="請輸入密碼" required minlength="6" maxlength="12">
+							<input type="password" id="pwd_login" name="login_password" placeholder="請輸入密碼" required minlength="6" maxlength="12">
 							<i class='bx bxs-lock-alt' ></i>
 							<span class="error-message"></span>
 						</div>
@@ -214,7 +256,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username']))
 							<input type="checkbox" class="checkbox">
 							<span>記住帳號密碼</span>
 						</div>
-						<button type="submit" class="btn">登入</button>
+						<button type="submit" class="btn" name="login">登入</button>
 					</form>
 				</div>
 				<!--註冊-->

@@ -1,69 +1,111 @@
-// 編輯商品資訊的函數
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function editProduct(productData) {
-    
-    // Remove any control characters before parsing
-    productData = productData.replace(/[\x00-\x1F\x7F]/g, ''); 
-    const data = JSON.parse(productData);
-    document.getElementById("edit_product_id").value = data.product_id;
-    document.getElementById("edit_product_name").value = data.product_name;
-    document.getElementById("edit_short_description").value = data.short_description;
-    document.getElementById("edit_full_description").value = data.full_description;
-    document.getElementById("edit_price").value = data.price;
-    document.getElementById("edit_stock").value = data.stock;
-    document.getElementById("edit_category").value = data.category;
-}
-
-
-// 編輯商品圖片的函數
-function editImage(image) {
-    const data = JSON.parse(image);
-    document.getElementById("edit_img_id").value = data.img_id;
-    document.getElementById("edit_product_id_img").value = data.product_id;
-    document.getElementById("edit_img_url").value = data.img_url;
-}
-
-// 編輯會員資訊的函數
-function editMember(member) {
-    const data = JSON.parse(member);
-    document.getElementById("edit_member_id").value = data.member_id;
-    document.getElementById("edit_username").value = data.username;
-    document.getElementById("edit_email").value = data.email;
-    document.getElementById("edit_password").value = data.password;
-    document.getElementById("edit_phone").value = data.phone;
-    document.getElementById("edit_register_date").value = data.register_date;
-}
-
-// 切換密碼可見性的函數
-function togglePasswordVisibility() {
-    const passwordInput = document.getElementById('edit_password');
-    const toggleButton = document.getElementById('toggle_password_visibility');
-
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleButton.textContent = '隱藏密碼';
-    } else {
-        passwordInput.type = 'password';
-        toggleButton.textContent = '顯示密碼';
+    try {
+        // 確保是字符串形式的JSON
+        const product = typeof productData === 'string' ? JSON.parse(productData) : productData;
+        
+        // 設置表單的值
+        document.getElementById('edit_product_id').value = product.product_id;
+        document.getElementById('edit_product_name').value = product.product_name;
+        document.getElementById('edit_short_description').value = product.short_description;
+        document.getElementById('edit_full_description').value = product.full_description;
+        document.getElementById('edit_price').value = product.price;
+        document.getElementById('edit_stock').value = product.stock;
+        document.getElementById('edit_category').value = product.category;
+        
+        // 滾動到修改表單
+        document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
+    } catch (e) {
+        console.error("解析產品數據時發生錯誤:", e);
+        alert("無法載入產品數據，請稍後再試");
     }
 }
 
-// 編輯訂單資訊的函數
-function editOrder(order) {
-    const data = JSON.parse(order);
-    document.getElementById("edit_order_id").value = data.order_id;
-    document.getElementById("edit_order_member_id").value = data.member_id;
-    document.getElementById("edit_order_username").value = data.username;
-    document.getElementById("edit_order_date").value = data.order_date;
-    document.getElementById("edit_order_total_price").value = data.total_price;
-    document.getElementById("edit_order_status").value = data.status;
+function editImage(imageData) {
+    try {
+        const image = typeof imageData === 'string' ? JSON.parse(imageData) : imageData;
+        document.getElementById('edit_img_id').value = image.img_id;
+        document.getElementById('edit_product_id_img').value = image.product_id;
+        document.getElementById('edit_img_url').value = image.img_url;
+        
+        // 滾動到修改表單
+        document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
+    } catch (e) {
+        console.error("解析圖片數據時發生錯誤:", e);
+        alert("無法載入圖片數據，請稍後再試");
+    }
 }
 
-// 編輯評論的函數
-function editReview(review) {
-    const data = JSON.parse(review);
-    document.getElementById("edit_review_id").value = data.review_id;
-    document.getElementById("edit_review_user_id").value = data.user_id;
-    document.getElementById("edit_review_username").value = data.username;
-    document.getElementById("edit_review_rating").value = data.rating;
-    document.getElementById("edit_review_content").value = data.content;
+function editMember(memberData) {
+    try {
+        const member = typeof memberData === 'string' ? JSON.parse(memberData) : memberData;
+        document.getElementById('edit_member_id').value = member.member_id;
+        document.getElementById('edit_username').value = member.username;
+        document.getElementById('edit_email').value = member.email;
+        document.getElementById('edit_password').value = member.password;
+        document.getElementById('edit_phone').value = member.phone;
+        document.getElementById('edit_register_date').value = member.register_date;
+        
+        // 滾動到修改表單
+        document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
+    } catch (e) {
+        console.error("解析會員數據時發生錯誤:", e);
+        alert("無法載入會員數據，請稍後再試");
+    }
+}
+
+function editOrder(orderData) {
+    try {
+        const order = typeof orderData === 'string' ? JSON.parse(orderData) : orderData;
+        document.getElementById('edit_order_id').value = order.order_id;
+        document.getElementById('edit_order_member_id').value = order.member_id;
+        document.getElementById('edit_order_username').value = order.username;
+        document.getElementById('edit_order_date').value = order.order_date;
+        document.getElementById('edit_order_total_price').value = order.total_price;
+        document.getElementById('edit_order_status').value = order.status;
+        
+        // 滾動到修改表單
+        document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
+    } catch (e) {
+        console.error("解析訂單數據時發生錯誤:", e);
+        alert("無法載入訂單數據，請稍後再試");
+    }
+}
+
+function editReview(reviewData) {
+    try {
+        const review = typeof reviewData === 'string' ? JSON.parse(reviewData) : reviewData;
+        document.getElementById('edit_review_id').value = review.review_id;
+        document.getElementById('edit_review_user_id').value = review.user_id;
+        document.getElementById('edit_review_username').value = review.username;
+        document.getElementById('edit_review_rating').value = review.rating;
+        document.getElementById('edit_review_content').value = review.content;
+        
+        // 滾動到修改表單
+        document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
+    } catch (e) {
+        console.error("解析評論數據時發生錯誤:", e);
+        alert("無法載入評論數據，請稍後再試");
+    }
+}
+
+function togglePasswordVisibility() {
+    const passwordField = document.getElementById('edit_password');
+    const toggleBtn = document.getElementById('toggle_password_visibility');
+    
+    if (passwordField.type === 'password') {
+        passwordField.type = 'text';
+        toggleBtn.textContent = '隱藏密碼';
+    } else {
+        passwordField.type = 'password';
+        toggleBtn.textContent = '顯示密碼';
+    }
 }
