@@ -1,15 +1,5 @@
 <?php
 include('db_connection.php');
-// 啟用錯誤報告
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-// 測試資料庫連接
-if (isset($conn)) {
-    echo "<!-- 資料庫連接成功 -->";
-} else {
-    echo "<!-- 資料庫連接失敗 -->";
-}
 
 // 取得商品 ID，若沒有則預設為 P_0001
 $product_id = isset($_GET['id']) ? $_GET['id'] : "P_0001";
@@ -110,7 +100,7 @@ while ($img_row = $img_result->fetch_assoc()) {
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="logo pull-left">
-                            <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                            <a href="index.php"><img src="images/home/logo.png" alt="" /></a>
                         </div>
                         <div class="btn-group pull-right">
                             <div class="btn-group">
@@ -145,7 +135,7 @@ while ($img_row = $img_result->fetch_assoc()) {
                                 <!-- <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li> -->
                                 <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> 購物車</a></li>
                                 <!-- <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li> -->
-                                <li><a href="login.html"><i class="fa fa-lock"></i> 登入</a></li>
+                                <li><a href="login.php"><i class="fa fa-lock"></i> 登入</a></li>
                             </ul>
                         </div>
                     </div>
@@ -171,18 +161,18 @@ while ($img_row = $img_result->fetch_assoc()) {
                         <div class="mainmenu pull-left">
                             <ul class="nav navbar-nav collapse navbar-collapse">
 
-                                <!-- <li><a href="index.html" class="active">Home</a></li> -->
-                                <li><a href="index.html" class="active">首頁</a></li>
+                                <!-- <li><a href="index.php" class="active">Home</a></li> -->
+                                <li><a href="index.php" class="active">首頁</a></li>
                                 <!-- <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a> -->
                                 <li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <!-- <li><a href="shop.html">Products</a></li> -->
-                                        <li><a href="shop.html">商品</a></li>
+                                        <!-- <li><a href="shop.php">Products</a></li> -->
+                                        <li><a href="shop.php">商品</a></li>
                                         <!-- <li><a href="checkout.html">Checkout</a></li> -->
                                         <li><a href="checkout.html">歷史訂單</a></li>
                                         <!-- <li><a href="cart.html">Cart</a></li> -->
                                         <li><a href="cart.html">購物車</a></li>
-                                        <!-- <li><a href="login.html">Login</a></li> -->
+                                        <!-- <li><a href="login.php">Login</a></li> -->
                                         <li><a href="login.php">登入</a></li>
                                     </ul>
                                 </li>
