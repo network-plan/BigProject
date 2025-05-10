@@ -126,7 +126,6 @@ session_start();
                                             echo "<li><a href=\"login.php\">購物車</a></li>";
                                         }
                                         ?>
-
                                     </ul>
                                 </li>
                                 <li class="dropdown"><a href="#">評價<i class="fa fa-angle-down"></i></a>
