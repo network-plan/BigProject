@@ -12,6 +12,7 @@ if (isset($conn)) {
 }
 session_start();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -155,8 +156,9 @@ session_start();
                                 <li><a href="contact-us.html">聯絡我們</a></li>
                                 <?php
                                 if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin')
-                                    echo "<li><a href=\"db_admin.php\">資料庫管理</a></li>"
+                                    echo "<li><a href=\"db_admin.php\">資料庫管理</a></li>" //管理者才看的到這個
                                 ?>
+
                             </ul>
                         </div>
                     </div>

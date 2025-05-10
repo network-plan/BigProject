@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-04-07 14:45:58
+-- 產生時間： 2025-04-29 18:16:20
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.0.30
 
@@ -18,8 +18,10 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- 資料庫： `bigprojectdb`
+-- 資料庫： `group_05`
 --
+CREATE DATABASE IF NOT EXISTS `group_05` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `group_05`;
 
 -- --------------------------------------------------------
 
@@ -41,12 +43,10 @@ CREATE TABLE `members` (
 --
 
 INSERT INTO `members` (`member_id`, `username`, `email`, `password`, `phone`, `register_date`) VALUES
-('1', 'name1111', 'email1111@gmail.com', 'password1', '912345', '0000-00-00'),
-('2', 'name2', 'email2@gmail.com', '123', '9', '2025-03-13'),
-('3', 'name3', 'email3@gmail.com', '33333', '912345678', '2025-03-08'),
-('4', 'name123', 'email123@gmail.com', 'password123', '900123123', '2025-04-07'),
-('5', 'name123', 'email123@gmail.com', 'password123', '900123123', '0000-00-00'),
-('6', 'name123', 'email123@gmail.com', 'password123', '0900123123', '2025-04-07');
+('1', 'admin', 'admin@gmail.com', 'admin123456', '900000000', '2025-04-10'),
+('2', 'member', 'member@gmail.com', 'member123456', '900000001', '2025-04-10'),
+('3', 'name001', 'email001@gmail.com', 'password001', '900123123', '2025-04-10'),
+('4', 'name002', 'email002@gmail.com', 'password002', '900123124', '2025-04-30');
 
 -- --------------------------------------------------------
 
@@ -55,7 +55,7 @@ INSERT INTO `members` (`member_id`, `username`, `email`, `password`, `phone`, `r
 --
 
 CREATE TABLE `orders` (
-  `order_id` int(255) NOT NULL,
+  `order_id` varchar(255) NOT NULL,
   `member_id` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
   `order_date` date NOT NULL,
@@ -68,8 +68,8 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`order_id`, `member_id`, `username`, `order_date`, `total_price`, `status`) VALUES
-(1, '1', 'n1', '2025-03-28', 1234, '備貨中'),
-(2, '222', 'n2', '2025-03-28', 4321, '已出貨');
+('1', '1', 'n1', '2025-03-28', 1234, '備貨中'),
+('2', '222', 'n2', '2025-03-28', 4321, '已出貨');
 
 -- --------------------------------------------------------
 
@@ -88,65 +88,65 @@ CREATE TABLE `product_img` (
 --
 
 INSERT INTO `product_img` (`img_id`, `product_id`, `img_url`) VALUES
-('Pimg_0001', 'P_0001', 'images/product-details/Pimg_0001'),
-('Pimg_0002', 'P_0002', 'images/product-details/Pimg_0002'),
-('Pimg_0003', 'P_0003', 'images/product-details/Pimg_0003'),
-('Pimg_0004', 'P_0004', 'images/product-details/Pimg_0004'),
-('Pimg_0005', 'P_0005', 'images/product-details/Pimg_0005'),
-('Pimg_0006', 'P_0006', 'images/product-details/Pimg_0006'),
-('Pimg_0007', 'P_0007', 'images/product-details/Pimg_0007'),
-('Pimg_0008_1', 'P_0008', 'images/product-details/Pimg_0008_1'),
-('Pimg_0008_2', 'P_0008', 'images/product-details/Pimg_0008_2'),
-('Pimg_0009', 'P_0009', 'images/product-details/Pimg_0009'),
-('Pimg_0010_1', 'P_0010', 'images/product-details/Pimg_0010_1'),
-('Pimg_0010_2', 'P_0010', 'images/product-details/Pimg_0010_2'),
-('Pimg_0011_1', 'P_0011', 'images/product-details/Pimg_0011_1'),
-('Pimg_0011_2', 'P_0011', 'images/product-details/Pimg_0011_2'),
-('Pimg_0012', 'P_0012', 'images/product-details/Pimg_0012'),
-('Pimg_0013', 'P_0013', 'images/product-details/Pimg_0013'),
-('Pimg_0014', 'P_0014', 'images/product-details/Pimg_0014'),
-('Pimg_0015', 'P_0015', 'images/product-details/Pimg_0015'),
-('Pimg_0016', 'P_0016', 'images/product-details/Pimg_0016'),
-('Pimg_0017', 'P_0017', 'images/product-details/Pimg_0017'),
-('Pimg_0018', 'P_0018', 'images/product-details/Pimg_0018'),
-('Pimg_0019', 'P_0019', 'images/product-details/Pimg_0019'),
-('Pimg_0020', 'P_0020', 'images/product-details/Pimg_0020'),
-('Pimg_0021', 'P_0021', 'images/product-details/Pimg_0021'),
-('Pimg_0022', 'P_0022', 'images/product-details/Pimg_0022'),
-('Pimg_0023', 'P_0023', 'images/product-details/Pimg_0023'),
-('Pimg_0024', 'P_0024', 'images/product-details/Pimg_0024'),
-('Pimg_0025', 'P_0025', 'images/product-details/Pimg_0025'),
-('Pimg_0026', 'P_0026', 'images/product-details/Pimg_0026'),
-('Pimg_0027', 'P_0027', 'images/product-details/Pimg_0027'),
-('Pimg_0028', 'P_0028', 'images/product-details/Pimg_0028'),
-('Pimg_0029', 'P_0029', 'images/product-details/Pimg_0029'),
-('Pimg_0030', 'P_0030', 'images/product-details/Pimg_0030'),
-('Pimg_0031_1', 'P_0031', 'images/product-details/Pimg_0031_1'),
-('Pimg_0031_2', 'P_0031', 'images/product-details/Pimg_0031_2'),
-('Pimg_0032', 'P_0032', 'images/product-details/Pimg_0032'),
-('Pimg_0033', 'P_0033', 'images/product-details/Pimg_0033'),
-('Pimg_0034', 'P_0034', 'images/product-details/Pimg_0034'),
-('Pimg_0035', 'P_0035', 'images/product-details/Pimg_0035'),
-('Pimg_0036', 'P_0036', 'images/product-details/Pimg_0036'),
-('Pimg_0037', 'P_0037', 'images/product-details/Pimg_0037'),
-('Pimg_0038', 'P_0038', 'images/product-details/Pimg_0038'),
-('Pimg_0039', 'P_0039', 'images/product-details/Pimg_0039'),
-('Pimg_0040', 'P_0040', 'images/product-details/Pimg_0040'),
-('Pimg_0041', 'P_0041', 'images/product-details/Pimg_0041'),
-('Pimg_0042', 'P_0042', 'images/product-details/Pimg_0042'),
-('Pimg_0043', 'P_0043', 'images/product-details/Pimg_0043'),
-('Pimg_0044', 'P_0044', 'images/product-details/Pimg_0044'),
-('Pimg_0045', 'P_0045', 'images/product-details/Pimg_0045'),
-('Pimg_0046', 'P_0046', 'images/product-details/Pimg_0046'),
-('Pimg_0047', 'P_0047', 'images/product-details/Pimg_0047'),
-('Pimg_0048', 'P_0048', 'images/product-details/Pimg_0048'),
-('Pimg_0049', 'P_0049', 'images/product-details/Pimg_0049'),
-('Pimg_0050', 'P_0050', 'images/product-details/Pimg_0050'),
-('Pimg_0051', 'P_0051', 'images/product-details/Pimg_0051'),
-('Pimg_0052', 'P_0052', 'images/product-details/Pimg_0052'),
-('Pimg_0053', 'P_0053', 'images/product-details/Pimg_0053'),
-('Pimg_0054', 'P_0054', 'images/product-details/Pimg_0054'),
-('Pimg_0055', 'P_0055', 'images/product-details/Pimg_0055');
+('Pimg_0001', 'P_0001', 'images/product-details/Pimg_0001.jpg'),
+('Pimg_0002', 'P_0002', 'images/product-details/Pimg_0002.jpg'),
+('Pimg_0003', 'P_0003', 'images/product-details/Pimg_0003.jpg'),
+('Pimg_0004', 'P_0004', 'images/product-details/Pimg_0004.jpg'),
+('Pimg_0005', 'P_0005', 'images/product-details/Pimg_0005.jpg'),
+('Pimg_0006', 'P_0006', 'images/product-details/Pimg_0006.jpg'),
+('Pimg_0007', 'P_0007', 'images/product-details/Pimg_0007.jpg'),
+('Pimg_0008_1', 'P_0008', 'images/product-details/Pimg_0008_1.jpg'),
+('Pimg_0008_2', 'P_0008', 'images/product-details/Pimg_0008_2.jpg'),
+('Pimg_0009', 'P_0009', 'images/product-details/Pimg_0009.jpg'),
+('Pimg_0010_1', 'P_0010', 'images/product-details/Pimg_0010_1.jpg'),
+('Pimg_0010_2', 'P_0010', 'images/product-details/Pimg_0010_2.jpg'),
+('Pimg_0011_1', 'P_0011', 'images/product-details/Pimg_0011_1.jpg'),
+('Pimg_0011_2', 'P_0011', 'images/product-details/Pimg_0011_2.jpg'),
+('Pimg_0012', 'P_0012', 'images/product-details/Pimg_0012.jpg'),
+('Pimg_0013', 'P_0013', 'images/product-details/Pimg_0013.jpg'),
+('Pimg_0014', 'P_0014', 'images/product-details/Pimg_0014.jpg'),
+('Pimg_0015', 'P_0015', 'images/product-details/Pimg_0015.jpg'),
+('Pimg_0016', 'P_0016', 'images/product-details/Pimg_0016.jpg'),
+('Pimg_0017', 'P_0017', 'images/product-details/Pimg_0017.jpg'),
+('Pimg_0018', 'P_0018', 'images/product-details/Pimg_0018.jpg'),
+('Pimg_0019', 'P_0019', 'images/product-details/Pimg_0019.jpg'),
+('Pimg_0020', 'P_0020', 'images/product-details/Pimg_0020.jpg'),
+('Pimg_0021', 'P_0021', 'images/product-details/Pimg_0021.jpg'),
+('Pimg_0022', 'P_0022', 'images/product-details/Pimg_0022.jpg'),
+('Pimg_0023', 'P_0023', 'images/product-details/Pimg_0023.jpg'),
+('Pimg_0024', 'P_0024', 'images/product-details/Pimg_0024.jpg'),
+('Pimg_0025', 'P_0025', 'images/product-details/Pimg_0025.jpg'),
+('Pimg_0026', 'P_0026', 'images/product-details/Pimg_0026.jpg'),
+('Pimg_0027', 'P_0027', 'images/product-details/Pimg_0027.jpg'),
+('Pimg_0028', 'P_0028', 'images/product-details/Pimg_0028.jpg'),
+('Pimg_0029', 'P_0029', 'images/product-details/Pimg_0029.jpg'),
+('Pimg_0030', 'P_0030', 'images/product-details/Pimg_0030.jpg'),
+('Pimg_0031_1', 'P_0031', 'images/product-details/Pimg_0031_1.jpg'),
+('Pimg_0031_2', 'P_0031', 'images/product-details/Pimg_0031_2.jpg'),
+('Pimg_0032', 'P_0032', 'images/product-details/Pimg_0032.jpg'),
+('Pimg_0033', 'P_0033', 'images/product-details/Pimg_0033.jpg'),
+('Pimg_0034', 'P_0034', 'images/product-details/Pimg_0034.jpg'),
+('Pimg_0035', 'P_0035', 'images/product-details/Pimg_0035.jpg'),
+('Pimg_0036', 'P_0036', 'images/product-details/Pimg_0036.jpg'),
+('Pimg_0037', 'P_0037', 'images/product-details/Pimg_0037.jpg'),
+('Pimg_0038', 'P_0038', 'images/product-details/Pimg_0038.jpg'),
+('Pimg_0039', 'P_0039', 'images/product-details/Pimg_0039.jpg'),
+('Pimg_0040', 'P_0040', 'images/product-details/Pimg_0040.jpg'),
+('Pimg_0041', 'P_0041', 'images/product-details/Pimg_0041.jpg'),
+('Pimg_0042', 'P_0042', 'images/product-details/Pimg_0042.jpg'),
+('Pimg_0043', 'P_0043', 'images/product-details/Pimg_0043.jpg'),
+('Pimg_0044', 'P_0044', 'images/product-details/Pimg_0044.jpg'),
+('Pimg_0045', 'P_0045', 'images/product-details/Pimg_0045.jpg'),
+('Pimg_0046', 'P_0046', 'images/product-details/Pimg_0046.jpg'),
+('Pimg_0047', 'P_0047', 'images/product-details/Pimg_0047.jpg'),
+('Pimg_0048', 'P_0048', 'images/product-details/Pimg_0048.jpg'),
+('Pimg_0049', 'P_0049', 'images/product-details/Pimg_0049.jpg'),
+('Pimg_0050', 'P_0050', 'images/product-details/Pimg_0050.jpg'),
+('Pimg_0051', 'P_0051', 'images/product-details/Pimg_0051.jpg'),
+('Pimg_0052', 'P_0052', 'images/product-details/Pimg_0052.jpg'),
+('Pimg_0053', 'P_0053', 'images/product-details/Pimg_0053.jpg'),
+('Pimg_0054', 'P_0054', 'images/product-details/Pimg_0054.jpg'),
+('Pimg_0055', 'P_0055', 'images/product-details/Pimg_0055.jpg');
 
 -- --------------------------------------------------------
 
@@ -169,8 +169,7 @@ CREATE TABLE `product_info` (
 --
 
 INSERT INTO `product_info` (`product_id`, `product_name`, `short_description`, `full_description`, `price`, `stock`, `category`) VALUES
-('P_0000', 'P_0053與其同質項目，無法修改。待處理', '1', '1', 1, 1, '1'),
-('P_0001', '嚴選好禮- 雙蜜組(2025年節禮盒)', '天然龍眼蜜420克、天然荔枝蜜420克 各1瓶', '2025年節禮盒彰化縣農會 #精選禮盒甜甜蜜過新年嚴選好禮- #雙蜜組 $850- 天然龍眼蜜、天然荔枝蜜 營養美味同時兼具- 訂/截/匯款日 : 2025 / 01 / 17▪️運費計算：購買1至4盒，運費為$140(超過4盒請先電話連絡)▪️匯款帳戶：    戶名:彰化縣農會農產品展售中心    帳號:00685102010291/台北富邦彰化分行012▪️本會官網線上購物不支援外島寄送服務本會展售中心取貨免運費(需先付款)▪️彰化市中山路二段349號1樓▪️連絡電話：04-7263460▪️營業時間：每週一～週五▪️AM 8:00 ～ PM 5:00#新春送禮 #過年好禮', 850, 1, '禮盒專區'),
+('P_0001', '嚴選好禮- 雙蜜組(2025年節禮盒)', '天然龍眼蜜420克、天然荔枝蜜420克 各1瓶', '2025年節禮盒彰化縣農會 #精選禮盒甜甜蜜過新年嚴選好禮- #雙蜜組 $850- 天然龍眼蜜、天然荔枝蜜 營養美味同時兼具- 訂/截/匯款日 : 2025 / 01 / 17▪️運費計算：購買1至4盒，運費為$140(超過4盒請先電話連絡)▪️匯款帳戶：    戶名:彰化縣農會農產品展售中心    帳號:00685102010291/台北富邦彰化分行012▪️本會官網線上購物不支援外島寄送服務本會展售中心取貨免運費(需先付款)▪️彰化市中山路二段349號1樓▪️連絡電話：04-7263460▪️營業時間：每週一～週五▪️AM 8:00 ～ PM 5:00#新春送禮 #過年好禮', 850, 10, '禮盒專區'),
 ('P_0002', '🙏🙏中元祭 普渡特選組合(1組18樣)', '🙏🙏#中元祭 🙏普渡特選組合(1組18樣)💲999', '🙏🙏#中元祭 🙏普渡特選組合(1組18樣)💲9991迷你小蛋餅*12廣吉大燕麥片280g*13愛之味甜八寶380ml*14誠泰寬版醬油禮盒*15彰農平安米1kg*16活點關廟麵250g*17高級精鹽1000g*18喜年來小蔬菜餅*19掬水軒胡椒烤蘇打餅*110橘平屋韓式海苔4.2g*111小舒跑245ml*112蝴蝶蘭冬粉100g*113愛之味麥仔茶(無糖)580g*114泰山陽光種子調合油1L*115特級砂糖500g*116龍口炊粉250g*117味味單入包麵*118自然顏香蔥蘇打餅*1🍚 #彰農祈福米 有拜有保庇四格禮盒裝👉方便買·輕鬆拜', 999, 1, '🙏禮盒專區'),
 ('P_0003', '🌈福農肉粽-爌肉香菇粽(宅配訂購區)', '🌈福農肉粽-爌肉香菇粽(宅配訂購區)\r\n⋯每 盒 十 顆 裝⋯\r\n▪️爌肉香菇蛋黃粽(180±10g) ⋯$750\r\n運費計算\r\n1-8盒: $160 (8盒以上請先電話聯絡)', '100%使用福興鄉在地長糯米\r\n生產工廠通過國際ISO22000、HACCP國際食品品質安全認證 產品均經急速冷凍殺菌，品質絕對有保障\r\n主要食材原物料，原產地均為台灣\r\n(以上節自福興鄉農會官網)\r\n\r\n🔥 年年熱銷，每年賣到缺貨！\r\n\r\n⋯每 盒 十 顆 裝⋯\r\n▪️爌肉香菇粽(180±10g) ⋯$750\r\n運費計算\r\n1-8盒: $160 (8盒以上請先電話聯絡)\r\n\r\n✅最後訂購日/匯款日/出貨日：2024/05/24(五)\r\n✅ 匯款帳戶：\r\n     戶名:彰化縣農會農產品展售中心\r\n     帳號:00685102010291 \r\n     台北富邦彰化分行012\r\n⚠️ 匯款完，請將帳號末5碼回傳給\r\n👉 彰化管仲 🔗 https://lin.ee/M4OPlF8\r\n\r\n\r\n✅ 如已過預購時間，訂單將於端午節後出貨\r\n★★★本會展售中心自取區 自取免運費★★★\r\n\r\n---------------------退換貨，很重要，訂購前一定要詳讀---------------------\r\n📍退貨條件：食品類商品無7天鑑賞期，除商品本身有瑕疵可辦理退貨，商品一經使用或損毀即不可退貨，退貨必須保留紙箱及商品組合之齊全及完整性。', 750, 1, '禮盒專區'),
 ('P_0004', '🌈福農肉粽-古早味香菇素粽(本會展售中心自取區)', '🌈福農肉粽-古早味香菇素粽(本會展售中心自取區)\r\n⋯每 盒 十 顆 裝⋯\r\n▪️古早味香菇素粽(180±10g) ⋯$650\r\n⋯免運費⋯', '100%使用福興鄉在地長糯米\r\n生產工廠通過國際ISO22000、HACCP國際食品品質安全認證 產品均經急速冷凍殺菌，品質絕對有保障\r\n主要食材原物料，原產地均為台灣\r\n(以上節自福興鄉農會官網)\r\n\r\n🔥 年年熱銷，每年賣到缺貨！\r\n\r\n⋯每 盒 十 顆 裝⋯\r\n▪️古早味香菇素粽(180±10g) ⋯$650\r\n⋯免運費⋯\r\n\r\n✅最後訂購日/匯款日/出貨日：2024/05/24(五)\r\n✅ 匯款帳戶：\r\n     戶名:彰化縣農會農產品展售中心\r\n     帳號:00685102010291 \r\n     台北富邦彰化分行012\r\n⚠️ 匯款完，請將帳號末5碼回傳給\r\n👉 彰化管仲 🔗 https://lin.ee/M4OPlF8\r\n\r\n\r\n✅ 如已過預購時間，訂單將於端午節後出貨\r\n✅ 本產品圖片僅供參考，實品請以實物為止\r\n✅面交取貨：\r\n    ▪️彰化縣農會展售中心\r\n    ▪️地址：彰化市中山路二段349號1樓\r\n    ▪️電話：04-7263460\r\n    ▪️營業時間:每週一～五 AM8:00~PM5:00\r\n★★★如需宅配，請至宅配訂購區訂購★★★\r\n\r\n---------------------退換貨，很重要，訂購前一定要詳讀---------------------\r\n📍退貨條件：食品類商品無7天鑑賞期，除商品本身有瑕疵可辦理退貨，商品一經使用或損毀即不可退貨，退貨必須保留紙箱及商品組合之齊全及完整性。', 650, 1, '禮盒專區'),

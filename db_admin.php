@@ -107,17 +107,151 @@ try {
 ?>
 <!DOCTYPE html>
 <html lang="zh">
-
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>資料庫管理系統</title>
-    <link href="css/db_admin_style.css" rel="stylesheet">
-    <script src="js/db_admin_f.js"></script>
-</head>
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>資料庫管理 | 彰化小禮坊</title>
+	<link href="css/db_admin_style.css" rel="stylesheet">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/prettyPhoto.css" rel="stylesheet">
+    <link href="css/price-range.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+	<link href="css/main.css" rel="stylesheet">
+	<link href="css/login.css" rel="stylesheet">
+	<link href="css/responsive.css" rel="stylesheet">
+	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
+    <link rel="shortcut icon" href="images/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+
+</head><!--/head-->
 
 <body>
-    <div class="container">
+	<header id="header"><!--header-->
+		<div class="header_top"><!--header_top-->
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-6">
+						<div class="contactinfo">
+							<ul class="nav nav-pills">
+								<li><a href="#"><i class="fa fa-phone"></i> 04 1234567</a></li>
+								<li><a href="#"><i class="fa fa-envelope"></i> hello@gm.ncue.edu.tw</a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div class="social-icons pull-right">
+							<ul class="nav navbar-nav">
+								<li><a href=""><i class="fa fa-facebook"></i></a></li>
+								<li><a href=""><i class="fa fa-twitter"></i></a></li>
+								<li><a href=""><i class="fa fa-linkedin"></i></a></li>
+								<li><a href=""><i class="fa fa-dribbble"></i></a></li>
+								<li><a href=""><i class="fa fa-google-plus"></i></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--/header_top-->
+		
+		<div class="header-middle"><!--header-middle-->
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-4">
+						<div class="logo pull-left">
+							<a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+						</div>
+						<div class="btn-group pull-right">
+							<div class="btn-group">
+								<button type="button" class="btn1 btn-default dropdown-toggle usa" data-toggle="dropdown">
+									中文
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li><a href="">英文</a></li>
+									<li><a href="">中文</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-8">
+						<div class="shop-menu pull-right">
+							<ul class="nav navbar-nav">
+								<!-- <li><a href="#"><i class="fa fa-user"></i> Account</a></li> -->
+								<li><a href="#"><i class="fa fa-user"></i> 帳號</a></li>
+								<!-- <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li> -->
+								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> 查看歷史訂單</a></li>
+								<!-- <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li> -->
+								<li><a href="cart.html"><i class="fa fa-shopping-cart"></i> 購物車</a></li>
+								<!-- <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li> -->
+								<li><a href="login.php"><i class="fa fa-lock"></i> 登入</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--/header-middle-->
+	
+		<div class="header-bottom"><!--header-bottom-->
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-9">
+						<div class="navbar-header">
+							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+								<span class="sr-only">Toggle navigation</span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+								<span class="icon-bar"></span>
+							</button>
+						</div>
+						<div class="mainmenu pull-left">
+							<ul class="nav navbar-nav collapse navbar-collapse">
+								<!-- <li><a href="index.html" class="active">Home</a></li> -->
+								<li><a href="index.html" class="active">首頁</a></li>
+								<!-- <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a> -->
+								<li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
+									<ul role="menu" class="sub-menu">
+										<!-- <li><a href="shop.html">Products</a></li> -->
+										<li><a href="shop.html">商品</a></li>
+										<!-- <li><a href="checkout.html">Checkout</a></li> -->
+										<li><a href="checkout.html">歷史訂單</a></li>
+										<!-- <li><a href="cart.html">Cart</a></li> -->
+										<li><a href="cart.html">購物車</a></li>
+										<!-- <li><a href="login.html">Login</a></li> -->
+										<li><a href="login.html">登入</a></li>
+									</ul>
+								</li>
+								<li class="dropdown"><a href="#">評價<i class="fa fa-angle-down"></i></a>
+									<ul role="menu" class="sub-menu">
+										<li><a href="blog.html">商品評價列表</a></li>
+										<li><a href="blog-single.html">單一商品評價</a></li>
+									</ul>
+								</li>
+								<!-- <li><a href="contact-us.html">Contact</a></li> -->
+								<li><a href="contact-us.html">聯絡我們</a></li>
+							</ul>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div class="search_box pull-right">
+							<input type="text" placeholder="搜尋"/>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div><!--/header-bottom-->
+	</header><!--/header-->
+	
+	<div class="container">
         <h1>商品管理系統</h1>
         <div class="table-selector">
             <button
@@ -370,5 +504,108 @@ try {
             </form>
             <?php endif; ?>
     </div>
+
+
+    
+	
+	<footer id="footer"><!--Footer-->
+		<div class="footer-top">
+			<div class="container">
+				<div class="row">
+					<div class="col-sm-2">
+						<div class="companyinfo">
+							<h2><span>彰化</span>小禮坊</h2>
+							<p>用購買支持在地小農</p>
+						</div>
+					</div>
+					<div class="col-sm-7">
+						<div class="col-sm-3">
+							<div class="video-gallery text-center">
+								<a href="images/home/iframe1.jpg">
+									<div class="iframe-img">
+										<img src="images/home/iframe1.jpg" alt="" />
+									</div>
+								</a>
+								<p>鯨魚魚</p>
+								<h2>01 JULY 2024</h2>
+							</div>
+						</div>
+
+						<div class="col-sm-3">
+							<div class="video-gallery text-center">
+								<a href="images/home/iframe2.jpg">
+									<div class="iframe-img">
+										<img src="images/home/iframe2.jpg" alt="" />
+									</div>
+								</a>
+								<p>南瓜辰</p>
+								<h2>32 DEC 2024</h2>
+							</div>
+						</div>
+
+						<div class="col-sm-3">
+							<div class="video-gallery text-center">
+								<a href="images/home/iframe3.jpg">
+									<div class="iframe-img">
+										<img src="images/home/iframe3.jpg" alt="" />
+									</div>
+								</a>
+								<p>台灣阿虹</p>
+								<h2>06 JUNE 2024</h2>
+							</div>
+						</div>
+
+						<div class="col-sm-3">
+							<div class="video-gallery text-center">
+								<a href="images/home/iframe4.jpg">
+									<div class="iframe-img">
+										<img src="images/home/iframe4.jpg" alt="" />
+									</div>
+								</a>
+								<p>Rory</p>
+								<h2>30 FEB 2023</h2>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div class="address">
+							<img src="images/home/map.png" alt="" />
+							<p>Taiwan</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="footer-bottom">
+			<div class="container">
+				<div class="row">
+					<p class="pull-left">Copyright © 2025 彰化小禮坊 Inc. All rights reserved.</p>
+					
+				</div>
+			</div>
+		</div>
+
+	</footer><!--/Footer-->
+	
+
+    <script src="js/db_admin_f.js"></script>
+    <script src="js/jquery.js"></script>
+	<script src="js/price-range.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/main.js"></script>
+	<script src="js/login.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+    <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script> -->
+    <!--additional method - for checkbox .. ,require_from_group method ...-->
+    <!-- <script src="//jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/localization/messages_zh_TW.js "></script> -->
 </body>
 </html>
+<?php $conn->close();?>
