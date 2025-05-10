@@ -12,7 +12,6 @@ if (isset($conn)) {
 }
 session_start();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -106,7 +105,11 @@ session_start();
                                 <!-- <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li> -->
                                 <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> 購物車</a></li>
                                 <!-- <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li> -->
-                                <li><a href="login.php"><i class="fa fa-lock"></i> 登入</a></li>
+                                <?php
+                                if(!isset($_SESSION['username'])) {
+                                    echo "<li><a href=\"login.php\"><i class=\"fa fa-lock\"></i> 登入</a></li>";
+                                } 
+                                ?>
                             </ul>
                         </div>
                     </div>
@@ -158,7 +161,6 @@ session_start();
                                 if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin')
                                     echo "<li><a href=\"db_admin.php\">資料庫管理</a></li>" //管理者才看的到這個
                                 ?>
-
                             </ul>
                         </div>
                     </div>
