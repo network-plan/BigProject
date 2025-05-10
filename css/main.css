@@ -254,7 +254,7 @@ a#scrollUp i{
 .search_box input {
   background: #F0F0E9;
   border: medium none;
-  color: #B2B2B2;
+  color: #000;
   font-family: 'roboto';
   font-size: 12px;
   font-weight: 300;
@@ -2518,3 +2518,5 @@ h2.title {
 .contact-info .social-networks ul li a:hover{
   color: #83B1C9;
 }
+
+

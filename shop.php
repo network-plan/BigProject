@@ -1,16 +1,5 @@
 <?php
 include('db_connection.php');
-// 啟用錯誤報告
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
-
-// 測試資料庫連接
-if (isset($conn)) {
-    echo "<!-- 資料庫連接成功 -->";
-} else {
-    echo "<!-- 資料庫連接失敗 -->";
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -72,7 +61,7 @@ if (isset($conn)) {
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="logo pull-left">
-                            <a href="index.html"><img src="images/home/logo.png" alt="" /></a>
+                            <a href="index.php"><img src="images/home/logo.png" alt="" /></a>
                         </div>
                         <div class="btn-group pull-right">
                             <div class="btn-group">
@@ -105,7 +94,7 @@ if (isset($conn)) {
                                 <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> 查看歷史訂單</a></li>
                                 <!-- <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li> -->
                                 <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> 購物車</a></li>
-                                <!-- <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li> -->
+                                <!-- <li><a href="login.php"><i class="fa fa-lock"></i> Login</a></li> -->
                                 <li><a href="login.php"><i class="fa fa-lock"></i> 登入</a></li>
                             </ul>
                         </div>
@@ -130,19 +119,19 @@ if (isset($conn)) {
                         <div class="mainmenu pull-left">
                             <ul class="nav navbar-nav collapse navbar-collapse">
 
-                                <!-- <li><a href="index.html" class="active">Home</a></li> -->
-                                <li><a href="index.html" class="active">首頁</a></li>
+                                <!-- <li><a href="index.php" class="active">Home</a></li> -->
+                                <li><a href="index.php" class="active">首頁</a></li>
                                 <!-- <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a> -->
                                 <li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <!-- <li><a href="shop.html">Products</a></li> -->
+                                        <!-- <li><a href="shop.php">Products</a></li> -->
                                         <li><a href="shop.php">商品</a></li>
                                         <!-- <li><a href="checkout.html">Checkout</a></li> -->
                                         <li><a href="checkout.html">歷史訂單</a></li>
                                         <!-- <li><a href="cart.html">Cart</a></li> -->
                                         <li><a href="cart.html">購物車</a></li>
                                         <!-- <li><a href="login.html">Login</a></li> -->
-                                        <li><a href="login.html">登入</a></li>
+                                        <li><a href="login.php">登入</a></li>
                                     </ul>
                                 </li>
                                 <li class="dropdown"><a href="#">評價<i class="fa fa-angle-down"></i></a>
@@ -156,12 +145,21 @@ if (isset($conn)) {
                             </ul>
                         </div>
                     </div>
+
                     <div class="col-sm-3">
                         <div class="search_box pull-right">
-                            <!-- <input type="text" placeholder="search" /> -->
-                            <input type="text" placeholder="搜尋" />
+                            <form action="shop.php" method="GET" id="searchForm">
+                                <input type="text" name="search" placeholder="搜尋"
+                                    value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" />
+                            </form>
                         </div>
                     </div>
+
+
+
+
+
+
                 </div>
             </div>
         </div><!--/header-bottom-->
@@ -224,11 +222,17 @@ if (isset($conn)) {
                         $current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
                         if ($current_page < 1) $current_page = 1;
 
-                        // 計算查詢的起始位置
-                        $offset = ($current_page - 1) * $items_per_page;
+                        // 檢查是否有搜尋參數
+                        $search_term = isset($_GET['search']) ? mysqli_real_escape_string($conn, $_GET['search']) : '';
+
+                        // 準備查詢條件
+                        $where_clause = "";
+                        if (!empty($search_term)) {
+                            $where_clause = " WHERE product_info.product_name LIKE '%$search_term%'";
+                        }
 
                         // 計算總商品數和總頁數
-                        $count_sql = "SELECT COUNT(*) as total FROM product_info";
+                        $count_sql = "SELECT COUNT(*) as total FROM product_info" . $where_clause;
                         $count_result = mysqli_query($conn, $count_sql) or die("SQL錯誤：" . mysqli_error($conn));
                         $count_row = mysqli_fetch_assoc($count_result);
                         $total_items = $count_row['total'];
@@ -239,12 +243,21 @@ if (isset($conn)) {
                             $current_page = $total_pages;
                         }
 
+                        // 計算查詢的起始位置
+                        $offset = ($current_page - 1) * $items_per_page;
+
                         // 查詢當前頁的商品，加入LIMIT子句限制結果數量
                         $sql = "SELECT product_info.product_id, product_info.product_name, product_info.price, product_img.img_url 
-                FROM product_info 
-                LEFT JOIN product_img ON product_info.product_id = product_img.product_id
-                LIMIT $offset, $items_per_page";
+                                FROM product_info 
+                                LEFT JOIN product_img ON product_info.product_id = product_img.product_id"
+                            . $where_clause .
+                            " LIMIT $offset, $items_per_page";
                         $result = mysqli_query($conn, $sql) or die("SQL錯誤：" . mysqli_error($conn));
+
+                        // 顯示搜尋結果計數（如果有搜尋）
+                        if (!empty($search_term)) {
+                            echo "<div class='alert alert-info'>搜尋 '" . htmlspecialchars($search_term) . "' 的結果：找到 $total_items 項商品</div>";
+                        }
 
                         // 顯示商品
                         while ($row = mysqli_fetch_assoc($result)) {
@@ -275,14 +288,14 @@ if (isset($conn)) {
                         <ul class="pagination">
                             <!-- 第一頁按鈕 -->
                             <?php if ($current_page > 1): ?>
-                                <li><a href="?page=1" title="第一頁"><i class="fa fa-angle-double-left"></i></a></li>
+                                <li><a href="?page=1<?php echo !empty($search_term) ? '&search=' . urlencode($search_term) : ''; ?>" title="第一頁"><i class="fa fa-angle-double-left"></i></a></li>
                             <?php else: ?>
                                 <li class="disabled"><a href="#"><i class="fa fa-angle-double-left"></i></a></li>
                             <?php endif; ?>
 
                             <!-- 上一頁連結 -->
                             <?php if ($current_page > 1): ?>
-                                <li><a href="?page=<?php echo $current_page - 1; ?>" title="上一頁">&laquo;</a></li>
+                                <li><a href="?page=<?php echo $current_page - 1; ?><?php echo !empty($search_term) ? '&search=' . urlencode($search_term) : ''; ?>" title="上一頁">&laquo;</a></li>
                             <?php else: ?>
                                 <li class="disabled"><a href="#">&laquo;</a></li>
                             <?php endif; ?>
@@ -295,20 +308,20 @@ if (isset($conn)) {
 
                             for ($i = $start_page; $i <= $end_page; $i++): ?>
                                 <li <?php if ($i == $current_page) echo 'class="active"'; ?>>
-                                    <a href="?page=<?php echo $i; ?>"><?php echo $i; ?></a>
+                                    <a href="?page=<?php echo $i; ?><?php echo !empty($search_term) ? '&search=' . urlencode($search_term) : ''; ?>"><?php echo $i; ?></a>
                                 </li>
                             <?php endfor; ?>
 
                             <!-- 下一頁連結 -->
                             <?php if ($current_page < $total_pages): ?>
-                                <li><a href="?page=<?php echo $current_page + 1; ?>" title="下一頁">&raquo;</a></li>
+                                <li><a href="?page=<?php echo $current_page + 1; ?><?php echo !empty($search_term) ? '&search=' . urlencode($search_term) : ''; ?>" title="下一頁">&raquo;</a></li>
                             <?php else: ?>
                                 <li class="disabled"><a href="#">&raquo;</a></li>
                             <?php endif; ?>
 
                             <!-- 最後一頁按鈕 -->
                             <?php if ($current_page < $total_pages): ?>
-                                <li><a href="?page=<?php echo $total_pages; ?>" title="最後一頁"><i class="fa fa-angle-double-right"></i></a></li>
+                                <li><a href="?page=<?php echo $total_pages; ?><?php echo !empty($search_term) ? '&search=' . urlencode($search_term) : ''; ?>" title="最後一頁"><i class="fa fa-angle-double-right"></i></a></li>
                             <?php else: ?>
                                 <li class="disabled"><a href="#"><i class="fa fa-angle-double-right"></i></a></li>
                             <?php endif; ?>
