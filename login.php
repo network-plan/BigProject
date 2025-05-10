@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 			$_SESSION['role'] = 'user';
 		}
 		echo "<!-- 登入成功，轉址中 -->";
-		header("Location: index.php");
+		header("Location: index.php");// 轉址到首頁
 		exit();
 	} else {
 		echo "<script>alert('帳號或密碼錯誤');</script>";
