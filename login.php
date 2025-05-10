@@ -1,7 +1,6 @@
 
 <?php
 include('db_connection.php');
-
 // 啟用錯誤報告
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -153,33 +152,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 				<div class="row">
 					<div class="col-sm-4">
 						<div class="logo pull-left">
-							<a href="index.html"><img src="images/home/logo.png" alt="" /></a>
-						</div>
-						<div class="btn-group pull-right">
-							<div class="btn-group">
-								<button type="button" class="btn1 btn-default dropdown-toggle usa" data-toggle="dropdown">
-									中文
-									<span class="caret"></span>
-								</button>
-								<ul class="dropdown-menu">
-									<li><a href="">英文</a></li>
-									<li><a href="">中文</a></li>
-								</ul>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-8">
-						<div class="shop-menu pull-right">
-							<ul class="nav navbar-nav">
-								<!-- <li><a href="#"><i class="fa fa-user"></i> Account</a></li> -->
-								<li><a href="#"><i class="fa fa-user"></i> 帳號</a></li>
-								<!-- <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li> -->
-								<li><a href="checkout.html"><i class="fa fa-crosshairs"></i> 查看歷史訂單</a></li>
-								<!-- <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li> -->
-								<li><a href="cart.html"><i class="fa fa-shopping-cart"></i> 購物車</a></li>
-								<!-- <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li> -->
-								<li><a href="login.html"><i class="fa fa-lock"></i> 登入</a></li>
-							</ul>
+							<a href="index.php"><img src="images/home/logo.png" alt="" /></a>
 						</div>
 					</div>
 				</div>
@@ -201,34 +174,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 						<div class="mainmenu pull-left">
 							<ul class="nav navbar-nav collapse navbar-collapse">
 								<!-- <li><a href="index.html" class="active">Home</a></li> -->
-								<li><a href="index.html" class="active">首頁</a></li>
+								<li><a href="index.php" class="active">首頁</a></li>
 								<!-- <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a> -->
 								<li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
 									<ul role="menu" class="sub-menu">
 										<!-- <li><a href="shop.html">Products</a></li> -->
 										<li><a href="shop.html">商品</a></li>
-										<!-- <li><a href="checkout.html">Checkout</a></li> -->
-										<li><a href="checkout.html">歷史訂單</a></li>
-										<!-- <li><a href="cart.html">Cart</a></li> -->
-										<li><a href="cart.html">購物車</a></li>
-										<!-- <li><a href="login.html">Login</a></li> -->
-										<li><a href="login.html">登入</a></li>
 									</ul>
 								</li>
 								<li class="dropdown"><a href="#">評價<i class="fa fa-angle-down"></i></a>
 									<ul role="menu" class="sub-menu">
 										<li><a href="blog.html">商品評價列表</a></li>
-										<li><a href="blog-single.html">單一商品評價</a></li>
 									</ul>
 								</li>
 								<!-- <li><a href="contact-us.html">Contact</a></li> -->
 								<li><a href="contact-us.html">聯絡我們</a></li>
 							</ul>
-						</div>
-					</div>
-					<div class="col-sm-3">
-						<div class="search_box pull-right">
-							<input type="text" placeholder="搜尋"/>
 						</div>
 					</div>
 				</div>
