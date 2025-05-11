@@ -68,11 +68,11 @@ include('db_connection.php');
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
                                 <?php
-                                if(isset($_SESSION['username'])) {
-                                    echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
-                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
-                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面(未做)
-                                } else {//若沒有登入 不管點甚麼都導入到登入頁面
+                                if (isset($_SESSION['username'])) {
+                                    echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>"; //若有登入導入到歷史訂單頁面
+                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>"; //若有登入導入到購物車頁面
+                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>"; //顯示會員名稱 點下去即到個人資料頁面(未做)
+                                } else { //若沒有登入 不管點甚麼都導入到登入頁面
                                     echo "<li><a href=\"login.php\"><i class=\"fa fa-user\"></i> 帳號 </a></li>";
                                     echo "<li><a href=\"login.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";
                                     echo "<li><a href=\"login.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";
@@ -108,11 +108,11 @@ include('db_connection.php');
                                 <li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <?php
-                                        if(isset($_SESSION['username'])) {//若有登入導入到對應頁面
+                                        if (isset($_SESSION['username'])) { //若有登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
                                             echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
                                             echo "<li><a href=\"cart.php\">購物車</a></li>";
-                                        } else {//若沒有登入 不管點甚麼都導入到登入頁面
+                                        } else { //若沒有登入 不管點甚麼都導入到登入頁面
                                             echo "<li><a href=\"login.php\">商品</a></li>";
                                             echo "<li><a href=\"login.php\">歷史訂單</a></li>";
                                             echo "<li><a href=\"login.php\">購物車</a></li>";
@@ -166,6 +166,37 @@ include('db_connection.php');
                         <div class="panel-group category-products" id="accordian"><!--category-productsr-->
                             <div class="panel panel-default">
                                 <div class="panel-heading">
+                                    <h4 class="panel-title"><a href="shop.php"><b>全部商品</b></a></h4>
+                                    <hr />
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title"><a href="shop.php?category=禮盒專區"><b>禮盒專區</b></a></h4>
+                                    <hr />
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title"><a href="shop.php?category=酒莊產品"><b>酒莊產品</b></a></h4>
+                                    <hr />
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title"><a href="shop.php?category=果汁系列"><b>果汁系列</b></a></h4>
+                                    <hr />
+                                </div>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title"><a href="shop.php?category=醬菜類(罐頭食品)"><b>醬菜類(罐頭食品)</b></a></h4>
+                                </div>
+                            </div>
+                        </div>
+
+                            <!-- <div class="panel panel-default">
+                                <div class="panel-heading">
                                     <h4 class="panel-title"><a href="#"><b>禮盒專區</b></a></h4>
                                     <hr />
                                 </div>
@@ -186,19 +217,28 @@ include('db_connection.php');
                                 <div class="panel-heading">
                                     <h4 class="panel-title"><a href="#"><b>醬菜類(罐頭食品)</b></a></h4>
                                 </div>
-                            </div>
-                        </div><!--/category-productsr-->
+                            </div> -->
+                        <!--/category-productsr-->
 
                         <!-- <div class="shipping text-center">shipping -->
                         <img src="./images/home/vegetable.png" alt="images/home/shipping.jpg" />
                         <!-- </div>/shipping -->
-
                     </div>
                 </div>
 
                 <div class="col-sm-9 padding-right">
                     <div class="features_items"><!--features_items-->
-                        <h2 class="title text-center">特色項目</h2>
+                        <?php
+                        // 獲取分類參數，如果有的話
+                        $selected_category = isset($_GET['category']) ? mysqli_real_escape_string($conn, $_GET['category']) : '';
+                        
+                        // 顯示分類標題
+                        if (!empty($selected_category)) {
+                            echo '<h2 class="title text-center">' . htmlspecialchars($selected_category) . '</h2>';
+                        } else {
+                            echo '<h2 class="title text-center">特色項目</h2>';
+                        }
+                        ?>
 
                         <?php
                         // 設定每頁顯示的商品數量
@@ -213,8 +253,18 @@ include('db_connection.php');
 
                         // 準備查詢條件
                         $where_clause = "";
+                        $conditions = array();
+                        
                         if (!empty($search_term)) {
-                            $where_clause = " WHERE product_info.product_name LIKE '%$search_term%'";
+                            $conditions[] = "product_info.product_name LIKE '%$search_term%'";
+                        }
+                        
+                        if (!empty($selected_category)) {
+                            $conditions[] = "product_info.category = '$selected_category'";
+                        }
+                        
+                        if (!empty($conditions)) {
+                            $where_clause = " WHERE " . implode(" AND ", $conditions);
                         }
 
                         // 計算總商品數和總頁數
@@ -233,16 +283,37 @@ include('db_connection.php');
                         $offset = ($current_page - 1) * $items_per_page;
 
                         // 查詢當前頁的商品，加入LIMIT子句限制結果數量
-                        $sql = "SELECT product_info.product_id, product_info.product_name, product_info.price, product_img.img_url 
+                        $sql = "SELECT product_info.product_id, product_info.product_name, product_info.price, product_info.category, product_img.img_url 
                                 FROM product_info 
                                 LEFT JOIN product_img ON product_info.product_id = product_img.product_id"
                             . $where_clause .
                             " LIMIT $offset, $items_per_page";
                         $result = mysqli_query($conn, $sql) or die("SQL錯誤：" . mysqli_error($conn));
 
-                        // 顯示搜尋結果計數（如果有搜尋）
-                        if (!empty($search_term)) {
-                            echo "<div class='alert alert-info'>搜尋 '" . htmlspecialchars($search_term) . "' 的結果：找到 $total_items 項商品</div>";
+                        // 顯示搜尋和分類結果計數
+                        $filters_applied = false;
+                        $filter_message = "";
+                        
+                        if (!empty($search_term) || !empty($selected_category)) {
+                            $filters_applied = true;
+                            $filter_message = "搜尋結果：找到 $total_items 項商品";
+                            
+                            if (!empty($search_term) && !empty($selected_category)) {
+                                $filter_message = "搜尋 '" . htmlspecialchars($search_term) . "' 在分類 '" . htmlspecialchars($selected_category) . "' 的結果：找到 $total_items 項商品";
+                            } else if (!empty($search_term)) {
+                                $filter_message = "搜尋 '" . htmlspecialchars($search_term) . "' 的結果：找到 $total_items 項商品";
+                            } else if (!empty($selected_category)) {
+                                $filter_message = "分類 '" . htmlspecialchars($selected_category) . "' 的結果：找到 $total_items 項商品";
+                            }
+                        }
+                        
+                        if ($filters_applied) {
+                            echo "<div class='alert alert-info'>" . $filter_message . "</div>";
+                        }
+
+                        // 檢查是否找到商品
+                        if (mysqli_num_rows($result) == 0) {
+                            echo "<div class='alert alert-warning'>沒有找到符合條件的商品</div>";
                         }
 
                         // 顯示商品
@@ -314,6 +385,10 @@ include('db_connection.php');
                         </ul>
                     <?php endif; ?>
                 </div>
+                
+                
+
+                
             </div>
         </div>
     </section>
