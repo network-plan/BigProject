@@ -169,10 +169,12 @@ session_start();
                             <div class="item active">
                                 <div class="col-sm-6">
                                     <h1><span>彰化</span>小禮坊</h1>
-                                    <h2>紅薏仁蕎麥x雪花片</h2>
-                                    <p>紅薏仁蕎麥結合雪花片，營養豐富，口感酥脆，是健康又美味的每日首選！</p>
-                                    <p>(=^-ω-^=)</p>
-                                    <button type="button" class="btn btn-default get">心動價 99 NTD</button>
+                                    <h2>紅薏仁蕎麥</h2>
+                                    <p>紅薏仁蕎麥兩盒超值組，養生加倍、優惠加倍，健康生活從每天開始！</p>
+                                    <p>ฅ^•ﻌ•^ฅ</p>
+                                    <a href="product-details.php?id=P_0057">
+                                        <button type="button" class="btn btn-default get">心動價 180 NTD</button>
+                                    </a>
                                 </div>
                                 <div class="col-sm-6">
                                     <img src="images/product-details/img1.png" class="girl img-responsive" alt="" />
@@ -182,31 +184,18 @@ session_start();
                             <div class="item">
                                 <div class="col-sm-6">
                                     <h1><span>彰化</span>小禮坊</h1>
-                                    <h2>紅薏仁蕎麥</h2>
-                                    <p>紅薏仁蕎麥兩盒超值組，養生加倍、優惠加倍，健康生活從每天開始！</p>
-                                    <p>ฅ^•ﻌ•^ฅ</p>
-                                    <button type="button" class="btn btn-default get">心動價 99 NTD</button>
+                                    <h2>紅薏仁蕎麥x雪花片</h2>
+                                    <p>紅薏仁蕎麥結合雪花片，營養豐富，口感酥脆，是健康又美味的每日首選！</p>
+                                    <p>(=^-ω-^=)</p>
+                                    <a href="product-details.php?id=P_0056">
+                                        <button type="button" class="btn btn-default get">心動價 729 NTD</button>
+                                    </a>
                                 </div>
                                 <div class="col-sm-6">
                                     <img src="images/product-details/img2.png" class="girl img-responsive" alt="" />
                                     <!-- <img src="images/home/pricing.png" class="pricing" alt="" /> -->
                                 </div>
                             </div>
-
-                            <div class="item">
-                                <div class="col-sm-6">
-                                    <h1><span>彰化</span>小禮坊</h1>
-                                    <h2>蕎麥水果脆片x雪花片</h2>
-                                    <p>紅薏仁蕎麥水果脆片x雪花片，雙重酥脆、營養滿分，健康美味一次擁有！</p>
-                                    <p>(╯✧∇✧)╯</p>
-                                    <button type="button" class="btn btn-default get">心動價 99 NTD</button>
-                                </div>
-                                <div class="col-sm-6">
-                                    <img src="images/product-details/img3.png" class="girl img-responsive" alt="" />
-                                    <!-- <img src="images/home/pricing.png" class="pricing" alt="" /> -->
-                                </div>
-                            </div>
-
                         </div>
 
                         <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
@@ -347,7 +336,48 @@ session_start();
                     <div class="features_items">
                         <!-- <h2 class="title text-center">Features Items</h2> -->
                         <h2 class="title text-center">特色商品</h2>
-                        <div class="col-sm-4">
+                        <?php
+                        // 查詢特色商品
+                        // 自選6個特定商品ID來顯示
+                        $featured_product_ids = array('P_0040', 'P_0041', 'P_0042', 'P_0043', 'P_0044', 'P_0045'); // 可以替換為任何您想要顯示的商品ID
+
+                        // 將陣列轉換為SQL安全的格式 
+                        $featured_ids_escaped = array();
+                        foreach ($featured_product_ids as $id) {
+                            $featured_ids_escaped[] = "'" . mysqli_real_escape_string($conn, $id) . "'";
+                        }
+                        $ids_list = implode(',', $featured_ids_escaped);
+
+                        $feature_sql = "SELECT product_info.product_id, product_info.product_name, product_info.price, product_img.img_url 
+                                        FROM product_info 
+                                        LEFT JOIN product_img ON product_info.product_id = product_img.product_id
+                                        WHERE product_info.product_id IN ($ids_list)
+                                        ORDER BY FIELD(product_info.product_id, $ids_list)";
+
+                        $feature_result = mysqli_query($conn, $feature_sql) or die("SQL錯誤：" . mysqli_error($conn));
+
+                        // 顯示特色商品
+                        while ($row = mysqli_fetch_assoc($feature_result)) {
+                            echo '<div class="col-sm-4">';
+                            echo '<div class="product-image-wrapper">';
+                            echo '<div class="single-products">';
+                            echo '<div class="productinfo text-center">';
+                            echo '<img src="' . htmlspecialchars($row['img_url']) . '" alt="" style="width:250px; height:250px;" />';
+                            echo '<h2>' . htmlspecialchars($row['price']) . ' NTD</h2>';
+                            echo '<p>' . htmlspecialchars($row['product_name']) . '</p>';
+                            echo '<a href="product-details.php?id=' . urlencode($row['product_id']) . '" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>加入購物車</a>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '<div class="choose">';
+                            echo '<ul class="nav nav-pills nav-justified">';
+                            echo '<li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>';
+                            echo '</ul>';
+                            echo '</div>';
+                            echo '</div>';
+                            echo '</div>';
+                        }
+                        ?>
+                        <!-- <div class="col-sm-4">
                             <div class="product-image-wrapper">
                                 <div class="single-products">
                                     <div class="productinfo text-center">
@@ -472,7 +502,7 @@ session_start();
                                     </ul>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                         
 
 
