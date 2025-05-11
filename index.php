@@ -1,7 +1,17 @@
 <?php
 include('db_connection.php');
-?>
+// 啟用錯誤報告
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 
+// 測試資料庫連接
+if (isset($conn)) {
+    echo "<!-- 資料庫連接成功 -->";
+} else {
+    echo "<!-- 資料庫連接失敗 -->";
+}
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -64,38 +74,22 @@ include('db_connection.php');
                         <div class="logo pull-left">
                             <a href="index.php"><img src="images/home/logo.png" alt="" /></a>
                         </div>
-                        <div class="btn-group pull-right">
-                            <div class="btn-group">
-
-                                <button type="button" class="btn btn-default dropdown-toggle usa" data-toggle="dropdown">
-                                    <!-- language -->
-                                    語言
-
-                                    <span class="caret"></span>
-                                </button>
-                                <!-- <ul class="dropdown-menu">
-									<li><a href="">Chinese</a></li>
-									<li><a href="">USA</a></li>
-								</ul> -->
-                                <ul class="dropdown-menu">
-
-                                    <li><a href="">中文</a></li>
-
-                                </ul>
-                            </div>
-                        </div>
                     </div>
                     <div class="col-sm-8">
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
-                                <!-- <li><a href="#"><i class="fa fa-user"></i> Account</a></li> -->
-                                <li><a href="login.php"><i class="fa fa-user"></i> 帳號</a></li>
-                                <!-- <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> Checkout</a></li> -->
-                                <li><a href="checkout.html"><i class="fa fa-crosshairs"></i> 查看歷史訂單</a></li>
-                                <!-- <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart</a></li> -->
-                                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> 購物車</a></li>
-                                <!-- <li><a href="login.html"><i class="fa fa-lock"></i> Login</a></li> -->
-                                <li><a href="login.php"><i class="fa fa-lock"></i> 登入</a></li>
+                                <?php
+                                if(isset($_SESSION['username'])) {
+                                    echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
+                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
+                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面(未做)
+                                } else {//若沒有登入 不管點甚麼都導入到登入頁面
+                                    echo "<li><a href=\"login.php\"><i class=\"fa fa-user\"></i> 帳號 </a></li>";
+                                    echo "<li><a href=\"login.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";
+                                    echo "<li><a href=\"login.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";
+                                    echo "<li><a href=\"login.php\"><i class=\"fa fa-lock\"></i> 登入</a></li>";
+                                }
+                                ?>
                             </ul>
                         </div>
                     </div>
@@ -118,21 +112,20 @@ include('db_connection.php');
                         </div>
                         <div class="mainmenu pull-left">
                             <ul class="nav navbar-nav collapse navbar-collapse">
-
-                                <!-- <li><a href="index.html" class="active">Home</a></li> -->
                                 <li><a href="index.php" class="active">首頁</a></li>
-                                <!-- <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a> -->
                                 <li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
-                                        <!-- <li><a href="shop.html">Products</a></li> -->
-                                        <li><a href="shop.php">商品</a></li>
-                                        <!-- <li><a href="checkout.html">Checkout</a></li> -->
-                                        <li><a href="checkout.html">歷史訂單</a></li>
-                                        <!-- <li><a href="cart.html">Cart</a></li> -->
-                                        <li><a href="cart.html">購物車</a></li>
-                                        <!-- <li><a href="login.html">Login</a></li> -->
-                                        <li><a href="login.php">登入</a></li>
-
+                                        <?php
+                                        if(isset($_SESSION['username'])) {//若有登入導入到對應頁面
+                                            echo "<li><a href=\"shop.php\">商品</a></li>";
+                                            echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
+                                            echo "<li><a href=\"cart.php\">購物車</a></li>";
+                                        } else {//若沒有登入 不管點甚麼都導入到登入頁面
+                                            echo "<li><a href=\"login.php\">商品</a></li>";
+                                            echo "<li><a href=\"login.php\">歷史訂單</a></li>";
+                                            echo "<li><a href=\"login.php\">購物車</a></li>";
+                                        }
+                                        ?>
                                     </ul>
                                 </li>
                                 <li class="dropdown"><a href="#">評價<i class="fa fa-angle-down"></i></a>
@@ -143,16 +136,19 @@ include('db_connection.php');
                                 </li>
                                 <!-- <li><a href="contact-us.html">Contact</a></li> -->
                                 <li><a href="contact-us.html">聯絡我們</a></li>
-                                <li><a href="db_admin.php">資料庫管理</a></li>
+                                <?php
+                                if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin')
+                                    echo "<li><a href=\"db_admin.php\">資料庫管理</a></li>" //管理者才看的到這個
+                                ?>
                             </ul>
                         </div>
                     </div>
-                    <!-- <div class="col-sm-3">
+                    <div class="col-sm-3">
                         <div class="search_box pull-right">
-                            <input type="text" placeholder="search" />
+                            <!-- <input type="text" placeholder="search" /> -->
                             <input type="text" placeholder="搜尋" />
                         </div>
-                    </div> -->
+                    </div>
                 </div>
             </div>
         </div><!--/header-bottom-->
@@ -166,7 +162,7 @@ include('db_connection.php');
                         <ol class="carousel-indicators">
                             <li data-target="#slider-carousel" data-slide-to="0" class="active"></li>
                             <li data-target="#slider-carousel" data-slide-to="1"></li>
-                            <!-- <li data-target="#slider-carousel" data-slide-to="2"></li> -->
+                            <li data-target="#slider-carousel" data-slide-to="2"></li>
                         </ol>
 
                         <div class="carousel-inner">
@@ -200,8 +196,6 @@ include('db_connection.php');
                                     <!-- <img src="images/home/pricing.png" class="pricing" alt="" /> -->
                                 </div>
                             </div>
-
-
                         </div>
 
                         <a href="#slider-carousel" class="left control-carousel hidden-xs" data-slide="prev">
@@ -400,15 +394,121 @@ include('db_connection.php');
                                     </ul>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/product-details/img2.png" alt="" />
+                                        <h2>99 NTD</h2>
+                                        <p>紅薏仁蕎麥</p>
+                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
+                                                class="fa fa-shopping-cart"></i>加入購物車</a>
+                                    </div>
+                                </div>
+                                <div class="choose">
+                                    <ul class="nav nav-pills nav-justified">
+                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/product-details/img3.png" alt="" />
+                                        <h2>99 NTD</h2>
+                                        <p>蕎麥水果脆片x雪花片</p>
+                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
+                                                class="fa fa-shopping-cart"></i>加入購物車</a>
+                                    </div>
+                                </div>
+                                <div class="choose">
+                                    <ul class="nav nav-pills nav-justified">
+                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/product-details/img4.png" alt="" />
+                                        <h2>120 NTD</h2>
+                                        <p>紅薏仁蕎麥x養生粉</p>
+                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
+                                                class="fa fa-shopping-cart"></i>加入購物車</a>
+                                    </div>
+                                </div>
+                                <div class="choose">
+                                    <ul class="nav nav-pills nav-justified">
+                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/product-details/img5.png" alt="" />
+                                        <h2>110 NTD</h2>
+                                        <p>蕎麥x紅薏仁</p>
+                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
+                                                class="fa fa-shopping-cart"></i>加入購物車</a>
+                                    </div>
+                                </div>
+                                <div class="choose">
+                                    <ul class="nav nav-pills nav-justified">
+                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/product-details/img6.png" alt="" />
+                                        <h2>150 NTD</h2>
+                                        <p>蕎麥x紅薏仁超值組合</p>
+                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
+                                                class="fa fa-shopping-cart"></i>加入購物車</a>
+                                    </div>
+                                </div>
+                                <div class="choose">
+                                    <ul class="nav nav-pills nav-justified">
+                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <img src="images/product-details/Pimg_0001.jpg" alt="" />
+                                        <h2>850 NTD</h2>
+                                        <p>年節禮盒</p>
+                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
+                                                class="fa fa-shopping-cart"></i>加入購物車</a>
+                                    </div>
+                                </div>
+                                <div class="choose">
+                                    <ul class="nav nav-pills nav-justified">
+                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div> -->
-                    </div>
+                        
+
+
+                    </div><!--features_items-->
                 </div>
-
-
-
-            </div><!--features_items-->
-        </div>
-        </div>
+            </div>
         </div>
     </section>
 
