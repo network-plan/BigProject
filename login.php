@@ -178,8 +178,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 								<!-- <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a> -->
 								<li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
 									<ul role="menu" class="sub-menu">
-										<!-- <li><a href="shop.html">Products</a></li> -->
-										<li><a href="shop.html">商品</a></li>
+										<!-- <li><a href="shop.php">Products</a></li> -->
+										<li><a href="shop.php">商品</a></li>
 									</ul>
 								</li>
 								<li class="dropdown"><a href="#">評價<i class="fa fa-angle-down"></i></a>
