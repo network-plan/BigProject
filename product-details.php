@@ -108,13 +108,12 @@ while ($img_row = $img_result->fetch_assoc()) {
                             <ul class="nav navbar-nav">
                                 <?php
                                 if(isset($_SESSION['username'])) {
+                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
                                     echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
                                     echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
                                     echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面(未做)
                                 } else {//若沒有登入 不管點甚麼都導入到登入頁面
                                     echo "<li><a href=\"login.php\"><i class=\"fa fa-user\"></i> 帳號 </a></li>";
-                                    echo "<li><a href=\"login.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";
-                                    echo "<li><a href=\"login.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";
                                     echo "<li><a href=\"login.php\"><i class=\"fa fa-lock\"></i> 登入</a></li>";
                                 }
                                 ?>
@@ -155,8 +154,6 @@ while ($img_row = $img_result->fetch_assoc()) {
                                             echo "<li><a href=\"cart.php\">購物車</a></li>";
                                         } else {//若沒有登入 不管點甚麼都導入到登入頁面
                                             echo "<li><a href=\"login.php\">商品</a></li>";
-                                            echo "<li><a href=\"login.php\">歷史訂單</a></li>";
-                                            echo "<li><a href=\"login.php\">購物車</a></li>";
                                         }
                                         ?>
                                     </ul>
