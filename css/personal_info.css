@@ -1,0 +1,20 @@
+.profile-info {
+	margin: 20px 0;
+}
+.info-item {
+	padding: 10px 0;
+	border-bottom: 1px solid #eee;
+}
+.info-item label {
+	display: inline-block;
+	width: 100px;
+	font-weight: bold;
+	color: #666;
+}
+.info-item span {
+	margin-left: 10px;
+	color: #333;
+}
+.info-item button {
+	margin-left: 10px;
+}
