@@ -86,7 +86,6 @@ session_start();
                                     echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
                                     echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面(未做)
                                 } else {//若沒有登入 不管點甚麼都導入到登入頁面
-                                    echo "<li><a href=\"login.php\"><i class=\"fa fa-user\"></i> 帳號 </a></li>";
                                     echo "<li><a href=\"login.php\"><i class=\"fa fa-lock\"></i> 登入</a></li>";
                                 }
 								?>
@@ -122,7 +121,7 @@ session_start();
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
                                             echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
                                         } else {//若沒有登入 不管點甚麼都導入到登入頁面
-                                            echo "<li><a href=\"login.php\">商品</a></li>";
+                                            echo "<li><a href=\"shop.php\">商品</a></li>";
                                         }
                                         ?>
 									</ul>
@@ -147,7 +146,7 @@ session_start();
 			<div class="breadcrumbs">
 				<ol class="breadcrumb">
 				  <!-- <li><a href="index.html">Home</a></li>  -->
-				  <li><a href="index.html">回首頁</a></li> 
+				  <li><a href="index.php">回首頁</a></li> 
 				  <!-- <li class="active">Shopping Cart</li> -->
 				  <li class="active">購物車</li>
 				</ol>

@@ -75,7 +75,6 @@ session_start();
                                     echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
                                     echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面(未做)
                                 } else {//若沒有登入 不管點甚麼都導入到登入頁面
-                                    echo "<li><a href=\"login.php\"><i class=\"fa fa-user\"></i> 帳號 </a></li>";
                                     echo "<li><a href=\"login.php\"><i class=\"fa fa-lock\"></i> 登入</a></li>";
                                 }
                                 ?>
@@ -105,19 +104,16 @@ session_start();
                                 <!-- <li><a href="index.php" class="active">Home</a></li> -->
                                 <li><a href="index.php" class="active">首頁</a></li>
                                 <!-- <li class="dropdown"><a href="#">Shop<i class="fa fa-angle-down"></i></a> -->
-                                <li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
-                                    <ul role="menu" class="sub-menu">
-                                        <?php
-                                        if(isset($_SESSION['username'])) {//若有登入導入到對應頁面
-                                            echo "<li><a href=\"shop.php\">商品</a></li>";
-                                            echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
-                                            echo "<li><a href=\"cart.php\">購物車</a></li>";
-                                        } else {//若沒有登入 不管點甚麼都導入到登入頁面
-                                            echo "<li><a href=\"login.php\">商品</a></li>";
-                                        }
-                                        ?>
-                                    </ul>
-                                </li>
+                                <?php
+                                if(isset($_SESSION['username'])) {//若有登入導入到對應頁面
+                                echo "<li class=\"dropdown\"><a href=\"#\">購物資訊<i class=\"fa fa-angle-down\"></i></a>";
+                                    echo "<ul role=\"menu\" class=\"sub-menu\">";
+                                        echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
+                                        echo "<li><a href=\"cart.php\">購物車</a></li>";
+                                    echo "</ul>";
+                                echo "</li>";
+                                }
+                                ?>
                                 <li class="dropdown"><a href="#">評價<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <li><a href="blog.html">商品評價列表</a></li>
