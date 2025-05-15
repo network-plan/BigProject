@@ -4,6 +4,7 @@
 --
 -- 主機： 127.0.0.1
 -- 產生時間： 2025-05-15 08:45:35
+
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.2.12
 
@@ -92,6 +93,7 @@ INSERT INTO `order_items` (`order_id`, `product_id`, `quantity`) VALUES
 ('1', 'P_0028', 2),
 ('2', 'P_0031', 3),
 ('2', 'P_0053', 3);
+
 
 -- --------------------------------------------------------
 
@@ -279,6 +281,12 @@ ALTER TABLE `orders`
   ADD PRIMARY KEY (`order_id`);
 
 --
+-- 資料表索引 `order_items`
+--
+ALTER TABLE `order_items`
+  ADD PRIMARY KEY (`item_id`);
+
+--
 -- 資料表索引 `product_img`
 --
 ALTER TABLE `product_img`
@@ -295,6 +303,16 @@ ALTER TABLE `product_info`
 --
 ALTER TABLE `reviews`
   ADD PRIMARY KEY (`review_id`);
+
+--
+-- 在傾印的資料表使用自動遞增(AUTO_INCREMENT)
+--
+
+--
+-- 使用資料表自動遞增(AUTO_INCREMENT) `order_items`
+--
+ALTER TABLE `order_items`
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

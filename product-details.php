@@ -107,11 +107,11 @@ while ($img_row = $img_result->fetch_assoc()) {
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
                                 <?php
-                                if(isset($_SESSION['username'])) {
-                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
-                                    echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
-                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
-                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面(未做)
+                                if (isset($_SESSION['username'])) {
+                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>"; //若有登入導入到登出頁面
+                                    echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>"; //若有登入導入到歷史訂單頁面
+                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>"; //若有登入導入到購物車頁面
+                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>"; //顯示會員名稱 點下去即到個人資料頁面(未做)
                                 } else {
                                     echo "<li><a href=\"shop.php\"><i class=\"fa fa-lock\"></i> 登入</a></li>";
                                 }
@@ -147,11 +147,11 @@ while ($img_row = $img_result->fetch_assoc()) {
                                 <li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <?php
-                                        if(isset($_SESSION['username'])) {//若有登入導入到對應頁面
+                                        if (isset($_SESSION['username'])) { //若有登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
                                             echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
                                             echo "<li><a href=\"cart.php\">購物車</a></li>";
-                                        } else {//若沒有登入 不管點甚麼都導入到登入頁面
+                                        } else { //若沒有登入 不管點甚麼都導入到登入頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
                                         }
                                         ?>
@@ -166,7 +166,7 @@ while ($img_row = $img_result->fetch_assoc()) {
                                 <!-- <li><a href="contact-us.html">Contact</a></li> -->
                                 <li><a href="contact-us.html">聯絡我們</a></li>
                                 <?php
-                                if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin')
+                                if (isset($_SESSION['role']) && $_SESSION['role'] === 'admin')
                                     echo "<li><a href=\"db_admin.php\">資料庫管理</a></li>" //管理者才看的到這個
                                 ?>
                             </ul>
@@ -280,7 +280,7 @@ while ($img_row = $img_result->fetch_assoc()) {
                                         加入購物車
                                     </button> -->
                                     <?php
-                                    if(isset($_SESSION['username'])) {
+                                    if (isset($_SESSION['username'])) {
                                         echo "<button type=\"button\" class=\"btn btn-default cart\"><i class=\"fa fa-shopping-cart\"></i>  加入購物車</button>";
                                     } else {
                                         echo "<button type=\"button\" class=\"btn btn-default cart\" onclick=\"location.href='login.php'\"><i class=\"fa fa-shopping-cart\"></i>  加入購物車</button>";
@@ -506,102 +506,142 @@ while ($img_row = $img_result->fetch_assoc()) {
                         <!--recommended_items-->
                         <h2 class="title text-center">推薦產品</h2>
 
-                        <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
-                            <div class="carousel-inner">
-                                <div class="item active">
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/product-details/Pimg_0040.jpg" alt="" />
-                                                    <h2>NTD 56</h2>
-                                                    <p>桂花釀</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i
-                                                            class="fa fa-shopping-cart"></i>加入購物車</button>
+                        <?php
+                        // 直接在PHP中定義推薦產品ID，無需額外資料表
+                        // 您可以根據需要自行修改此陣列
+                        // 格式: 商品ID => 推薦商品ID陣列
+                        $recommendations = [
+                            'product001' => ['product005', 'product008', 'product012', 'product015', 'product020', 'product025'],
+                            'product002' => ['product010', 'product015', 'product022', 'product023', 'product024', 'product026'],
+                            'global'     => ['P_0040', 'P_0041', 'P_0042', 'P_0043', 'P_0044', 'P_0045'],
+                        ];
+
+                        // 決定使用哪組推薦產品
+                        if (isset($recommendations[$product_id]) && !empty($recommendations[$product_id])) {
+                            $recommended_products_ids = $recommendations[$product_id];
+                        } else {
+                            $recommended_products_ids = $recommendations['global'];
+                        }
+
+                        // 最多取6筆
+                        $recommended_products_ids = array_slice($recommended_products_ids, 0, 6);
+
+                        // 沒有推薦時初始化空結果
+                        if (empty($recommended_products_ids)) {
+                            $recommended_result = new mysqli_result($conn);
+                        } else {
+                            // 準備 SQL 和占位符
+                            $placeholders = implode(',', array_fill(0, count($recommended_products_ids), '?'));
+                            $recommended_sql = "
+                            SELECT p.*, 
+                            (SELECT img_url FROM product_img WHERE product_id = p.product_id LIMIT 1) AS main_image
+                            FROM product_info p
+                            WHERE p.product_id IN ($placeholders)
+                            ORDER BY FIELD(p.product_id, $placeholders)";
+
+                            // 建立預處理
+                            $recommended_stmt = $conn->prepare($recommended_sql);
+
+                            // 合併兩次要綁定的參數
+                            $params = array_merge($recommended_products_ids, $recommended_products_ids);
+                            // 類型字串，全部為s
+                            $types = str_repeat('s', count($params));
+
+                            // 組合 bind_param 所需的參數陣列
+                            $bind_params = [];
+                            $bind_params[] = $types;
+                            foreach ($params as $p) {
+                                $bind_params[] = $p;
+                            }
+
+                            // 將參數轉為參考引用
+                            $refs = [];
+                            foreach ($bind_params as $key => $value) {
+                                $refs[$key] = &$bind_params[$key];
+                            }
+
+                            // 綁定並執行
+                            call_user_func_array([$recommended_stmt, 'bind_param'], $refs);
+                            $recommended_stmt->execute();
+                            $recommended_result = $recommended_stmt->get_result();
+                        }
+
+                        // 顯示結果
+                        if ($recommended_result->num_rows > 0) {
+                            $totalItems   = $recommended_result->num_rows;
+                            $itemsPerSlide = 3;
+                            $totalSlides  = ceil($totalItems / $itemsPerSlide);
+                        ?>
+
+                            <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
+                                <div class="carousel-inner">
+                                    <?php
+                                    $recommended_products = [];
+                                    while ($rec_product = $recommended_result->fetch_assoc()) {
+                                        $recommended_products[] = $rec_product;
+                                    }
+
+                                    for ($i = 0; $i < $totalSlides; $i++) {
+                                        $isActive = ($i === 0) ? 'active' : '';
+                                        echo "<div class='item $isActive'>";
+
+                                        for ($j = 0; $j < $itemsPerSlide; $j++) {
+                                            $index = $i * $itemsPerSlide + $j;
+                                            if ($index < $totalItems) {
+                                                $rec = $recommended_products[$index];
+                                    ?>
+                                                <div class="col-sm-4">
+                                                    <div class="product-image-wrapper">
+                                                        <div class="single-products">
+                                                            <div class="productinfo text-center">
+                                                                <?php if (!empty($rec['main_image'])): ?>
+                                                                    <img src="<?php echo htmlspecialchars($rec['main_image']); ?>" alt="<?php echo htmlspecialchars($rec['product_name']); ?>" />
+                                                                <?php else: ?>
+                                                                    <img src="images/product-details/no-image.jpg" alt="No image available" />
+                                                                <?php endif; ?>
+
+                                                                <h2>NTD <?php echo number_format($rec['price']); ?></h2>
+                                                                <p><?php echo htmlspecialchars($rec['product_name']); ?></p>
+
+                                                                <!-- 點擊按鈕直接連到商品詳細頁 -->
+                                                                <button type="button" class="btn btn-default add-to-cart"
+                                                                    onclick="location.href='product-details.php?id=<?php echo $rec['product_id']; ?>'">
+                                                                    <i class="fa fa-shopping-cart"></i> 加入購物車
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/product-details/Pimg_0038.jpg" alt="" />
-                                                    <h2>NTD 56</h2>
-                                                    <p>百香果汁</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i
-                                                            class="fa fa-shopping-cart"></i>加入購物車</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/product-details/Pimg_0039.jpg" alt="" />
-                                                    <h2>NTD 56</h2>
-                                                    <p>玫瑰花釀</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i
-                                                            class="fa fa-shopping-cart"></i>加入購物車</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <?php
+                                            }
+                                        }
+                                        echo "</div>"; // .item
+                                    }
+                                    ?>
                                 </div>
-                                <div class="item">
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/product-details/Pimg_0044.jpg" alt="" />
-                                                    <h2>NTD 56</h2>
-                                                    <p>百香果豆腐乳</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i
-                                                            class="fa fa-shopping-cart"></i>加入購物車</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/product-details/Pimg_0045.jpg" alt="" />
-                                                    <h2>NTD 56</h2>
-                                                    <p>梅子豆腐乳</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i
-                                                            class="fa fa-shopping-cart"></i>加入購物車</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <div class="product-image-wrapper">
-                                            <div class="single-products">
-                                                <div class="productinfo text-center">
-                                                    <img src="images/product-details/Pimg_0046.jpg" alt="" />
-                                                    <h2>NTD 56</h2>
-                                                    <p>鳳梨豆腐乳</p>
-                                                    <button type="button" class="btn btn-default add-to-cart"><i
-                                                            class="fa fa-shopping-cart"></i>加入購物車</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+
+                                <?php if ($totalSlides > 1): ?>
+                                    <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
+                                        <i class="fa fa-angle-left"></i>
+                                    </a>
+                                    <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
+                                        <i class="fa fa-angle-right"></i>
+                                    </a>
+                                <?php endif; ?>
                             </div>
-                            <a class="left recommended-item-control" href="#recommended-item-carousel"
-                                data-slide="prev">
-                                <i class="fa fa-angle-left"></i>
-                            </a>
-                            <a class="right recommended-item-control" href="#recommended-item-carousel"
-                                data-slide="next">
-                                <i class="fa fa-angle-right"></i>
-                            </a>
-                        </div>
+
+                        <?php
+                        } else {
+                            echo "<p class='text-center'>暫無推薦產品</p>";
+                        }
+
+                        if (!empty($recommended_products_ids)) {
+                            $recommended_stmt->close();
+                        }
+                        ?>
                     </div>
                     <!--/recommended_items-->
+
 
                 </div>
             </div>
