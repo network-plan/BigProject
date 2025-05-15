@@ -3,9 +3,10 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-05-14 15:43:33
+-- 產生時間： 2025-05-15 08:45:35
+
 -- 伺服器版本： 10.4.32-MariaDB
--- PHP 版本： 8.0.30
+-- PHP 版本： 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -78,13 +79,21 @@ INSERT INTO `orders` (`order_id`, `member_id`, `username`, `order_date`, `total_
 --
 
 CREATE TABLE `order_items` (
-  `item_id` int(11) NOT NULL,
-  `order_id` int(11) DEFAULT NULL,
-  `product_id` int(11) DEFAULT NULL,
-  `quantity` int(11) DEFAULT NULL,
-  `price` decimal(10,2) DEFAULT NULL,
-  `subtotal` decimal(10,2) DEFAULT NULL
+  `order_id` varchar(11) DEFAULT NULL,
+  `product_id` varchar(11) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- 傾印資料表的資料 `order_items`
+--
+
+INSERT INTO `order_items` (`order_id`, `product_id`, `quantity`) VALUES
+('1', 'P_0055', 3),
+('1', 'P_0028', 2),
+('2', 'P_0031', 3),
+('2', 'P_0053', 3);
+
 
 -- --------------------------------------------------------
 
