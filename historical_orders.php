@@ -189,7 +189,7 @@
 					</div>
 				</div>
 				<div class="col-sm-9">
-					<div class="replay-box">
+					<!-- <div class="replay-box">
 						<div class="col-sm-12">
 							<h2>發表評論</h2><br>
 							<ul>
@@ -234,7 +234,7 @@
 								</div>
 							</form>
 						</div>
-					</div><br>
+					</div><br> -->
 					<div class="response-area">
 						<h2>歷史訂單</h2><br>
 						<!-- 2024/03/20的订单 -->
@@ -254,8 +254,45 @@
 											<p class="price">價格：NT$ 580</p>
 											<p class="quantity">購買件數：2</p>
 										</div>
-										<div class="product-description">
-											<p>嚴選在地新鮮蔬菜，傳統工法醃製，無添加防腐劑，開胃爽口。</p>
+										<button class="btn btn-primary review-btn" data-target="#reviewForm1">評論</button>
+										<div class="review-section">
+											<div id="reviewForm1" class="review-form">
+												<form action="#" class="review-form-content">
+													<div class="row">
+														<div class="col-sm-6">
+															<input type="text" placeholder="你的名字" />
+														</div>
+														<div class="col-sm-6">
+															<input type="email" placeholder="電子郵件" />
+														</div>
+													</div>
+													<textarea name="" placeholder="想說什麼..."></textarea>
+													<div class="rating-area">
+														<ul class="ratings">
+															<li class="rate-this">評分:</li>
+															<li>
+																<div class="rating-box">
+																	<fieldset class="rating">
+																		<input type="radio" id="star1" class="star_rating" name="star_rating"
+																			value="1"><label class="full" for="star1" title="1 Stars"></label>
+																		<input type="radio" id="star2" class="star_rating" name="star_rating"
+																			value="2"><label class="full" for="star2" title="2 Stars"></label>
+																		<input type="radio" id="star3" class="star_rating" name="star_rating"
+																			value="3"><label class="full" for="star3" title="3 Stars"></label>
+																		<input type="radio" id="star4" class="star_rating" name="star_rating"
+																			value="4"><label class="full" for="star4" title="4 Stars"></label>
+																		<input type="radio" id="star5" class="star_rating" name="star_rating"
+																			value="5"><label class="full" for="star5" title="5 Stars"></label>
+																	</fieldset>
+																</div>
+															</li>
+														</ul>
+														<ul class="tag">
+															<button type="submit" class="btn btn-primary">發布評價</button>
+														</ul>
+													</div>
+												</form>
+											</div>
 										</div>
 									</div>
 								</li>
@@ -269,8 +306,40 @@
 											<p class="price">價格：NT$ 580</p>
 											<p class="quantity">購買件數：1</p>
 										</div>
-										<div class="product-description">
-											<p>嚴選在地新鮮蔬菜，傳統工法醃製，無添加防腐劑，開胃爽口。</p>
+										<button class="btn btn-primary review-btn" data-target="#reviewForm2">評論</button>
+										<div class="review-section">
+											<div id="reviewForm2" class="review-form">
+												<form action="#" class="review-form-content">
+													<div class="row">
+														<div class="col-sm-6">
+															<input type="text" placeholder="你的名字" />
+														</div>
+														<div class="col-sm-6">
+															<input type="email" placeholder="電子郵件" />
+														</div>
+													</div>
+													<textarea name="" placeholder="想說什麼..."></textarea>
+													<div class="rating-area">
+														<ul class="ratings">
+															<li class="rate-this">評分:</li>
+															<li>
+																<div class="rating-box">
+																	<fieldset class="rating">
+																		<input type="radio" id="star1_2" class="star_rating" name="star_rating_2" value="1"><label class="full" for="star1_2" title="1 Stars"></label>
+																		<input type="radio" id="star2_2" class="star_rating" name="star_rating_2" value="2"><label class="full" for="star2_2" title="2 Stars"></label>
+																		<input type="radio" id="star3_2" class="star_rating" name="star_rating_2" value="3"><label class="full" for="star3_2" title="3 Stars"></label>
+																		<input type="radio" id="star4_2" class="star_rating" name="star_rating_2" value="4"><label class="full" for="star4_2" title="4 Stars"></label>
+																		<input type="radio" id="star5_2" class="star_rating" name="star_rating_2" value="5"><label class="full" for="star5_2" title="5 Stars"></label>
+																	</fieldset>
+																</div>
+															</li>
+														</ul>
+														<ul class="tag">
+															<button type="submit" class="btn btn-primary">發布評價</button>
+														</ul>
+													</div>
+												</form>
+											</div>
 										</div>
 									</div>
 								</li>
@@ -294,8 +363,40 @@
 											<p class="price">價格：NT$ 580</p>
 											<p class="quantity">購買件數：3</p>
 										</div>
-										<div class="product-description">
-											<p>嚴選在地新鮮蔬菜，傳統工法醃製，無添加防腐劑，開胃爽口。</p>
+										<button class="btn btn-primary review-btn" data-target="#reviewForm3">評論</button>
+										<div class="review-section">
+											<div id="reviewForm3" class="review-form">
+												<form action="#" class="review-form-content">
+													<div class="row">
+														<div class="col-sm-6">
+															<input type="text" placeholder="你的名字" />
+														</div>
+														<div class="col-sm-6">
+															<input type="email" placeholder="電子郵件" />
+														</div>
+													</div>
+													<textarea name="" placeholder="想說什麼..."></textarea>
+													<div class="rating-area">
+														<ul class="ratings">
+															<li class="rate-this">評分:</li>
+															<li>
+																<div class="rating-box">
+																	<fieldset class="rating">
+																		<input type="radio" id="star1_3" class="star_rating" name="star_rating_3" value="1"><label class="full" for="star1_3" title="1 Stars"></label>
+																		<input type="radio" id="star2_3" class="star_rating" name="star_rating_3" value="2"><label class="full" for="star2_3" title="2 Stars"></label>
+																		<input type="radio" id="star3_3" class="star_rating" name="star_rating_3" value="3"><label class="full" for="star3_3" title="3 Stars"></label>
+																		<input type="radio" id="star4_3" class="star_rating" name="star_rating_3" value="4"><label class="full" for="star4_3" title="4 Stars"></label>
+																		<input type="radio" id="star5_3" class="star_rating" name="star_rating_3" value="5"><label class="full" for="star5_3" title="5 Stars"></label>
+																	</fieldset>
+																</div>
+															</li>
+														</ul>
+														<ul class="tag">
+															<button type="submit" class="btn btn-primary">發布評價</button>
+														</ul>
+													</div>
+												</form>
+											</div>
 										</div>
 									</div>
 								</li>
@@ -395,5 +496,82 @@
 	<script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
+	<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		if (typeof jQuery !== 'undefined') {
+			$('.review-btn').on('click', function(e) {
+				e.preventDefault();
+				var target = $(this).data('target');
+				
+				// 关闭其他打开的表单
+				$('.review-form.show').not(target).removeClass('show');
+				
+				// 切换当前表单
+				$(target).toggleClass('show');
+			});
+
+			// 处理所有评分星星的点击和悬停效果
+			$('.rating').each(function() {
+				var $rating = $(this);
+				var $stars = $rating.find('label');
+				var $inputs = $rating.find('input');
+
+				// 点击星星时的效果
+				$stars.on('click', function() {
+					var $this = $(this);
+					var index = $stars.index(this);
+					
+					// 更新所有星星的状态
+					$stars.each(function(i) {
+						if (i <= index) {
+							$(this).css('color', '#ffd700');
+						} else {
+							$(this).css('color', '#ddd');
+						}
+					});
+				});
+
+				// 悬停效果
+				$stars.hover(
+					function() {
+						var $this = $(this);
+						var index = $stars.index(this);
+						
+						$stars.each(function(i) {
+							if (i <= index) {
+								$(this).css('color', '#ffd700');
+							} else {
+								$(this).css('color', '#ddd');
+							}
+						});
+					},
+					function() {
+						// 恢复选中状态
+						var $checked = $rating.find('input:checked');
+						if ($checked.length) {
+							var index = $inputs.index($checked);
+							$stars.each(function(i) {
+								if (i <= index) {
+									$(this).css('color', '#ffd700');
+								} else {
+									$(this).css('color', '#ddd');
+								}
+							});
+						} else {
+							$stars.css('color', '#ddd');
+						}
+					}
+				);
+			});
+
+			// 处理表单提交
+			$('.review-form form').on('submit', function(e) {
+				e.preventDefault();
+				alert('評價已發布！');
+				$(this).closest('.review-form').removeClass('show');
+			});
+		}
+	});
+	</script>
 </body>
 </html>
