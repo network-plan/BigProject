@@ -460,43 +460,65 @@ while ($img_row = $img_result->fetch_assoc()) {
 								</div>
 							</div> -->
 
-                            <div class="tab-pane fade" id="reviews">
-                                <div class="col-sm-12">
-                                    <!-- <h2>發表評論</h2><br> -->
-                                    <ul>
-                                        <li><a href=""><i class="fa fa-user"></i>匿名</a></li>
-                                        <li><a href=""><i class="fa fa-clock-o"></i>12:41 PM</a></li>
-                                        <li><a href=""><i class="fa fa-calendar-o"></i>31 DEC 2014</a></li>
-
-                                    </ul>
-                                    <form action="#">
-                                        <span>
-                                            <input type="text"
-                                                placeholder="你的名字     =͟͟͞͞ʕ•̫͡•ʔ=͟͟͞͞ʕ•̫͡•ʔ=͟͟͞͞ʕ•̫͡•ʔ" />
-                                            <input type="email" placeholder="ʕ·ᴥ·ʔ 電子郵件" />
-                                        </span>
-                                        <textarea name="" placeholder="/ᐠ｡ꞈ｡ᐟ\   想說什麼..."></textarea>
-                                        <b>評分: </b>
-                                        <div class="rating-box">
-                                            <fieldset class="rating">
-                                                <input type="radio" id="star5" class="star_rating" name="star_rating"
-                                                    value="5"><label class="full" for="star5" title="5 Stars"></label>
-                                                <input type="radio" id="star4" class="star_rating" name="star_rating"
-                                                    value="4"><label class="full" for="star4" title="4 Stars"></label>
-                                                <input type="radio" id="star3" class="star_rating" name="star_rating"
-                                                    value="3"><label class="full" for="star3" title="3 Stars"></label>
-                                                <input type="radio" id="star2" class="star_rating" name="star_rating"
-                                                    value="2"><label class="full" for="star2" title="2 Stars"></label>
-                                                <input type="radio" id="star1" class="star_rating" name="star_rating"
-                                                    value="1"><label class="full" for="star1" title="1 Stars"></label>
-                                            </fieldset>
-                                        </div>
-                                        <button type="button" class="btn btn-default pull-right">
-                                            提交
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
+                            <div class="tab-pane fade" id="reviews" >
+								<div class="col-sm-12">
+									<div class="review-list">
+										<div class="review-item">
+											<div class="review-header">
+												<span><i class="fa fa-user"></i> 王小明</span><br>
+												<span><i class="fa fa-clock-o"></i> 2024-03-15 14:30</span><br>
+												<span>評價：
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star-o"></i>
+												</span>
+											</div>
+											<div class="review-content">
+												商品品質非常好，包裝精美，送禮很體面。蜂蜜味道純正，木製蜂蜜棒也很實用。
+											</div>
+										</div>
+										<hr>
+										<div class="review-item">
+											<div class="review-header">
+												<span><i class="fa fa-user"></i> 李小華</span><br>
+												<span><i class="fa fa-clock-o"></i> 2024-03-10 09:15</span><br>
+												<span>評價：
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+												</span>
+											</div>
+											<div class="review-content">
+												蜂蜜很香醇，但價格稍貴。整體來說是很好的送禮選擇。
+											</div>
+										</div>
+										<hr>
+										<div class="review-item">
+											<div class="review-header">
+												<span><i class="fa fa-user"></i> 張小美</span><br>
+												<span><i class="fa fa-clock-o"></i> 2024-03-05 16:45</span><br>
+												<span>評價：
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star"></i>
+													<i class="fa fa-star-o"></i>
+													<i class="fa fa-star-o"></i>
+													<i class="fa fa-star-o"></i>
+												</span>
+											</div>
+											<div class="review-content">
+												包裝很精緻，蜂蜜品質優良，送給長輩很受歡迎。
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							
+						</div>
+					</div><!--/category-tab-->
 
                         </div>
                     </div>
