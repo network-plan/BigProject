@@ -3,10 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-05-15 08:45:35
-
+-- 產生時間： 2025-05-18 17:49:59
 -- 伺服器版本： 10.4.32-MariaDB
--- PHP 版本： 8.2.12
+-- PHP 版本： 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -44,10 +43,10 @@ CREATE TABLE `members` (
 --
 
 INSERT INTO `members` (`member_id`, `username`, `email`, `password`, `phone`, `register_date`) VALUES
-('1', 'admin', 'admin@gmail.com', 'admin123456', '900000000', '2025-04-10'),
-('2', 'member', 'member@gmail.com', 'member123456', '900000001', '2025-04-10'),
-('3', 'name001', 'email001@gmail.com', 'password001', '900123123', '2025-04-10'),
-('4', 'name002', 'email002@gmail.com', 'password002', '900123124', '2025-04-30');
+('1', 'admin', 'admin@gmail.com', 'admin123456', '0900000000', '2025-04-10'),
+('2', 'member', 'member@gmail.com', 'member123456', '0900000001', '2025-04-10'),
+('3', 'name001', 'email001@gmail.com', 'password001', '0900123123', '2025-04-10'),
+('4', 'name002', 'email002@gmail.com', 'password002', '0900123124', '2025-04-30');
 
 -- --------------------------------------------------------
 
@@ -93,7 +92,6 @@ INSERT INTO `order_items` (`order_id`, `product_id`, `quantity`) VALUES
 ('1', 'P_0028', 2),
 ('2', 'P_0031', 3),
 ('2', 'P_0053', 3);
-
 
 -- --------------------------------------------------------
 
@@ -275,44 +273,16 @@ INSERT INTO `reviews` (`review_id`, `user_id`, `username`, `rating`, `content`) 
 --
 
 --
+-- 資料表索引 `members`
+--
+ALTER TABLE `members`
+  ADD PRIMARY KEY (`username`);
+
+--
 -- 資料表索引 `orders`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`order_id`);
-
---
--- 資料表索引 `order_items`
---
-ALTER TABLE `order_items`
-  ADD PRIMARY KEY (`item_id`);
-
---
--- 資料表索引 `product_img`
---
-ALTER TABLE `product_img`
-  ADD PRIMARY KEY (`img_id`);
-
---
--- 資料表索引 `product_info`
---
-ALTER TABLE `product_info`
-  ADD PRIMARY KEY (`product_id`);
-
---
--- 資料表索引 `reviews`
---
-ALTER TABLE `reviews`
-  ADD PRIMARY KEY (`review_id`);
-
---
--- 在傾印的資料表使用自動遞增(AUTO_INCREMENT)
---
-
---
--- 使用資料表自動遞增(AUTO_INCREMENT) `order_items`
---
-ALTER TABLE `order_items`
-  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
