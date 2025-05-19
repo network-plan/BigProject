@@ -187,8 +187,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 										<li><a href="blog.html">商品評價列表</a></li>
 									</ul>
 								</li>
-								<!-- <li><a href="contact-us.html">Contact</a></li> -->
-								<li><a href="contact-us.html">聯絡我們</a></li>
 							</ul>
 						</div>
 					</div>

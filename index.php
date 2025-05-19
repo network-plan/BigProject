@@ -79,12 +79,15 @@ session_start();
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
                                 <?php
-                                if(isset($_SESSION['username'])) {
+                                if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
                                     echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
                                     echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
-                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面(未做)
-                                } else {//若沒有登入 不管點甚麼都導入到登入頁面
+                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
+                                }else if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin'){
+                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
+                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
+                                }else{//若沒有登入 不管點甚麼都導入到登入頁面
                                     echo "<li><a href=\"login.php\"><i class=\"fa fa-lock\"></i> 登入</a></li>";
                                 }
                                 ?>
@@ -114,35 +117,31 @@ session_start();
                                 <li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <?php
-                                        if(isset($_SESSION['username'])) {//若有登入導入到對應頁面
+                                        if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {//若一般會員登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
                                             echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
                                             echo "<li><a href=\"cart.php\">購物車</a></li>";
-                                        } else {
+                                        }else{
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
                                         }
                                         ?>
                                     </ul>
                                 </li>
-                                <li class="dropdown"><a href="#">評價<i class="fa fa-angle-down"></i></a>
-                                    <ul role="menu" class="sub-menu">
-                                        <li><a href="blog.html">商品評價列表</a></li>
-                                        <!-- <li><a href="blog-single.html">單一商品評價</a></li> -->
-                                    </ul>
-                                </li>
-                                <!-- <li><a href="contact-us.html">Contact</a></li> -->
-                                <li><a href="contact-us.html">聯絡我們</a></li>
                                 <?php
-                                if(isset($_SESSION['role']) && $_SESSION['role'] === 'admin')
+                                //若為一般會員才看的到(評價連結未改)
+                                if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin'){
+                                        echo "<li class=\"dropdown\"><a href=\"#\">評價<i class=\"fa fa-angle-down\"></i></a>";
+                                        echo "<ul role=\"menu\" class=\"sub-menu\">";
+                                        echo "    <li><a href=\"blog.html\">商品評價列表</a></li>";
+                                        echo "</ul>";
+                                    echo "</li>";
+                                }
+                                ?>
+                                <?php
+                                if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin')
                                     echo "<li><a href=\"db_admin.php\">資料庫管理</a></li>" //管理者才看的到這個
                                 ?>
                             </ul>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="search_box pull-right">
-                            <!-- <input type="text" placeholder="search" /> -->
-                            <input type="text" placeholder="搜尋" />
                         </div>
                     </div>
                 </div>
