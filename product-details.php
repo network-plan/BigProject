@@ -478,12 +478,12 @@ while ($img_row = $img_result->fetch_assoc()) {
                                                                 <?php endif; ?>
 
                                                                 <h2>NTD <?php echo number_format($rec['price']); ?></h2>
-                                                                <p><?php echo htmlspecialchars($rec['product_name']); ?></p>
+                                                                <p><?php echo htmlspecialchars($rec['product_name']); ?></p><br>
 
                                                                 <!-- 點擊按鈕直接連到商品詳細頁 -->
                                                                 <button type="button" class="btn btn-default add-to-cart"
                                                                     onclick="location.href='product-details.php?id=<?php echo $rec['product_id']; ?>'">
-                                                                    <i class="fa fa-shopping-cart"></i> 加入購物車
+                                                                    <i class="fa fa-plus-square"></i> 詳細資料
                                                                 </button>
                                                             </div>
                                                         </div>
