@@ -169,7 +169,7 @@ session_start();
                                     <h2>紅薏仁蕎麥</h2>
                                     <p>紅薏仁蕎麥兩盒超值組，養生加倍、優惠加倍，健康生活從每天開始！</p>
                                     <p>ฅ^•ﻌ•^ฅ</p>
-                                    <a href="product-details.php?id=P_0057">
+                                    <a href="shop.php">
                                         <button type="button" class="btn btn-default get">心動價 180 NTD</button>
                                     </a>
                                 </div>
@@ -184,8 +184,8 @@ session_start();
                                     <h2>紅薏仁蕎麥x雪花片</h2>
                                     <p>紅薏仁蕎麥結合雪花片，營養豐富，口感酥脆，是健康又美味的每日首選！</p>
                                     <p>(=^-ω-^=)</p>
-                                    <a href="product-details.php?id=P_0056">
-                                        <button type="button" class="btn btn-default get">心動價 729 NTD</button>
+                                    <a href="product-details.php?id=P_0009">
+                                        <button type="button" class="btn btn-default get">心動價 160 NTD</button>
                                     </a>
                                 </div>
                                 <div class="col-sm-6">
