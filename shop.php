@@ -18,15 +18,17 @@ session_start();
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
     <link href="css/responsive.css" rel="stylesheet">
-    <!--[if lt IE 9]>
-    <script src="js/html5shiv.js"></script>
-    <script src="js/respond.min.js"></script>
-    <![endif]-->
     <link rel="shortcut icon" href="images/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+    <script src="js/jquery.js"></script>
+    <script src="js/price-range.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/main.js"></script>
 </head><!--/head-->
 
 <body>
@@ -140,12 +142,6 @@ session_start();
                             </form>
                         </div>
                     </div>
-
-
-
-
-
-
                 </div>
             </div>
         </div><!--/header-bottom-->
@@ -194,35 +190,7 @@ session_start();
                                 </div>
                             </div>
                         </div>
-
-                            <!-- <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#"><b>禮盒專區</b></a></h4>
-                                    <hr />
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#"><b>酒莊產品</b></a></h4>
-                                    <hr />
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#"><b>果汁系列</b></a></h4>
-                                    <hr />
-                                </div>
-                            </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#"><b>醬菜類(罐頭食品)</b></a></h4>
-                                </div>
-                            </div> -->
-                        <!--/category-productsr-->
-
-                        <!-- <div class="shipping text-center">shipping -->
                         <img src="./images/home/vegetable.png" alt="images/home/shipping.jpg" />
-                        <!-- </div>/shipping -->
                     </div>
                 </div>
 
@@ -325,19 +293,18 @@ session_start();
                             echo '<img src="' . htmlspecialchars($row['img_url']) . '" alt="" style="width:250px; height:250px;" />';
                             echo '<h2>' . htmlspecialchars($row['price']) . ' NTD</h2>';
                             echo '<p>' . htmlspecialchars($row['product_name']) . '</p>';
-                            echo '<a href="product-details.php?id=' . urlencode($row['product_id']) . '" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>加入購物車</a>';
+                            // echo '<a href="product-details.php?id=' . urlencode($row['product_id']) . '" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>詳細資料</a>';
                             echo '</div>';
                             echo '</div>';
                             echo '<div class="choose">';
                             echo '<ul class="nav nav-pills nav-justified">';
-                            echo '<li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>';
+                            echo '<li><a href="product-details.php?id=' . urlencode($row['product_id']) . '" class="btn btn-default add-to-cart"><i class="fa fa-plus-square"></i>詳細資料</a></li>';
                             echo '</ul>';
                             echo '</div>';
                             echo '</div>';
                             echo '</div>';
                         }
                         ?>
-
                     </div><!--features_items-->
 
                     <!-- 動態生成分頁導航 -->
@@ -385,10 +352,6 @@ session_start();
                         </ul>
                     <?php endif; ?>
                 </div>
-                
-                
-
-                
             </div>
         </div>
     </section>
@@ -469,17 +432,7 @@ session_start();
                 </div>
             </div>
         </div>
-
     </footer><!--/Footer-->
-
-
-
-    <script src="js/jquery.js"></script>
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
 </body>
 
 </html>
