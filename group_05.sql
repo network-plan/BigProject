@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-05-18 17:49:59
+-- 產生時間： 2025-05-22 06:53:20
 -- 伺服器版本： 10.4.32-MariaDB
--- PHP 版本： 8.0.30
+-- PHP 版本： 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -60,16 +60,19 @@ CREATE TABLE `orders` (
   `username` varchar(255) NOT NULL,
   `order_date` date NOT NULL,
   `total_price` int(11) NOT NULL,
-  `status` varchar(255) NOT NULL
+  `status` varchar(255) NOT NULL,
+  `address` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `phone` varchar(15) NOT NULL,
+  `shipping_method` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- 傾印資料表的資料 `orders`
 --
 
-INSERT INTO `orders` (`order_id`, `member_id`, `username`, `order_date`, `total_price`, `status`) VALUES
-('1', '1', 'n1', '2025-03-28', 1234, '備貨中'),
-('2', '222', 'n2', '2025-03-28', 4321, '已出貨');
+INSERT INTO `orders` (`order_id`, `member_id`, `username`, `order_date`, `total_price`, `status`, `address`, `phone`, `shipping_method`) VALUES
+('1', '1', 'n1', '2025-03-28', 1234, '備貨中', '', '', ''),
+('2', '222', 'n2', '2025-03-28', 4321, '已出貨', '', '', '');
 
 -- --------------------------------------------------------
 
@@ -91,7 +94,13 @@ INSERT INTO `order_items` (`order_id`, `product_id`, `quantity`) VALUES
 ('1', 'P_0055', 3),
 ('1', 'P_0028', 2),
 ('2', 'P_0031', 3),
-('2', 'P_0053', 3);
+('2', 'P_0053', 3),
+('name001', 'P_0042', 3),
+('member', 'P_0044', 1),
+('member', 'P_0007', 4),
+('member', 'P_0043', 11),
+('member', 'P_0044', 9),
+('member', 'P_0045', 5);
 
 -- --------------------------------------------------------
 
