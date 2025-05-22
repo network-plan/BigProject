@@ -1,6 +1,28 @@
 <?php
+// 從資料庫撈商品資料
 include('db_connection.php');
 session_start();
+
+// 放在最前面處理「加入購物車請求」
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'], $_POST['quantity'])) {
+    $product_id = $_POST['product_id'];
+    $quantity = max(1, intval($_POST['quantity']));
+
+    $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
+
+    if (isset($cart[$product_id])) {
+        $cart[$product_id] += $quantity;
+    } else {
+        $cart[$product_id] = $quantity;
+    }
+
+    setcookie('cart', json_encode($cart), time() + (7 * 24 * 60 * 60), "/");
+
+    // 重新導向讓 cookie 生效
+    header("Location: cart.php");
+    exit();
+}
+
 // 取得商品 ID，若沒有則預設為 P_0001
 $product_id = isset($_GET['id']) ? $_GET['id'] : "P_0001";
 
@@ -30,7 +52,9 @@ while ($img_row = $img_result->fetch_assoc()) {
     $images[] = $img_row['img_url'];
 }
 
+$cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -47,22 +71,32 @@ while ($img_row = $img_result->fetch_assoc()) {
     <link href="css/price-range.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
-    <link href="css/product-details.css" rel="stylesheet">
     <link href="css/responsive.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://jci.book.com.tw/css/books/product/overlay-n.css">
     <link rel="stylesheet" href="https://jci.book.com.tw/css/css.css">
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
     <link rel="shortcut icon" href="images/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-    <script src="js/jquery.js"></script>
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/jquery-3.6.4.min.js"></script>
+    <script src="js/cart_js.js"></script>
+    <style>
+        .cart_quantity_button {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-direction: row; /* 保證從左到右 */
+        }
+        .cart_quantity_button a,.cart_quantity_button input {
+            display: inline-block;
+        }
+    </style>
 </head>
 <!--/head-->
 
@@ -113,7 +147,14 @@ while ($img_row = $img_result->fetch_assoc()) {
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
                                     echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
-                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
+                                    //取得現在購物車商品數量
+                                    $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
+                                    $total_items = 0;
+                                    // 統計購物車中所有商品的「數量總和」
+                                    foreach ($cart as $quantity) {
+                                        $total_items += $quantity;
+                                    }
+                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車" . " (" . $total_items . ")</a></li>";//若有登入導入到購物車頁面
                                     echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
                                 }else if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin'){
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
@@ -192,38 +233,39 @@ while ($img_row = $img_result->fetch_assoc()) {
                 <div class="col-sm-3">
                     <div class="left-sidebar">
                         <h2>商品分類</h2>
-                        <div class="panel-group category-products" id="accordian"><!--category-productsr-->
+                        <div class="panel-group category-products" id="accordian">
+                            <!--category-productsr-->
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="shop.php"><b>全部商品</b></a></h4>
+                                    <h4 class="panel-title"><a href="#"><b>禮盒專區</b></a></h4>
                                     <hr />
                                 </div>
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="shop.php?category=禮盒專區"><b>禮盒專區</b></a></h4>
+                                    <h4 class="panel-title"><a href="#"><b>酒莊產品</b></a></h4>
                                     <hr />
                                 </div>
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="shop.php?category=酒莊產品"><b>酒莊產品</b></a></h4>
+                                    <h4 class="panel-title"><a href="#"><b>果汁系列</b></a></h4>
                                     <hr />
                                 </div>
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="shop.php?category=果汁系列"><b>果汁系列</b></a></h4>
-                                    <hr />
+                                    <h4 class="panel-title"><a href="#"><b>醬菜類(罐頭食品)</b></a></h4>
                                 </div>
                             </div>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="shop.php?category=醬菜類(罐頭食品)"><b>醬菜類(罐頭食品)</b></a></h4>
-                                </div>
-                            </div>
+
                         </div>
+                        <!--/category-products-->
+
+                        <!-- <div class="shipping text-center">shipping -->
                         <img src="./images/home/vegetable.png" alt="images/home/shipping.jpg" />
+                        <!-- </div>/shipping -->
+
                     </div>
                 </div>
 
@@ -281,22 +323,22 @@ while ($img_row = $img_result->fetch_assoc()) {
                                 <img src="images/product-details/rating.png" alt="" />
                                 <span>
                                     <span>NTD <?php echo number_format($product['price']); ?></span>
-                                    <!-- <button type="button" class="btn btn-default cart">
-                                        <i class="fa fa-shopping-cart"></i>
-                                        加入購物車
-                                    </button> -->
-                                    <?php
-                                    if (isset($_SESSION['username'])) {
-                                        echo "<button type=\"button\" class=\"btn btn-default cart\"><i class=\"fa fa-shopping-cart\"></i>  加入購物車</button>";
-                                    } else {
-                                        echo "<button type=\"button\" class=\"btn btn-default cart\" onclick=\"location.href='login.php'\"><i class=\"fa fa-shopping-cart\"></i>  加入購物車</button>";
-                                    }
-                                    ?>
                                 </span>
+                                <hr/> 
+                                <form method="post" action="product-details.php?id=<?php echo urlencode($product['product_id']); ?>" style="display:inline;">
+                                    <div class="cart_quantity_button">
+                                        <p>數量： </p>
+                                        <a class="cart_quantity_up_pd" href="update_cart.php?action=add&id=<?= urlencode($product_id) ?>"> + </a>
+                                        <input class="cart_quantity_input_pd" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="1">
+                                        <a class="cart_quantity_down_pd" href="update_cart.php?action=remove&id=<?= urlencode($product_id) ?>"> - </a>
+                                        <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['product_id']); ?>">
+                                        <button type="submit" class="btn btn-default cart"><i class="fa fa-shopping-cart"></i> 加入購物車</button>
+                                    </div>
+                                </form>
                                 <p><b>存貨狀態:</b>剩 <?php echo intval($product['stock']); ?> 盒</p>
                                 <p><b>商品簡述:</b></p>
                                 <p><?php echo nl2br(htmlspecialchars($product['short_description'])); ?></p>
-                                <!-- <a href=""><img src="images/product-details/share.png" class="share img-responsive" alt="" /></a> -->
+                                <a href=""><img src="images/product-details/share.png" class="share img-responsive" alt="" /></a>
                             </div>
                             <!--/product-information-->
                         </div>
@@ -314,7 +356,6 @@ while ($img_row = $img_result->fetch_assoc()) {
                         <div class="tab-content">
                             <div class="tab-pane fade active in" id="details">
                                 <?php echo nl2br(htmlspecialchars($product['full_description'])); ?>
-                            </div>
                             <div class="tab-pane fade" id="reviews" >
 								<div class="col-sm-12">
 									<div class="review-list">
@@ -478,12 +519,12 @@ while ($img_row = $img_result->fetch_assoc()) {
                                                                 <?php endif; ?>
 
                                                                 <h2>NTD <?php echo number_format($rec['price']); ?></h2>
-                                                                <p><?php echo htmlspecialchars($rec['product_name']); ?></p><br>
+                                                                <p><?php echo htmlspecialchars($rec['product_name']); ?></p>
 
                                                                 <!-- 點擊按鈕直接連到商品詳細頁 -->
                                                                 <button type="button" class="btn btn-default add-to-cart"
                                                                     onclick="location.href='product-details.php?id=<?php echo $rec['product_id']; ?>'">
-                                                                    <i class="fa fa-plus-square"></i> 詳細資料
+                                                                    <i class="fa fa-shopping-cart"></i> 加入購物車
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -605,6 +646,15 @@ while ($img_row = $img_result->fetch_assoc()) {
 
     </footer>
     <!--/Footer-->
+
+
+
+    <script src="js/jquery.js"></script>
+    <script src="js/price-range.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>
