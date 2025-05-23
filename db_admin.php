@@ -1,5 +1,7 @@
 <?php
 include('db_connection.php');
+session_start();
+include('check_login.php');//檢查登入
 
 // 決定當前操作的資料表
 $current_table = isset($_GET['table']) ? $_GET['table'] : 'product_info';
@@ -104,7 +106,14 @@ try {
 } catch (Exception $e) {
     echo "<p class='error'>" . $e->getMessage() . "</p>";
 }
-session_start();
+
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
+    echo "<script>
+        alert('你需要擁有管理者權限');
+        window.location.href = 'login.php';
+    </script>";
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh">

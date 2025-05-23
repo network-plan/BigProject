@@ -84,7 +84,13 @@ session_start();
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
                                     echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
-                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
+                                    $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
+                                    $total_items = 0;
+                                    // 統計購物車中所有商品的「數量總和」
+                                    foreach ($cart as $quantity) {
+                                        $total_items += $quantity;
+                                    }
+                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車" . " (" . $total_items . ")</a></li>";//若有登入導入到購物車頁面
                                     echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
                                 }else if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin'){
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面

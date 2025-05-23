@@ -86,6 +86,7 @@ while ($row = $result->fetch_assoc()) {
 			height: auto;   
 			object-fit: cover; 
 		}
+
 	</style>
 </head><!--/head-->
 
@@ -169,7 +170,6 @@ while ($row = $result->fetch_assoc()) {
                                         if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {//若一般會員登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
                                             echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
-                                            echo "<li><a href=\"cart.php\">購物車</a></li>";
                                         }else{
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
                                         }
@@ -237,7 +237,7 @@ while ($row = $result->fetch_assoc()) {
 										<img src="<?= htmlspecialchars($product['img_url']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
 									</a>
 								</td>
-								<td class="cart_description" style="width: 200px;">
+								<td class="cart_description" style="width: 250px;">
 									<h4><a href="product.php?id=<?= htmlspecialchars($product_id) ?>">
 										<?= htmlspecialchars($product['product_name']) ?>
 									</a></h4>
@@ -249,7 +249,7 @@ while ($row = $result->fetch_assoc()) {
 									<div class="cart_quantity_button">
 										<a class="cart_quantity_up" href="update_cart.php?action=add&id=<?= urlencode($product_id) ?>"> + </a>
 										<input class="cart_quantity_input" type="text" name="quantity" value="<?= $quantity ?>" autocomplete="off" size="2" data-id="<?= htmlspecialchars($product_id) ?>">
-										<a class="cart_quantity_down" href="update_cart.php?action=remove&id=<?= urlencode($product_id) ?>"> - </a>
+										<a class="cart_quantity_down"h ref="update_cart.php?action=remove&id=<?= urlencode($product_id) ?>"> - </a>
 									</div>
 								</td>
 								<td class="cart_total">

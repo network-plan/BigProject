@@ -84,6 +84,12 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+    <script src="js/jquery.js"></script>
+    <script src="js/price-range.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/main.js"></script>
     <script src="js/jquery-3.6.4.min.js"></script>
     <script src="js/cart_js.js"></script>
 </head>
@@ -136,7 +142,13 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
                                     echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
-                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
+                                    //取得現在購物車商品數量
+                                    $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
+                                    $total_items = 0;
+                                    // 統計購物車中所有商品的「數量總和」
+                                    foreach ($cart as $quantity) {
+                                        $total_items += $quantity;
+                                    }
                                     echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
                                 }else if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin'){
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
@@ -310,12 +322,12 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                 <form method="post" action="product-details.php?id=<?php echo urlencode($product['product_id']); ?>" style="display:inline;">
                                     <div class="cart_quantity_button">
                                         <p>數量： </p>
-                                        <a class="cart_quantity_up" href="#"> + </a>
-                                        <input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="1">
-                                        <a class="cart_quantity_down" href="#"> - </a>
+                                        <a class="cart_quantity_up_pd" href="update_cart.php?action=add&id=<?= urlencode($product_id) ?>"> + </a>
+                                        <input class="cart_quantity_input_pd" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="1">
+                                        <a class="cart_quantity_down_pd" href="update_cart.php?action=remove&id=<?= urlencode($product_id) ?>"> - </a>
+                                        <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['product_id']); ?>">
+                                        <button type="submit" class="btn btn-default cart"><i class="fa fa-shopping-cart"></i> 加入購物車</button>
                                     </div>
-                                    <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['product_id']); ?>">
-                                    <button type="submit" class="btn btn-default cart"><i class="fa fa-shopping-cart"></i> 加入購物車</button>
                                 </form>
                                 <p><b>存貨狀態:</b>剩 <?php echo intval($product['stock']); ?> 盒</p>
                                 <p><b>商品簡述:</b></p>

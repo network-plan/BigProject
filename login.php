@@ -79,6 +79,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 		} else {
 			$_SESSION['role'] = 'user';
 		}
+		// 成功登入後，清除舊的購物車
+		setcookie("cart", "", time() - 3600, "/");
+		
 		echo "<!-- 登入成功，轉址中 -->";
 		header("Location: index.php");// 轉址到首頁
 		exit();
@@ -107,21 +110,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 	<link href="css/login.css" rel="stylesheet">
 	<link href="css/responsive.css" rel="stylesheet">
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
     <link rel="shortcut icon" href="images/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-	<script src="js/jquery.js"></script>
-	<script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
-	<script src="js/login.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+
 </head><!--/head-->
 
 <body>
@@ -352,6 +350,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 		</div>
 
 	</footer><!--/Footer-->
+	
+
+  
+    <script src="js/jquery.js"></script>
+	<script src="js/price-range.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/main.js"></script>
+	<script src="js/login.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+    <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script> -->
+    <!--additional method - for checkbox .. ,require_from_group method ...-->
+    <!-- <script src="//jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/localization/messages_zh_TW.js "></script> -->
 </body>
 </html>
 <?php $conn->close();?>
