@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-05-22 06:53:20
+-- 產生時間： 2025-05-23 06:49:34
 -- 伺服器版本： 10.4.32-MariaDB
--- PHP 版本： 8.2.12
+-- PHP 版本： 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -71,8 +71,9 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`order_id`, `member_id`, `username`, `order_date`, `total_price`, `status`, `address`, `phone`, `shipping_method`) VALUES
-('1', '1', 'n1', '2025-03-28', 1234, '備貨中', '', '', ''),
-('2', '222', 'n2', '2025-03-28', 4321, '已出貨', '', '', '');
+('ORD202505230000001', '2', 'member', '2025-05-23', 660, '已出貨', '彰化市師大路2號', '0912345678', '宅配到家'),
+('ORD202505230000002', '3', 'name001', '2025-05-23', 220, '已出貨', '彰化市師大路2號', '0900123123', '宅配到家'),
+('ORD202505240000001', '2', 'member', '2025-05-24', 340, '備貨中', '彰化小禮坊', '0987654321', '彰化小禮坊商店');
 
 -- --------------------------------------------------------
 
@@ -81,8 +82,9 @@ INSERT INTO `orders` (`order_id`, `member_id`, `username`, `order_date`, `total_
 --
 
 CREATE TABLE `order_items` (
-  `order_id` varchar(11) DEFAULT NULL,
-  `product_id` varchar(11) DEFAULT NULL,
+  `number` int(11) NOT NULL,
+  `order_id` varchar(255) DEFAULT NULL,
+  `product_id` varchar(255) DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -90,17 +92,12 @@ CREATE TABLE `order_items` (
 -- 傾印資料表的資料 `order_items`
 --
 
-INSERT INTO `order_items` (`order_id`, `product_id`, `quantity`) VALUES
-('1', 'P_0055', 3),
-('1', 'P_0028', 2),
-('2', 'P_0031', 3),
-('2', 'P_0053', 3),
-('name001', 'P_0042', 3),
-('member', 'P_0044', 1),
-('member', 'P_0007', 4),
-('member', 'P_0043', 11),
-('member', 'P_0044', 9),
-('member', 'P_0045', 5);
+INSERT INTO `order_items` (`number`, `order_id`, `product_id`, `quantity`) VALUES
+(1, 'ORD202505230000001', 'P_0040', 2),
+(2, 'ORD202505230000001', 'P_0041', 1),
+(3, 'ORD202505230000002', 'P_0042', 1),
+(4, 'ORD202505240000001', 'P_0043', 1),
+(5, 'ORD202505240000001', 'P_0045', 1);
 
 -- --------------------------------------------------------
 
@@ -292,6 +289,28 @@ ALTER TABLE `members`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`order_id`);
+
+--
+-- 資料表索引 `order_items`
+--
+ALTER TABLE `order_items`
+  ADD PRIMARY KEY (`number`);
+
+--
+-- 資料表索引 `product_info`
+--
+ALTER TABLE `product_info`
+  ADD PRIMARY KEY (`product_id`);
+
+--
+-- 在傾印的資料表使用自動遞增(AUTO_INCREMENT)
+--
+
+--
+-- 使用資料表自動遞增(AUTO_INCREMENT) `order_items`
+--
+ALTER TABLE `order_items`
+  MODIFY `number` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
