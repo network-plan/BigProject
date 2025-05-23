@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-05-23 06:49:34
+-- 產生時間： 2025-05-23 13:55:25
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.0.30
 
@@ -260,6 +260,8 @@ INSERT INTO `product_info` (`product_id`, `product_name`, `short_description`, `
 
 CREATE TABLE `reviews` (
   `review_id` varchar(255) NOT NULL,
+  `order_id` varchar(255) NOT NULL,
+  `product_id` varchar(255) NOT NULL,
   `user_id` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
   `rating` int(11) NOT NULL,
@@ -270,9 +272,8 @@ CREATE TABLE `reviews` (
 -- 傾印資料表的資料 `reviews`
 --
 
-INSERT INTO `reviews` (`review_id`, `user_id`, `username`, `rating`, `content`) VALUES
-('1', '123', '12313', 5, '31231'),
-('2', '32', '12', 3, '2');
+INSERT INTO `reviews` (`review_id`, `order_id`, `product_id`, `user_id`, `username`, `rating`, `content`) VALUES
+('REV20250523135506671', 'ORD202505230000001', 'P_0040', '2', 'member', 5, '讚唷!');
 
 --
 -- 已傾印資料表的索引
@@ -301,6 +302,12 @@ ALTER TABLE `order_items`
 --
 ALTER TABLE `product_info`
   ADD PRIMARY KEY (`product_id`);
+
+--
+-- 資料表索引 `reviews`
+--
+ALTER TABLE `reviews`
+  ADD PRIMARY KEY (`review_id`);
 
 --
 -- 在傾印的資料表使用自動遞增(AUTO_INCREMENT)
