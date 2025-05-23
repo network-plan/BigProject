@@ -3,25 +3,46 @@
 include('db_connection.php');
 session_start();
 
-// 放在最前面處理「加入購物車請求」
+// 處理加入購物車
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'], $_POST['quantity'])) {
     $product_id = $_POST['product_id'];
     $quantity = max(1, intval($_POST['quantity']));
 
-    $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
+    // 查詢目前庫存
+    $stmt = $conn->prepare("SELECT stock FROM product_info WHERE product_id = ?");
+    $stmt->bind_param("s", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if (isset($cart[$product_id])) {
-        $cart[$product_id] += $quantity;
-    } else {
-        $cart[$product_id] = $quantity;
+    if ($result->num_rows === 0) {
+        // 商品不存在
+        echo "<script>alert('找不到此商品'); window.history.back();</script>";
+        exit();
     }
 
+    $row = $result->fetch_assoc();
+    $stock = intval($row['stock']);
+
+    // 取得目前購物車中該商品的數量（如果有的話）
+    $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
+    $currentInCart = isset($cart[$product_id]) ? $cart[$product_id] : 0;
+
+    if ($currentInCart + $quantity > $stock) {
+        echo "<script>alert('加入數量超過庫存！目前庫存為 $stock 件'); window.history.back();</script>";
+        exit();
+    }
+
+    // 數量足夠，加入購物車
+    $cart[$product_id] = $currentInCart + $quantity;
+
+    // 更新 cookie
     setcookie('cart', json_encode($cart), time() + (7 * 24 * 60 * 60), "/");
 
-    // 重新導向讓 cookie 生效
+    // 導回購物車頁面
     header("Location: cart.php");
     exit();
 }
+
 
 // 取得商品 ID，若沒有則預設為 P_0001
 $product_id = isset($_GET['id']) ? $_GET['id'] : "P_0001";
@@ -317,9 +338,9 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                 <form method="post" action="product-details.php?id=<?php echo urlencode($product['product_id']); ?>" style="display:inline;">
                                     <div class="cart_quantity_button">
                                         <p>數量： </p>
-                                        <a class="cart_quantity_up_pd" href="update_cart.php?action=add&id=<?= urlencode($product_id) ?>"> + </a>
+                                        <a class="cart_quantity_up_pd" href="#"> + </a>
                                         <input class="cart_quantity_input_pd" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="1">
-                                        <a class="cart_quantity_down_pd" href="update_cart.php?action=remove&id=<?= urlencode($product_id) ?>"> - </a>
+                                        <a class="cart_quantity_down_pd" href="#"> - </a>
                                         <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['product_id']); ?>">
                                         <button type="submit" class="btn btn-default cart"><i class="fa fa-shopping-cart"></i> 加入購物車</button>
                                     </div>
