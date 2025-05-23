@@ -233,12 +233,12 @@ while ($row = $result->fetch_assoc()) {
 						?>
 							<tr>
 								<td class="cart_product" style="width: 150px;">
-									<a href="product.php?id=<?= htmlspecialchars($product_id) ?>">
+									<a href="product-details.php?id=<?= htmlspecialchars($product_id) ?>">
 										<img src="<?= htmlspecialchars($product['img_url']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
 									</a>
 								</td>
 								<td class="cart_description" style="width: 250px;">
-									<h4><a href="product.php?id=<?= htmlspecialchars($product_id) ?>">
+									<h4><a href="product-details.php?id=<?= htmlspecialchars($product_id) ?>">
 										<?= htmlspecialchars($product['product_name']) ?>
 									</a></h4>
 								</td>
@@ -247,16 +247,16 @@ while ($row = $result->fetch_assoc()) {
 								</td>
 								<td class="cart_quantity">
 									<div class="cart_quantity_button">
-										<a class="cart_quantity_up" href="update_cart.php?action=add&id=<?= urlencode($product_id) ?>"> + </a>
+										<a class="cart_quantity_up" href="#"> + </a>
 										<input class="cart_quantity_input" type="text" name="quantity" value="<?= $quantity ?>" autocomplete="off" size="2" data-id="<?= htmlspecialchars($product_id) ?>">
-										<a class="cart_quantity_down"h ref="update_cart.php?action=remove&id=<?= urlencode($product_id) ?>"> - </a>
+										<a class="cart_quantity_down" href="#"> - </a>
 									</div>
 								</td>
 								<td class="cart_total">
 									<p class="cart_total_price">NT$<?= number_format($total_price) ?></p>
 								</td>
 								<td class="cart_delete">
-									<a class="cart_quantity_delete" href="update_cart.php?action=delete&id=<?= urlencode($product_id) ?>"><i class="fa fa-times"></i></a>
+									<a class="cart_quantity_delete" href="#"><i class="fa fa-times"></i></a>
 								</td>
 							</tr>
 						<?php endforeach; ?>
@@ -320,16 +320,6 @@ while ($row = $result->fetch_assoc()) {
 
 						<!-- 地區與郵遞區號（僅在選擇宅配時顯示） -->
 						<ul class="user_info delivery-info" style="display: none;">
-							<li class="single_field">
-								<div class="region-box" name="region">
-									<label>地區：</label>
-									<select id="country">
-										<option value="0" name="region">台灣本島 +0元</option>
-										<option value="1" name="region">台灣離島 +50元</option>
-										<option value="2" name="region">海外 +200元</option>
-									</select>
-								</div>
-							</li>
 							<!-- single_field -->
 							<li class="zip-field">
 								<br/>
@@ -350,12 +340,12 @@ while ($row = $result->fetch_assoc()) {
 							<!-- <li>Shipping Cost <span>2 NTD</span></li> -->
 							<li>運費 <span>0 NTD</span></li>
 							<!-- <li>coupon discount<span>- 60 NTD</span></li> -->
-							<li>優惠卷減免<span>- 60 NTD</span></li>
+							<li>優惠卷減免<span>0 NTD</span></li>
 							<hr/>
 							<!-- <li>Total <span>65 NTD</span></li> -->
-							<li>總金額 <span>65 NTD</span></li>
+							<li>總金額 <span id="total-amount">0 NTD</span></li>
 						</ul>
-							<a class="btn btn-default update" href="submit_order.php">確認訂單並送出</a>
+							<button type="submit" class="btn update submit-order">確認訂單並送出</button>
 					</div>
 				</div>
 			</div>

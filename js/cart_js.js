@@ -240,57 +240,129 @@ $(document).ready(function() {
     updateDiscount(); // 初始計算優惠卷
 });
 
-// 電話驗證相關代碼
-document.addEventListener('DOMContentLoaded', function() {
-    // 找到電話輸入框
+document.addEventListener('DOMContentLoaded', function () {
+    // ===== 電話驗證相關 =====
     const phoneInput = document.querySelector('input[type="tel"]');
-    if (!phoneInput) return;
-
-    // 為電話輸入框添加外層容器
     const wrapper = document.createElement('div');
-    wrapper.style.display = 'flex';
-    wrapper.style.alignItems = 'center';
-    wrapper.style.gap = '8px';
-    phoneInput.parentElement.insertBefore(wrapper, phoneInput);
-    wrapper.appendChild(phoneInput);
-
-    // 創建錯誤信息元素
     const errorSpan = document.createElement('span');
-    errorSpan.style.color = '#dc2626';
-    errorSpan.style.fontSize = '12px';
-    errorSpan.style.display = 'none';
-    wrapper.appendChild(errorSpan);
 
-    // 驗證函數
-    function validatePhone() {
-        const phone = phoneInput.value.trim();
-        const phoneRegex = /^09\d{8}$/;
+    if (phoneInput) {
+        wrapper.style.display = 'flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.gap = '8px';
+        phoneInput.parentElement.insertBefore(wrapper, phoneInput);
+        wrapper.appendChild(phoneInput);
 
-        if (!phone) {
-            showError('手機號碼為必填');
-        } else if (phone.length > 12) {
-            showError('手機號碼不能超過12個字');
-        } else if (!phoneRegex.test(phone)) {
-            showError('請輸入正確的手機號碼格式');
-        } else {
-            hideError();
-        }
-    }
-
-    // 顯示錯誤
-    function showError(message) {
-        errorSpan.textContent = message;
-        errorSpan.style.display = 'block';
-        phoneInput.style.borderColor = '#dc2626';
-    }
-
-    // 隱藏錯誤
-    function hideError() {
+        errorSpan.style.color = '#dc2626';
+        errorSpan.style.fontSize = '12px';
         errorSpan.style.display = 'none';
-        phoneInput.style.borderColor = '';
+        wrapper.appendChild(errorSpan);
+
+        function validatePhone() {
+            const phone = phoneInput.value.trim();
+            const phoneRegex = /^09\d{8}$/;
+
+            if (!phone) {
+                showError('手機號碼為必填');
+                return false;
+            } else if (phone.length > 12) {
+                showError('手機號碼不能超過12個字');
+                return false;
+            } else if (!phoneRegex.test(phone)) {
+                showError('請輸入正確的手機號碼格式（如：0912345678）');
+                return false;
+            } else {
+                hideError();
+                return true;
+            }
+        }
+
+        function showError(message) {
+            errorSpan.textContent = message;
+            errorSpan.style.display = 'block';
+            phoneInput.style.borderColor = '#dc2626';
+        }
+
+        function hideError() {
+            errorSpan.style.display = 'none';
+            phoneInput.style.borderColor = '';
+        }
+
+        phoneInput.addEventListener('input', validatePhone);
+        phoneInput.addEventListener('blur', validatePhone);
+
+        // 提供全域使用的驗證方法
+        window.validatePhoneBeforeSubmit = validatePhone;
     }
 
-    // 添加事件監聽
-    phoneInput.addEventListener('input', validatePhone);
-    phoneInput.addEventListener('blur', validatePhone);
+    // ===== 配送方式切換與驗證 =====
+    const sendWayRadios = document.querySelectorAll('input[name="send-way"]');
+    const contactInfo = document.querySelector(".contact-info");
+    const deliveryInfo = document.querySelector(".delivery-info");
+    const addressInput = document.querySelector('.delivery-info input');
+
+    sendWayRadios.forEach(radio => {
+        radio.addEventListener("change", function () {
+            const value = this.value;
+            contactInfo.style.display = "block";
+
+            if (value === "0") {
+                deliveryInfo.style.display = "none";
+                addressInput.required = false;
+            } else {
+                deliveryInfo.style.display = "block";
+                addressInput.required = true;
+            }
+        });
+    });
+
+    // ===== 表單送出驗證與提交 =====
+    document.querySelector(".btn.update").addEventListener("click", function (e) {
+        const selectedMethod = document.querySelector('input[name="send-way"]:checked');
+        const phone = phoneInput.value.trim();
+        const address = addressInput.value.trim();
+
+        if (!selectedMethod) {
+            alert("請選擇配送方式！");
+            e.preventDefault();
+            return;
+        }
+
+        // 加上電話格式驗證
+        if (!window.validatePhoneBeforeSubmit || !window.validatePhoneBeforeSubmit()) {
+            alert("請正確填寫聯絡電話！");
+            e.preventDefault();
+            return;
+        }
+
+        if ((selectedMethod.value === "1" || selectedMethod.value === "2") && address === "") {
+            alert("請填寫地址！");
+            e.preventDefault();
+            return;
+        }
+
+        // 建立表單送出
+        const form = document.createElement("form");
+        form.method = "post";
+        form.action = "submit_order.php";
+
+        const addHiddenInput = (name, value) => {
+            const input = document.createElement("input");
+            input.type = "hidden";
+            input.name = name;
+            input.value = value;
+            form.appendChild(input);
+        };
+
+        addHiddenInput("phone", phone);
+        addHiddenInput("address", address || "彰化小禮坊"); // 門市取貨預設
+        addHiddenInput("shipping_method", selectedMethod.nextElementSibling.textContent.trim());
+
+        const totalText = document.querySelector("#total-amount").textContent;
+        const totalPrice = parseInt(totalText.replace(/[^\d]/g, ""), 10);
+        addHiddenInput("total_price", totalPrice);
+
+        document.body.appendChild(form);
+        form.submit();
+    });
 });

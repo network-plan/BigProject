@@ -3,6 +3,7 @@
 include('db_connection.php');
 // 啟用錯誤報告
 ini_set('display_errors', 1);
+session_start();
 error_reporting(E_ALL);
 
 // 測試資料庫連接
@@ -47,14 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username']))
         echo "<script>alert('發生錯誤: " . $e->getMessage() . "');</script>";
     }
 }
-?>
-<?php
-
-session_start();
-include('db_connection.php');
 
 //專門用於登入的處理邏輯
-
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 	
 	// 輸出除錯信息
@@ -64,26 +59,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 	$password = $_POST['login_password'];
 
 	// 查詢資料表確認帳號密碼是否存在
-	$stmt = $conn->prepare("SELECT username,password FROM members WHERE username = ? AND password = ?");
+	$stmt = $conn->prepare("SELECT username, password, member_id FROM members WHERE username = ? AND password = ?");
 	$stmt->bind_param("ss", $username, $password);
 	$stmt->execute();
 	$result = $stmt->get_result();
-	if ($result->num_rows > 0) {
-		// 登入成功
-		
-		$_SESSION['username'] = $username;
 
+	if ($result->num_rows > 0) {
+		$row = $result->fetch_assoc(); // 取得查詢結果
+		
+		$_SESSION['username'] = $row['username'];
+		$_SESSION['member_id'] = $row['member_id']; 
+		
 		// 檢查是否為管理者
-		if ($username === 'admin' && $password === 'admin123456') {
+		if ($row['username'] === 'admin' && $password === 'admin123456') {
 			$_SESSION['role'] = 'admin';
 		} else {
 			$_SESSION['role'] = 'user';
 		}
-		// 成功登入後，清除舊的購物車
+
 		setcookie("cart", "", time() - 3600, "/");
-		
-		echo "<!-- 登入成功，轉址中 -->";
-		header("Location: index.php");// 轉址到首頁
+		header("Location: index.php");
 		exit();
 	} else {
 		echo "<script>alert('帳號或密碼錯誤');</script>";
