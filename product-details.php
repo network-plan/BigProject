@@ -3,25 +3,46 @@
 include('db_connection.php');
 session_start();
 
-// 放在最前面處理「加入購物車請求」
+// 處理加入購物車
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'], $_POST['quantity'])) {
     $product_id = $_POST['product_id'];
     $quantity = max(1, intval($_POST['quantity']));
 
-    $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
+    // 查詢目前庫存
+    $stmt = $conn->prepare("SELECT stock FROM product_info WHERE product_id = ?");
+    $stmt->bind_param("s", $product_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if (isset($cart[$product_id])) {
-        $cart[$product_id] += $quantity;
-    } else {
-        $cart[$product_id] = $quantity;
+    if ($result->num_rows === 0) {
+        // 商品不存在
+        echo "<script>alert('找不到此商品'); window.history.back();</script>";
+        exit();
     }
 
+    $row = $result->fetch_assoc();
+    $stock = intval($row['stock']);
+
+    // 取得目前購物車中該商品的數量（如果有的話）
+    $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
+    $currentInCart = isset($cart[$product_id]) ? $cart[$product_id] : 0;
+
+    if ($currentInCart + $quantity > $stock) {
+        echo "<script>alert('加入數量超過庫存！目前庫存為 $stock 件'); window.history.back();</script>";
+        exit();
+    }
+
+    // 數量足夠，加入購物車
+    $cart[$product_id] = $currentInCart + $quantity;
+
+    // 更新 cookie
     setcookie('cart', json_encode($cart), time() + (7 * 24 * 60 * 60), "/");
 
-    // 重新導向讓 cookie 生效
+    // 導回購物車頁面
     header("Location: cart.php");
     exit();
 }
+
 
 // 取得商品 ID，若沒有則預設為 P_0001
 $product_id = isset($_GET['id']) ? $_GET['id'] : "P_0001";
@@ -55,7 +76,6 @@ while ($img_row = $img_result->fetch_assoc()) {
 $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
 ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -71,14 +91,11 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
     <link href="css/price-range.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
+    <link href="css/product-details.css" rel="stylesheet">
     <link href="css/responsive.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://jci.book.com.tw/css/books/product/overlay-n.css">
     <link rel="stylesheet" href="https://jci.book.com.tw/css/css.css">
-    <!--[if lt IE 9]>
-    <script src="js/html5shiv.js"></script>
-    <script src="js/respond.min.js"></script>
-    <![endif]-->
     <link rel="shortcut icon" href="images/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
@@ -227,39 +244,38 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                 <div class="col-sm-3">
                     <div class="left-sidebar">
                         <h2>商品分類</h2>
-                        <div class="panel-group category-products" id="accordian">
-                            <!--category-productsr-->
+                        <div class="panel-group category-products" id="accordian"><!--category-productsr-->
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#"><b>禮盒專區</b></a></h4>
+                                    <h4 class="panel-title"><a href="shop.php"><b>全部商品</b></a></h4>
                                     <hr />
                                 </div>
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#"><b>酒莊產品</b></a></h4>
+                                    <h4 class="panel-title"><a href="shop.php?category=禮盒專區"><b>禮盒專區</b></a></h4>
                                     <hr />
                                 </div>
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#"><b>果汁系列</b></a></h4>
+                                    <h4 class="panel-title"><a href="shop.php?category=酒莊產品"><b>酒莊產品</b></a></h4>
                                     <hr />
                                 </div>
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="#"><b>醬菜類(罐頭食品)</b></a></h4>
+                                    <h4 class="panel-title"><a href="shop.php?category=果汁系列"><b>果汁系列</b></a></h4>
+                                    <hr />
                                 </div>
                             </div>
-
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title"><a href="shop.php?category=醬菜類(罐頭食品)"><b>醬菜類(罐頭食品)</b></a></h4>
+                                </div>
+                            </div>
                         </div>
-                        <!--/category-products-->
-
-                        <!-- <div class="shipping text-center">shipping -->
                         <img src="./images/home/vegetable.png" alt="images/home/shipping.jpg" />
-                        <!-- </div>/shipping -->
-
                     </div>
                 </div>
 
@@ -322,9 +338,9 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                 <form method="post" action="product-details.php?id=<?php echo urlencode($product['product_id']); ?>" style="display:inline;">
                                     <div class="cart_quantity_button">
                                         <p>數量： </p>
-                                        <a class="cart_quantity_up_pd" href="update_cart.php?action=add&id=<?= urlencode($product_id) ?>"> + </a>
+                                        <a class="cart_quantity_up_pd" href="#"> + </a>
                                         <input class="cart_quantity_input_pd" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="1">
-                                        <a class="cart_quantity_down_pd" href="update_cart.php?action=remove&id=<?= urlencode($product_id) ?>"> - </a>
+                                        <a class="cart_quantity_down_pd" href="#"> - </a>
                                         <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['product_id']); ?>">
                                         <button type="submit" class="btn btn-default cart"><i class="fa fa-shopping-cart"></i> 加入購物車</button>
                                     </div>
@@ -332,7 +348,7 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                 <p><b>存貨狀態:</b>剩 <?php echo intval($product['stock']); ?> 盒</p>
                                 <p><b>商品簡述:</b></p>
                                 <p><?php echo nl2br(htmlspecialchars($product['short_description'])); ?></p>
-                                <a href=""><img src="images/product-details/share.png" class="share img-responsive" alt="" /></a>
+                                <!-- <a href=""><img src="images/product-details/share.png" class="share img-responsive" alt="" /></a> -->
                             </div>
                             <!--/product-information-->
                         </div>
@@ -350,6 +366,7 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                         <div class="tab-content">
                             <div class="tab-pane fade active in" id="details">
                                 <?php echo nl2br(htmlspecialchars($product['full_description'])); ?>
+                            </div>
                             <div class="tab-pane fade" id="reviews" >
 								<div class="col-sm-12">
 									<div class="review-list">
@@ -513,12 +530,12 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                                                 <?php endif; ?>
 
                                                                 <h2>NTD <?php echo number_format($rec['price']); ?></h2>
-                                                                <p><?php echo htmlspecialchars($rec['product_name']); ?></p>
+                                                                <p><?php echo htmlspecialchars($rec['product_name']); ?></p><br>
 
                                                                 <!-- 點擊按鈕直接連到商品詳細頁 -->
                                                                 <button type="button" class="btn btn-default add-to-cart"
                                                                     onclick="location.href='product-details.php?id=<?php echo $rec['product_id']; ?>'">
-                                                                    <i class="fa fa-shopping-cart"></i> 加入購物車
+                                                                    <i class="fa fa-plus-square"></i> 詳細資料
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -640,15 +657,6 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
 
     </footer>
     <!--/Footer-->
-
-
-
-    <script src="js/jquery.js"></script>
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
 </body>
 
 </html>
