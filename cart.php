@@ -86,7 +86,7 @@ while ($row = $result->fetch_assoc()) {
 			height: auto;   
 			object-fit: cover; 
 		}
-		
+
 	</style>
 </head><!--/head-->
 
