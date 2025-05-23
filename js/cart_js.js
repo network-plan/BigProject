@@ -61,6 +61,7 @@ $(document).ready(function() {
         var totalPrice = (price * quantity); // 計算總價
         row.find(".cart_total_price").text(`NT$${totalPrice}`); // 更新總價顯示
         updateTotalPrice();
+       
     }
 
     // 計算購物車總價
@@ -118,13 +119,73 @@ $(document).ready(function() {
         updatemoney(); // 更新總價
     }
 
-
     //-------偵測變化-------
+    function updateCartCookieFromDOM() {
+         var cartData = {};
+
+        $(".cart_quantity_input").each(function () {
+            var productId = $(this).data("id");
+            var quantity = parseInt($(this).val());
+
+            if (quantity > 0) {
+                cartData[productId] = quantity;
+            }
+        });
+
+        document.cookie = "cart=" + JSON.stringify(cartData) + ";path=/;max-age=" + (7 * 24 * 60 * 60);
+    }
+
     //商品數量變化
-    // 點擊 "+" 按鈕
+    $(".cart_quantity_input_pd").change(function(e) {
+        e.preventDefault();
+        var inputField = $(this);
+        var currentValue = parseInt(inputField.val());
+        // 如果數量小於 1，則設置為 1
+        if (currentValue < 1) {
+            inputField.val(1);
+        }
+        changePrice($(this).closest("tr"), currentValue); // 更新總價
+    });
+
+    $(".cart_quantity_input").change(function(e) {
+        e.preventDefault();
+        var inputField = $(this);
+        var currentValue = parseInt(inputField.val());
+        // 如果數量小於 1，則設置為 1
+        if (currentValue < 1) {
+            inputField.val(1);
+        }
+        changePrice($(this).closest("tr"), currentValue); // 更新總價
+        updateCartCookieFromDOM();
+    });
+
+    //購物車後商品叉叉刪除
+    $(".cart_info").on("click", ".cart_quantity_delete", function(e) {
+        e.preventDefault(); // 防止 <a> 預設跳轉
+    
+        if (confirm("確定要刪除這個商品嗎？")) {
+            $(this).closest("tr").remove(); // 移除該列
+            updateTotalPrice(); // 更新總價
+        }
+        updateCartCookieFromDOM();
+    });
+
+
+    // 商品數量變化
+    // 點擊數量輸入框
+
+    //點擊 "+" 按鈕
     $(".cart_quantity_up").click(function(e) {
         e.preventDefault();  // 防止跳轉到其他頁面
         var inputField = $(this).siblings(".cart_quantity_input");  // 獲取對應的數量輸入框
+        var currentValue = parseInt(inputField.val());  // 取得當前的數量
+        inputField.val(currentValue + 1);  // 增加數量
+        changePrice($(this).closest("tr"), currentValue + 1);  // 更新總價
+        updateCartCookieFromDOM();
+    });
+    $(".cart_quantity_up_pd").click(function(e) {
+        e.preventDefault();  // 防止跳轉到其他頁面
+        var inputField = $(this).siblings(".cart_quantity_input_pd");  // 獲取對應的數量輸入框
         var currentValue = parseInt(inputField.val());  // 取得當前的數量
         inputField.val(currentValue + 1);  // 增加數量
         changePrice($(this).closest("tr"), currentValue + 1);  // 更新總價
@@ -147,30 +208,23 @@ $(document).ready(function() {
             }
         }
         changePrice($(this).closest("tr"), currentValue - 1);// 更新總價
+        updateCartCookieFromDOM();
     });
-
-    //商品數量變化
-    // 點擊數量輸入框
-    $(".cart_quantity_input").change(function(e) {
+    $(".cart_quantity_down_pd").click(function(e) {
         e.preventDefault();
-        var inputField = $(this);
+        var inputField = $(this).siblings(".cart_quantity_input_pd");
         var currentValue = parseInt(inputField.val());
-        // 如果數量小於 1，則設置為 1
-        if (currentValue < 1) {
-            inputField.val(1);
+        
+        // 如果數量大於 1，則減少數量
+        if (currentValue > 1) {
+            inputField.val(currentValue - 1);
+        } else {
+            // 如果數量小於等於 1，則維持1
+            inputField.val(currentValue);
         }
-        changePrice($(this).closest("tr"), currentValue); // 更新總價
+        changePrice($(this).closest("tr"), currentValue - 1);// 更新總價
     });
-
-    //購物車後商品叉叉刪除
-    $(".cart_info").on("click", ".cart_quantity_delete", function(e) {
-        e.preventDefault(); // 防止 <a> 預設跳轉
     
-        if (confirm("確定要刪除這個商品嗎？")) {
-            $(this).closest("tr").remove(); // 移除該列
-            updateTotalPrice(); // 更新總價
-        }
-    });
 
     // 更新運費
     $('input[name="send-way"]').change(updateShippingCost);
