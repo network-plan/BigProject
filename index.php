@@ -127,7 +127,7 @@ session_start();
                                         <?php
                                         if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {//若一般會員登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
-                                            echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
+                                            echo "<li><a href=\"historical_orders.php\">歷史訂單</a></li>";
                                             echo "<li><a href=\"cart.php\">購物車</a></li>";
                                         }else{
                                             echo "<li><a href=\"shop.php\">商品</a></li>";

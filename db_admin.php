@@ -187,7 +187,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                                 <?php
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
-                                    echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
+                                    echo "<li><a href=\"historical_orders.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
                                     echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
                                     echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
                                 }else if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin'){
@@ -225,7 +225,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                                         <?php
                                         if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {//若一般會員登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
-                                            echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
+                                            echo "<li><a href=\"historical_orders.php\">歷史訂單</a></li>";
                                             echo "<li><a href=\"cart.php\">購物車</a></li>";
                                         }else{
                                             echo "<li><a href=\"shop.php\">商品</a></li>";

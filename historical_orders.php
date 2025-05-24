@@ -359,7 +359,6 @@ SQL;
 										<li><a href="shop.php">商品</a></li>
 										<li><a href="historical_orders.php">歷史訂單</a></li>
 										<li><a href="cart.php">購物車</a></li>
-										<li><a href="login.php">登入</a></li>
 									</ul>
 								</li>
 								<li class="dropdown"><a href="#">評價<i class="fa fa-angle-down"></i></a>
