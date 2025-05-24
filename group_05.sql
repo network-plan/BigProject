@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-05-18 17:49:59
+-- 產生時間： 2025-05-23 15:16:18
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.0.30
 
@@ -60,16 +60,20 @@ CREATE TABLE `orders` (
   `username` varchar(255) NOT NULL,
   `order_date` date NOT NULL,
   `total_price` int(11) NOT NULL,
-  `status` varchar(255) NOT NULL
+  `status` varchar(255) NOT NULL,
+  `address` varchar(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci DEFAULT NULL,
+  `phone` varchar(15) NOT NULL,
+  `shipping_method` varchar(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- 傾印資料表的資料 `orders`
 --
 
-INSERT INTO `orders` (`order_id`, `member_id`, `username`, `order_date`, `total_price`, `status`) VALUES
-('1', '1', 'n1', '2025-03-28', 1234, '備貨中'),
-('2', '222', 'n2', '2025-03-28', 4321, '已出貨');
+INSERT INTO `orders` (`order_id`, `member_id`, `username`, `order_date`, `total_price`, `status`, `address`, `phone`, `shipping_method`) VALUES
+('ORD0000001', '2', 'member', '2025-05-23', 660, '已出貨', '彰化市師大路2號', '0912345678', '宅配到家'),
+('ORD0000002', '3', 'name001', '2025-05-23', 220, '已出貨', '彰化市師大路2號', '0900123123', '宅配到家'),
+('ORD0000003', '2', 'member', '2025-05-24', 340, '備貨中', '彰化小禮坊', '0987654321', '彰化小禮坊商店');
 
 -- --------------------------------------------------------
 
@@ -78,8 +82,9 @@ INSERT INTO `orders` (`order_id`, `member_id`, `username`, `order_date`, `total_
 --
 
 CREATE TABLE `order_items` (
-  `order_id` varchar(11) DEFAULT NULL,
-  `product_id` varchar(11) DEFAULT NULL,
+  `number` int(11) NOT NULL,
+  `order_id` varchar(255) DEFAULT NULL,
+  `product_id` varchar(255) DEFAULT NULL,
   `quantity` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -87,11 +92,12 @@ CREATE TABLE `order_items` (
 -- 傾印資料表的資料 `order_items`
 --
 
-INSERT INTO `order_items` (`order_id`, `product_id`, `quantity`) VALUES
-('1', 'P_0055', 3),
-('1', 'P_0028', 2),
-('2', 'P_0031', 3),
-('2', 'P_0053', 3);
+INSERT INTO `order_items` (`number`, `order_id`, `product_id`, `quantity`) VALUES
+(1, 'ORD0000001', 'P_0040', 2),
+(2, 'ORD0000001', 'P_0041', 1),
+(3, 'ORD0000002', 'P_0042', 1),
+(4, 'ORD0000003', 'P_0043', 1),
+(5, 'ORD0000003', 'P_0045', 1);
 
 -- --------------------------------------------------------
 
@@ -229,10 +235,10 @@ INSERT INTO `product_info` (`product_id`, `product_name`, `short_description`, `
 ('P_0037', '山形玫瑰花瓣醬', '迷人的香氣\r\n遍尋世界的品種，終於找到擁有\r\n顏色深紅華美、花型優美\r\n花瓣絲絨般溫潤\r\n馥郁甜香、口感極佳的品種\r\n將玫瑰獨特迷人香氣\r\n完整真實的呈現給你', '品名: 山形玫瑰花瓣醬\r\n淨重: 150公克(g)*2入\r\n成分: 砂糖、食用玫瑰花瓣、果膠、檸檬酸\r\n保存方式: 開封後請冷藏\r\n保存期限: 一年(未開封)\r\n產地: 台灣\r\n出品:埔里鎮農會農村休閒酒莊', 450, 1, '酒莊產品'),
 ('P_0038', '百香果汁', '濃縮果汁', '品名:百香果汁成分:百香果20%、果糖、蔗糖、水、檸檬酸、醋磺內酯鉀(甜味劑)、玉米醣膠(黏稠劑)、己二烯酸鉀(防腐劑)、食用黃色4號色素、食用黃色5號色素、食用香料內容量:800g±15g保存期限:一年產地:臺灣', 220, 1, '果汁系列'),
 ('P_0039', '玫瑰花釀', '濃縮果汁', '品名:玫瑰花釀\r\n成分:果糖、蜂蜜、蔗糖、玫瑰花、水、檸檬酸、醋磺內酯鉀(甜味劑)、玉米醣膠(黏稠劑)、己二烯酸鉀(防腐劑)、紅色40號色素、食用香料\r\n內容量:800g±15g\r\n保存期限:一年\r\n產地:臺灣', 220, 1, '果汁系列'),
-('P_0040', '玫瑰花釀', '濃縮果汁', '品名:桂花釀\r\n成分:果糖、蔗糖、蜂蜜、桂花、醋磺內酯鉀(甜味劑)、玉米醣膠(黏稠劑)、己二烯酸鉀(防腐劑)、食用香料\r\n內容量:800g±15g\r\n保存期限:一年\r\n產地:臺灣', 220, 1, '果汁系列'),
-('P_0041', '桑椹汁', '濃縮果汁', '品名:桑椹汁\r\n成分:桑椹20%、果糖、蔗糖、水、檸檬酸、醋磺內酯鉀(甜味劑)、玉米醣膠(黏稠劑)、己二烯酸鉀(防腐劑)、食用紅色40號色素、食用香料\r\n內容量:800g±15g\r\n保存期限:一年\r\n產地:臺灣', 220, 1, '果汁系列'),
-('P_0042', '金桔汁', '濃縮果汁', '品名:金桔汁\r\n成分:金桔20%、果糖、水、檸檬酸、、玉米醣膠(黏稠劑)、己二烯酸鉀(防腐劑)、食用香料、β-胡蘿蔔素\r\n內容量:600ml±15ml\r\n保存期限:一年\r\n產地:臺灣', 220, 1, '果汁系列'),
-('P_0043', '蔓越莓汁', '濃縮果汁', '品名:蔓越莓汁\r\n成分:蔓越莓20%、果糖、蔗糖、水、檸檬酸、醋磺內酯鉀(甜味劑)、果膠、玉米醣膠(黏稠劑)、己二烯酸鉀(防腐劑)、食用紅色40號色素、食用香料\r\n內容量:800g±15g\r\n保存期限:一年\r\n產地:臺灣', 220, 1, '果汁系列'),
+('P_0040', '玫瑰花釀', '濃縮果汁', '品名:桂花釀\r\n成分:果糖、蔗糖、蜂蜜、桂花、醋磺內酯鉀(甜味劑)、玉米醣膠(黏稠劑)、己二烯酸鉀(防腐劑)、食用香料\r\n內容量:800g±15g\r\n保存期限:一年\r\n產地:臺灣', 220, 99, '果汁系列'),
+('P_0041', '桑椹汁', '濃縮果汁', '品名:桑椹汁\r\n成分:桑椹20%、果糖、蔗糖、水、檸檬酸、醋磺內酯鉀(甜味劑)、玉米醣膠(黏稠劑)、己二烯酸鉀(防腐劑)、食用紅色40號色素、食用香料\r\n內容量:800g±15g\r\n保存期限:一年\r\n產地:臺灣', 220, 0, '果汁系列'),
+('P_0042', '金桔汁', '濃縮果汁', '品名:金桔汁\r\n成分:金桔20%、果糖、水、檸檬酸、、玉米醣膠(黏稠劑)、己二烯酸鉀(防腐劑)、食用香料、β-胡蘿蔔素\r\n內容量:600ml±15ml\r\n保存期限:一年\r\n產地:臺灣', 220, 87, '果汁系列'),
+('P_0043', '蔓越莓汁', '濃縮果汁', '品名:蔓越莓汁\r\n成分:蔓越莓20%、果糖、蔗糖、水、檸檬酸、醋磺內酯鉀(甜味劑)、果膠、玉米醣膠(黏稠劑)、己二烯酸鉀(防腐劑)、食用紅色40號色素、食用香料\r\n內容量:800g±15g\r\n保存期限:一年\r\n產地:臺灣', 220, 5, '果汁系列'),
 ('P_0044', '百香果豆腐乳', '非基因改造\r\n口感綿密回甘\r\n佐清粥、沾醬、炒菜、烹煮料理\r\n讓味道更美味', '品名:百香果豆腐乳內容物:黃豆(非基因改造)、水、糙米、食鹽、糖、百香果汁、食用酒精食品添加物:調味劑(胺基乙酸、琥珀酸二鈉)、甜味劑(甘草酸鈉、醋磺內酯鉀、蔗糖素)、品質改良劑(二氧化矽)內容量:345公克固形量:250公克過敏原:本產品含有大豆及其製品，不適合其過敏體質者食用原產地:台灣保存期限:二年', 120, 1, '醬菜類(罐頭食品)'),
 ('P_0045', '梅子豆腐乳', '非基因改造\r\n口感綿密回甘\r\n佐清粥、沾醬、炒菜、烹煮料理\r\n讓味道更美味', '品名:梅子豆腐乳\r\n內容物:黃豆(非基因改造)、水、糙米、食鹽、糖、烏梅汁、梅子\r\n食品添加物:胺基乙酸(調味劑)、琥珀酸二鈉(調味劑)、甘草酸鈉(甜味劑)、醋磺內酯鉀(甜味劑)、蔗糖素(甜味劑)、苯甲酸(防腐劑)、二氧化矽(品質改良劑)\r\n內容量:345公克\r\n固形量:250公克\r\n過敏原:本產品含有大豆，不適合其過敏體質者食用\r\n原產地:台灣\r\n保存期限:二年', 120, 1, '醬菜類(罐頭食品)'),
 ('P_0046', '鳳梨豆腐乳', '非基因改造\r\n口感綿密回甘\r\n佐清粥、沾醬、炒菜、烹煮料理\r\n讓味道更美味', '品名:鳳梨豆腐乳\r\n內容物:黃豆(非基因改造)、水、鹽、鳳梨果乾\r\n食品添加物:胺基丙酸(調味劑)、琥珀酸二鈉(調味劑)、甘草酸銨(甜味劑)、己二烯酸鉀(防腐劑)\r\n內容量:345公克\r\n固形量:250公克\r\n過敏原:本產品含有大豆及其製品，不適合其過敏體質者食用\r\n原產地:台灣\r\n保存期限:二年', 120, 1, '醬菜類(罐頭食品)'),
@@ -254,6 +260,8 @@ INSERT INTO `product_info` (`product_id`, `product_name`, `short_description`, `
 
 CREATE TABLE `reviews` (
   `review_id` varchar(255) NOT NULL,
+  `order_id` varchar(255) NOT NULL,
+  `product_id` varchar(255) NOT NULL,
   `user_id` varchar(255) NOT NULL,
   `username` varchar(255) NOT NULL,
   `rating` int(11) NOT NULL,
@@ -264,9 +272,8 @@ CREATE TABLE `reviews` (
 -- 傾印資料表的資料 `reviews`
 --
 
-INSERT INTO `reviews` (`review_id`, `user_id`, `username`, `rating`, `content`) VALUES
-('1', '123', '12313', 5, '31231'),
-('2', '32', '12', 3, '2');
+INSERT INTO `reviews` (`review_id`, `order_id`, `product_id`, `user_id`, `username`, `rating`, `content`) VALUES
+('REV20250523135506671', 'ORD0000001', 'P_0040', '2', 'member', 5, '讚唷!');
 
 --
 -- 已傾印資料表的索引
@@ -283,6 +290,34 @@ ALTER TABLE `members`
 --
 ALTER TABLE `orders`
   ADD PRIMARY KEY (`order_id`);
+
+--
+-- 資料表索引 `order_items`
+--
+ALTER TABLE `order_items`
+  ADD PRIMARY KEY (`number`);
+
+--
+-- 資料表索引 `product_info`
+--
+ALTER TABLE `product_info`
+  ADD PRIMARY KEY (`product_id`);
+
+--
+-- 資料表索引 `reviews`
+--
+ALTER TABLE `reviews`
+  ADD PRIMARY KEY (`review_id`);
+
+--
+-- 在傾印的資料表使用自動遞增(AUTO_INCREMENT)
+--
+
+--
+-- 使用資料表自動遞增(AUTO_INCREMENT) `order_items`
+--
+ALTER TABLE `order_items`
+  MODIFY `number` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
