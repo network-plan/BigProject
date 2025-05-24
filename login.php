@@ -3,6 +3,7 @@
 include('db_connection.php');
 // 啟用錯誤報告
 ini_set('display_errors', 1);
+session_start();
 error_reporting(E_ALL);
 
 // 測試資料庫連接
@@ -47,14 +48,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username']))
         echo "<script>alert('發生錯誤: " . $e->getMessage() . "');</script>";
     }
 }
-?>
-<?php
-
-session_start();
-include('db_connection.php');
 
 //專門用於登入的處理邏輯
-
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 	
 	// 輸出除錯信息
@@ -64,23 +59,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 	$password = $_POST['login_password'];
 
 	// 查詢資料表確認帳號密碼是否存在
-	$stmt = $conn->prepare("SELECT username,password FROM members WHERE username = ? AND password = ?");
+	$stmt = $conn->prepare("SELECT username, password, member_id FROM members WHERE username = ? AND password = ?");
 	$stmt->bind_param("ss", $username, $password);
 	$stmt->execute();
 	$result = $stmt->get_result();
-	if ($result->num_rows > 0) {
-		// 登入成功
-		
-		$_SESSION['username'] = $username;
 
+	if ($result->num_rows > 0) {
+		$row = $result->fetch_assoc(); // 取得查詢結果
+		
+		$_SESSION['username'] = $row['username'];
+		$_SESSION['member_id'] = $row['member_id']; 
+		
 		// 檢查是否為管理者
-		if ($username === 'admin' && $password === 'admin123456') {
+		if ($row['username'] === 'admin' && $password === 'admin123456') {
 			$_SESSION['role'] = 'admin';
 		} else {
 			$_SESSION['role'] = 'user';
 		}
-		echo "<!-- 登入成功，轉址中 -->";
-		header("Location: index.php");// 轉址到首頁
+
+		setcookie("cart", "", time() - 3600, "/");
+		header("Location: index.php");
 		exit();
 	} else {
 		echo "<script>alert('帳號或密碼錯誤');</script>";
@@ -107,21 +105,16 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 	<link href="css/login.css" rel="stylesheet">
 	<link href="css/responsive.css" rel="stylesheet">
 	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <!--[if lt IE 9]>
+    <script src="js/html5shiv.js"></script>
+    <script src="js/respond.min.js"></script>
+    <![endif]-->
     <link rel="shortcut icon" href="images/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-	<script src="js/jquery.js"></script>
-	<script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
-	<script src="js/login.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+
 </head><!--/head-->
 
 <body>
@@ -352,6 +345,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
 		</div>
 
 	</footer><!--/Footer-->
+	
+
+  
+    <script src="js/jquery.js"></script>
+	<script src="js/price-range.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/main.js"></script>
+	<script src="js/login.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+    <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script> -->
+    <!--additional method - for checkbox .. ,require_from_group method ...-->
+    <!-- <script src="//jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/localization/messages_zh_TW.js "></script> -->
 </body>
 </html>
 <?php $conn->close();?>

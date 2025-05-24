@@ -1,5 +1,7 @@
 <?php
 include('db_connection.php');
+session_start();
+include('check_login.php');//檢查登入
 
 // 決定當前操作的資料表
 $current_table = isset($_GET['table']) ? $_GET['table'] : 'product_info';
@@ -104,7 +106,14 @@ try {
 } catch (Exception $e) {
     echo "<p class='error'>" . $e->getMessage() . "</p>";
 }
-session_start();
+
+if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
+    echo "<script>
+        alert('你需要擁有管理者權限');
+        window.location.href = 'login.php';
+    </script>";
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="zh">
@@ -178,7 +187,7 @@ session_start();
                                 <?php
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
-                                    echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
+                                    echo "<li><a href=\"historical_orders.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
                                     echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
                                     echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
                                 }else if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin'){
@@ -216,7 +225,7 @@ session_start();
                                         <?php
                                         if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {//若一般會員登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
-                                            echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
+                                            echo "<li><a href=\"historical_orders.php\">歷史訂單</a></li>";
                                             echo "<li><a href=\"cart.php\">購物車</a></li>";
                                         }else{
                                             echo "<li><a href=\"shop.php\">商品</a></li>";

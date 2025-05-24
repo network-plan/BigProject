@@ -28,15 +28,17 @@ session_start();
     <link href="css/animate.css" rel="stylesheet">
     <link href="css/main.css" rel="stylesheet">
     <link href="css/responsive.css" rel="stylesheet">
-    <!--[if lt IE 9]>
-    <script src="js/html5shiv.js"></script>
-    <script src="js/respond.min.js"></script>
-    <![endif]-->
     <link rel="shortcut icon" href="images/ico/favicon.ico">
     <link rel="apple-touch-icon-precomposed" sizes="144x144" href="images/ico/apple-touch-icon-144-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+    <script src="js/price-range.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/main.js"></script>
 </head><!--/head-->
 
 <body>
@@ -81,7 +83,7 @@ session_start();
                                 <?php
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
-                                    echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
+                                    echo "<li><a href=\"historical_orders.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
                                     $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                     $total_items = 0;
                                     // 統計購物車中所有商品的「數量總和」
@@ -125,7 +127,7 @@ session_start();
                                         <?php
                                         if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {//若一般會員登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
-                                            echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
+                                            echo "<li><a href=\"historical_orders.php\">歷史訂單</a></li>";
                                             echo "<li><a href=\"cart.php\">購物車</a></li>";
                                         }else{
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
@@ -173,7 +175,7 @@ session_start();
                                     <h2>紅薏仁蕎麥</h2>
                                     <p>紅薏仁蕎麥兩盒超值組，養生加倍、優惠加倍，健康生活從每天開始！</p>
                                     <p>ฅ^•ﻌ•^ฅ</p>
-                                    <a href="product-details.php?id=P_0057">
+                                    <a href="shop.php">
                                         <button type="button" class="btn btn-default get">心動價 180 NTD</button>
                                     </a>
                                 </div>
@@ -188,8 +190,8 @@ session_start();
                                     <h2>紅薏仁蕎麥x雪花片</h2>
                                     <p>紅薏仁蕎麥結合雪花片，營養豐富，口感酥脆，是健康又美味的每日首選！</p>
                                     <p>(=^-ω-^=)</p>
-                                    <a href="product-details.php?id=P_0056">
-                                        <button type="button" class="btn btn-default get">心動價 729 NTD</button>
+                                    <a href="product-details.php?id=P_0009">
+                                        <button type="button" class="btn btn-default get">心動價 160 NTD</button>
                                     </a>
                                 </div>
                                 <div class="col-sm-6">
@@ -220,75 +222,6 @@ session_start();
                         <!-- <h2>Category</h2> -->
                         <h2>商品分類</h2>
                         <div class="panel-group category-products" id="accordian">
-                            <!-- <div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title">
-										<a data-toggle="collapse" data-parent="#accordian" href="#sportswear">
-											<span class="badge pull-right"><i class="fa fa-plus"></i></span>
-											Sportswear
-										</a>
-									</h4>
-								</div>
-								<div id="sportswear" class="panel-collapse collapse">
-									<div class="panel-body">
-										<ul>
-											<li><a href="#">Nike </a></li>
-											<li><a href="#">Under Armour </a></li>
-											<li><a href="#">Adidas </a></li>
-											<li><a href="#">Puma</a></li>
-											<li><a href="#">ASICS </a></li>
-										</ul>
-									</div>
-								</div>
-							</div> -->
-                            <!-- <div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title">
-										<a data-toggle="collapse" data-parent="#accordian" href="#mens">
-											<span class="badge pull-right"><i class="fa fa-plus"></i></span>
-											Mens
-										</a>
-									</h4>
-								</div>
-								<div id="mens" class="panel-collapse collapse">
-									<div class="panel-body">
-										<ul>
-											<li><a href="#">Fendi</a></li>
-											<li><a href="#">Guess</a></li>
-											<li><a href="#">Valentino</a></li>
-											<li><a href="#">Dior</a></li>
-											<li><a href="#">Versace</a></li>
-											<li><a href="#">Armani</a></li>
-											<li><a href="#">Prada</a></li>
-											<li><a href="#">Dolce and Gabbana</a></li>
-											<li><a href="#">Chanel</a></li>
-											<li><a href="#">Gucci</a></li>
-										</ul>
-									</div>
-								</div>
-							</div> -->
-
-                            <!-- <div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title">
-										<a data-toggle="collapse" data-parent="#accordian" href="#womens">
-											<span class="badge pull-right"><i class="fa fa-plus"></i></span>
-											Womens
-										</a>
-									</h4>
-								</div>
-								<div id="womens" class="panel-collapse collapse">
-									<div class="panel-body">
-										<ul>
-											<li><a href="#">Fendi</a></li>
-											<li><a href="#">Guess</a></li>
-											<li><a href="#">Valentino</a></li>
-											<li><a href="#">Dior</a></li>
-											<li><a href="#">Versace</a></li>
-										</ul>
-									</div>
-								</div>
-							</div> -->
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title"><a href="shop.php"><b>全部商品</b></a></h4>
@@ -319,22 +252,7 @@ session_start();
                                 </div>
                             </div>
                         </div>
-
-                        <!--price-range-->
-                        <!-- <div class="price-range">
-							<h2>Price Range</h2>
-							<div class="well text-center">
-								<input type="text" class="span2" value="" data-slider-min="0" data-slider-max="600"
-									data-slider-step="5" data-slider-value="[250,450]" id="sl2"><br />
-								<b class="pull-left">$ 0</b> <b class="pull-right">$ 600</b>
-							</div>
-						</div> -->
-                        <!--/price-range-->
-                        <!-- 左側圖片 -->
-                        <!-- <div class="shipping text-center">shipping -->
                         <img src="./images/home/vegetable.png" alt="" />
-                        <!-- <img src="#" alt="這裡可以放圖片 只需將alt刪掉 src加上連結" /> -->
-                        <!-- </div>/shipping -->
 
                     </div>
                 </div>
@@ -372,147 +290,18 @@ session_start();
                             echo '<img src="' . htmlspecialchars($row['img_url']) . '" alt="" style="width:250px; height:250px;" />';
                             echo '<h2>' . htmlspecialchars($row['price']) . ' NTD</h2>';
                             echo '<p>' . htmlspecialchars($row['product_name']) . '</p>';
-                            echo '<a href="product-details.php?id=' . urlencode($row['product_id']) . '" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>加入購物車</a>';
+                            // echo '<a href="product-details.php?id=' . urlencode($row['product_id']) . '" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>加入購物車</a>';
                             echo '</div>';
                             echo '</div>';
                             echo '<div class="choose">';
                             echo '<ul class="nav nav-pills nav-justified">';
-                            echo '<li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>';
+                            echo '<li><a href="product-details.php?id=' . urlencode($row['product_id']) . '" class="btn btn-default add-to-cart"><i class="fa fa-plus-square"></i>詳細資料</a></li>';
                             echo '</ul>';
                             echo '</div>';
                             echo '</div>';
                             echo '</div>';
                         }
                         ?>
-                        <!-- <div class="col-sm-4">
-                            <div class="product-image-wrapper">
-                                <div class="single-products">
-                                    <div class="productinfo text-center">
-                                        <img src="images/product-details/img1.png" alt="" />
-                                        <h2>99 NTD</h2>
-                                        <p>紅薏仁蕎麥x雪花片</p>
-                                        <a href="product-details.php" class="btn btn-default add-to-cart">
-                                            <i class="fa fa-shopping-cart"></i>加入購物車</a>
-                                    </div>
-                                </div>
-                                <div class="choose">
-                                    <ul class="nav nav-pills nav-justified">
-                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="product-image-wrapper">
-                                <div class="single-products">
-                                    <div class="productinfo text-center">
-                                        <img src="images/product-details/img2.png" alt="" />
-                                        <h2>99 NTD</h2>
-                                        <p>紅薏仁蕎麥</p>
-                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
-                                                class="fa fa-shopping-cart"></i>加入購物車</a>
-                                    </div>
-                                </div>
-                                <div class="choose">
-                                    <ul class="nav nav-pills nav-justified">
-                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="product-image-wrapper">
-                                <div class="single-products">
-                                    <div class="productinfo text-center">
-                                        <img src="images/product-details/img3.png" alt="" />
-                                        <h2>99 NTD</h2>
-                                        <p>蕎麥水果脆片x雪花片</p>
-                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
-                                                class="fa fa-shopping-cart"></i>加入購物車</a>
-                                    </div>
-                                </div>
-                                <div class="choose">
-                                    <ul class="nav nav-pills nav-justified">
-                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="product-image-wrapper">
-                                <div class="single-products">
-                                    <div class="productinfo text-center">
-                                        <img src="images/product-details/img4.png" alt="" />
-                                        <h2>120 NTD</h2>
-                                        <p>紅薏仁蕎麥x養生粉</p>
-                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
-                                                class="fa fa-shopping-cart"></i>加入購物車</a>
-                                    </div>
-                                </div>
-                                <div class="choose">
-                                    <ul class="nav nav-pills nav-justified">
-                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="product-image-wrapper">
-                                <div class="single-products">
-                                    <div class="productinfo text-center">
-                                        <img src="images/product-details/img5.png" alt="" />
-                                        <h2>110 NTD</h2>
-                                        <p>蕎麥x紅薏仁</p>
-                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
-                                                class="fa fa-shopping-cart"></i>加入購物車</a>
-                                    </div>
-                                </div>
-                                <div class="choose">
-                                    <ul class="nav nav-pills nav-justified">
-                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="product-image-wrapper">
-                                <div class="single-products">
-                                    <div class="productinfo text-center">
-                                        <img src="images/product-details/img6.png" alt="" />
-                                        <h2>150 NTD</h2>
-                                        <p>蕎麥x紅薏仁超值組合</p>
-                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
-                                                class="fa fa-shopping-cart"></i>加入購物車</a>
-                                    </div>
-                                </div>
-                                <div class="choose">
-                                    <ul class="nav nav-pills nav-justified">
-                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="product-image-wrapper">
-                                <div class="single-products">
-                                    <div class="productinfo text-center">
-                                        <img src="images/product-details/Pimg_0001.jpg" alt="" />
-                                        <h2>850 NTD</h2>
-                                        <p>年節禮盒</p>
-                                        <a href="product-details.php" class="btn btn-default add-to-cart"><i
-                                                class="fa fa-shopping-cart"></i>加入購物車</a>
-                                    </div>
-                                </div>
-                                <div class="choose">
-                                    <ul class="nav nav-pills nav-justified">
-                                        <li><a href="blog.html"><i class="fa fa-plus-square"></i>查看評價</a></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div> -->
-                        
-
-
                     </div><!--features_items-->
                 </div>
             </div>
@@ -597,15 +386,6 @@ session_start();
         </div>
 
     </footer><!--/Footer-->
-
-
-
-    <script src="js/jquery.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
 </body>
 
 </html>

@@ -1,5 +1,50 @@
 <?php
+include('db_connection.php'); // 連接資料庫
 session_start();
+include('check_login.php');//檢查登入
+// 取得購物車內容（從 cookie 中）
+$cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
+
+if (empty($cart)) {
+    echo '<script>alert("購物車是空的。開始購物吧！"); window.location.href="shop.php";</script>';
+    exit();
+}
+
+// 取得所有 product_id
+$product_ids = array_keys($cart);
+
+// 準備 SQL 查詢
+$placeholders = implode(',', array_fill(0, count($product_ids), '?'));
+
+$sql = "
+    SELECT 
+        p.product_id, 
+        p.product_name, 
+        p.price, 
+        i.img_url 
+    FROM 
+        product_info p 
+    LEFT JOIN 
+        product_img i 
+    ON 
+        p.product_id = i.product_id 
+    WHERE 
+        p.product_id IN ($placeholders)
+";
+
+$stmt = $conn->prepare($sql);
+
+// 綁定查詢參數
+$types = str_repeat('s', count($product_ids));
+$stmt->bind_param($types, ...$product_ids);
+$stmt->execute();
+$result = $stmt->get_result();
+
+// 把查詢結果整理成陣列
+$products = [];
+while ($row = $result->fetch_assoc()) {
+    $products[$row['product_id']] = $row;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,7 +81,12 @@ session_start();
 			margin-top: 20px;
 			color: #83B1C9;
 		}
-		
+		.cart_product img {
+			width: 120px;   
+			height: auto;   
+			object-fit: cover; 
+		}
+
 	</style>
 </head><!--/head-->
 
@@ -83,13 +133,11 @@ session_start();
 								<?php
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
-                                    echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
+                                    echo "<li><a href=\"historical_orders.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
                                     echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
                                 }else if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin'){
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
                                     echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
-                                }else{//若沒有登入 不管點甚麼都導入到登入頁面
-                                    echo "<li><a href=\"login.php\"><i class=\"fa fa-lock\"></i> 登入</a></li>";
                                 }
                                 ?>
 							</ul>
@@ -121,8 +169,8 @@ session_start();
                                         <?php
                                         if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {//若一般會員登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
-                                            echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
-                                            echo "<li><a href=\"cart.php\">購物車</a></li>";
+                                            echo "<li><a href=\"historical_orders.php\">歷史訂單</a></li>";
+											echo "<li><a href=\"cart.php\">購物車</a></li>";
                                         }else{
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
                                         }
@@ -180,83 +228,39 @@ session_start();
 					</thead>
 					<!-- 商品資訊 -->
 					<tbody>
-						<tr>
-							<td class="cart_product">
-								<a href=""><img src="./images/cart/img3.jpg" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a href="">蕎麥水果脆片x雪花片</a></h4>
-								<p>Web ID: 2025410</p>
-							</td>
-							<td class="cart_price">
-								<p>NT$99</p>
-							</td>
-							<td class="cart_quantity">
-								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href="#"> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="1">
-									<a class="cart_quantity_down" href="#"> - </a>
-								</div>
-							</td>
-							<td class="cart_total">
-								<p class="cart_total_price">NT$99</p>
-							</td>
-							<td class="cart_delete">
-								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-							</td>
-						</tr>
-						
-						<tr>
-							<td class="cart_product">
-								<a href=""><img src="./images/cart/img6.jpg" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a href="">蕎麥x紅薏仁超值組合</a></h4>
-								<p>Web ID: 2025410</p>
-							</td>
-							<td class="cart_price">
-								<p>NT$150</p>
-							</td>
-							<td class="cart_quantity">
-								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href="#"> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="2">
-									<a class="cart_quantity_down" href="#"> - </a>
-								</div>
-							</td>
-							<td class="cart_total">
-								<p class="cart_total_price">NT$150</p>
-							</td>
-							<td class="cart_delete">
-								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-							</td>
-						</tr>
-						
-						<tr>
-							<td class="cart_product">
-								<a href=""><img src="./images/cart/img4.jpg" alt=""></a>
-							</td>
-							<td class="cart_description">
-								<h4><a href="">紅薏仁蕎麥x養生粉</a></h4>
-								<p>Web ID: 2025410</p>
-							</td>
-							<td class="cart_price">
-								<p>NT$120</p>
-							</td>
-							<td class="cart_quantity">
-								<div class="cart_quantity_button">
-									<a class="cart_quantity_up" href="#"> + </a>
-									<input class="cart_quantity_input" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="3">
-									<a class="cart_quantity_down" href="#"> - </a>
-								</div>
-							</td>
-							<td class="cart_total">
-								<p class="cart_total_price">NT$120</p>
-							</td>
-							<td class="cart_delete">
-								<a class="cart_quantity_delete" href=""><i class="fa fa-times"></i></a>
-							</td>
-						</tr>						
+						<?php foreach ($products as $product_id => $product): 
+							$quantity = $cart[$product_id];
+							$total_price = $product['price'] * $quantity;
+						?>
+							<tr>
+								<td class="cart_product" style="width: 150px;">
+									<a href="product-details.php?id=<?= htmlspecialchars($product_id) ?>">
+										<img src="<?= htmlspecialchars($product['img_url']) ?>" alt="<?= htmlspecialchars($product['product_name']) ?>">
+									</a>
+								</td>
+								<td class="cart_description" style="width: 250px;">
+									<h4><a href="product-details.php?id=<?= htmlspecialchars($product_id) ?>">
+										<?= htmlspecialchars($product['product_name']) ?>
+									</a></h4>
+								</td>
+								<td class="cart_price">
+									<p>NT$<?= number_format($product['price']) ?></p>
+								</td>
+								<td class="cart_quantity">
+									<div class="cart_quantity_button">
+										<a class="cart_quantity_up" href="#"> + </a>
+										<input class="cart_quantity_input" type="text" name="quantity" value="<?= $quantity ?>" autocomplete="off" size="2" data-id="<?= htmlspecialchars($product_id) ?>">
+										<a class="cart_quantity_down" href="#"> - </a>
+									</div>
+								</td>
+								<td class="cart_total">
+									<p class="cart_total_price">NT$<?= number_format($total_price) ?></p>
+								</td>
+								<td class="cart_delete">
+									<a class="cart_quantity_delete" href="#"><i class="fa fa-times"></i></a>
+								</td>
+							</tr>
+						<?php endforeach; ?>
 					</tbody>
 				</table>
 			</div>
@@ -317,16 +321,6 @@ session_start();
 
 						<!-- 地區與郵遞區號（僅在選擇宅配時顯示） -->
 						<ul class="user_info delivery-info" style="display: none;">
-							<li class="single_field">
-								<div class="region-box" name="region">
-									<label>地區：</label>
-									<select id="country">
-										<option value="0" name="region">台灣本島 +0元</option>
-										<option value="1" name="region">台灣離島 +50元</option>
-										<option value="2" name="region">海外 +200元</option>
-									</select>
-								</div>
-							</li>
 							<!-- single_field -->
 							<li class="zip-field">
 								<br/>
@@ -347,12 +341,12 @@ session_start();
 							<!-- <li>Shipping Cost <span>2 NTD</span></li> -->
 							<li>運費 <span>0 NTD</span></li>
 							<!-- <li>coupon discount<span>- 60 NTD</span></li> -->
-							<li>優惠卷減免<span>- 60 NTD</span></li>
+							<li>優惠卷減免<span>0 NTD</span></li>
 							<hr/>
 							<!-- <li>Total <span>65 NTD</span></li> -->
-							<li>總金額 <span>65 NTD</span></li>
+							<li>總金額 <span id="total-amount">0 NTD</span></li>
 						</ul>
-							<a class="btn btn-default update" href="">確認訂單並送出</a>
+							<button type="submit" class="btn update submit-order">確認訂單並送出</button>
 					</div>
 				</div>
 			</div>
