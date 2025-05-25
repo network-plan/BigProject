@@ -1,3 +1,4 @@
+
 <?php
 include('db_connection.php');
 session_start();
@@ -5,7 +6,7 @@ include('check_login.php');//檢查登入
 
 // 決定當前操作的資料表
 $current_table = isset($_GET['table']) ? $_GET['table'] : 'product_info';
-// 新增商品或圖片
+// 新增記錄
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
     if ($_POST['table'] == 'product_info') {
         $stmt = $conn->prepare("INSERT INTO product_info (product_id, product_name, short_description, full_description, price, stock, category) VALUES (?, ?, ?, ?, ?, ?, ?)");
@@ -15,13 +16,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
         $stmt->bind_param("sss", $_POST['img_id'], $_POST['product_id'], $_POST['img_url']);
     } elseif ($_POST['table'] == 'members') {
         $stmt = $conn->prepare("INSERT INTO members (member_id, username, email, password, phone, register_date) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssds", $_POST['member_id'], $_POST['username'], $_POST['email'], $_POST['password'], $_POST['phone'], $_POST['register_date']);
+        $stmt->bind_param("ssssss", $_POST['member_id'], $_POST['username'], $_POST['email'], $_POST['password'], $_POST['phone'], $_POST['register_date']);
     } elseif ($_POST['table'] == 'orders') {
-        $stmt = $conn->prepare("INSERT INTO orders (order_id, member_id, username, order_date, total_price, status) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("isssds", $_POST['order_id'], $_POST['member_id'], $_POST['username'], $_POST['order_date'], $_POST['total_price'], $_POST['status']);
+        $stmt = $conn->prepare("INSERT INTO orders (order_id, member_id, username, order_date, total_price, status, address, phone, shipping_method) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssisss", $_POST['order_id'], $_POST['member_id'], $_POST['username'], $_POST['order_date'], $_POST['total_price'], $_POST['status'], $_POST['address'], $_POST['phone'], $_POST['shipping_method']);
+    } elseif ($_POST['table'] == 'order_items') {
+        $stmt = $conn->prepare("INSERT INTO order_items (number, order_id, product_id, quantity) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("issi",$_POST['number'], $_POST['order_id'], $_POST['product_id'], $_POST['quantity']);
     } elseif ($_POST['table'] == 'reviews') {
-        $stmt = $conn->prepare("INSERT INTO reviews (review_id, user_id, username, rating, content) VALUES (?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssi", $_POST['review_id'], $_POST['user_id'], $_POST['username'], $_POST['rating'], $_POST['content']);
+        $stmt = $conn->prepare("INSERT INTO reviews (review_id, order_id, product_id, user_id, username, rating, content) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssssis", $_POST['review_id'], $_POST['order_id'], $_POST['product_id'], $_POST['user_id'], $_POST['username'], $_POST['rating'], $_POST['content']);
     }
     if ($stmt->execute()) {
         echo "<p class='success'>新增成功!</p>";
@@ -30,7 +34,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
     }
     $stmt->close();
 }
-// 更新商品或圖片
+
+// 更新記錄
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     if ($_POST['table'] == 'product_info') {
         $stmt = $conn->prepare("UPDATE product_info SET product_name=?, short_description=?, full_description=?, price=?, stock=?, category=? WHERE product_id=?");
@@ -42,11 +47,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
         $stmt = $conn->prepare("UPDATE members SET username=?, email=?, password=?, phone=?, register_date=? WHERE member_id=?");
         $stmt->bind_param("ssssss", $_POST['username'], $_POST['email'], $_POST['password'], $_POST['phone'], $_POST['register_date'], $_POST['member_id']);
     } elseif ($_POST['table'] == 'orders') {
-        $stmt = $conn->prepare("UPDATE orders SET member_id=?, username=?, order_date=?, total_price=?, status=? WHERE order_id=?");
-        $stmt->bind_param("sssdsi", $_POST['member_id'], $_POST['username'], $_POST['order_date'], $_POST['total_price'], $_POST['status'], $_POST['order_id']);
+
+        $stmt = $conn->prepare("UPDATE orders SET member_id=?, username=?, order_date=?, total_price=?, status=?, address=?, phone=?, shipping_method=? WHERE order_id=?");
+        $stmt->bind_param("sssisssss", $_POST['member_id'], $_POST['username'], $_POST['order_date'], $_POST['total_price'], $_POST['status'], $_POST['address'], $_POST['phone'], $_POST['shipping_method'], $_POST['order_id']);
+
+    } elseif ($_POST['table'] == 'order_items') {
+
+        $stmt = $conn->prepare("UPDATE order_items SET  order_id=?, product_id=?, quantity=? WHERE number=?");
+        $stmt->bind_param("ssii", $_POST['order_id'], $_POST['product_id'], $_POST['quantity'], $_POST['number']);
+
     } elseif ($_POST['table'] == 'reviews') {
-        $stmt = $conn->prepare("UPDATE reviews SET user_id=?, username=?, rating=?, content=? WHERE review_id=?");
-        $stmt->bind_param("ssis", $_POST['user_id'], $_POST['username'], $_POST['rating'], $_POST['content'], $_POST['review_id']);
+        $stmt = $conn->prepare("UPDATE reviews SET order_id=?, product_id=?, user_id=?, username=?, rating=?, content=? WHERE review_id=?");
+        $stmt->bind_param("ssssiss", $_POST['order_id'], $_POST['product_id'], $_POST['user_id'], $_POST['username'], $_POST['rating'], $_POST['content'], $_POST['review_id']);
     }
     if ($stmt->execute()) {
         echo "<p class='success'>更新成功!</p>";
@@ -55,7 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
     }
     $stmt->close();
 }
-// 刪除商品或圖片
+
+// 刪除記錄
 if (isset($_GET['delete']) && isset($_GET['table'])) {
     if ($_GET['table'] == 'product_info') {
         $stmt = $conn->prepare("DELETE FROM product_info WHERE product_id=?");
@@ -68,6 +81,9 @@ if (isset($_GET['delete']) && isset($_GET['table'])) {
         $stmt->bind_param("s", $_GET['delete']);
     } elseif ($_GET['table'] == 'orders') {
         $stmt = $conn->prepare("DELETE FROM orders WHERE order_id=?");
+        $stmt->bind_param("s", $_GET['delete']);
+    } elseif ($_GET['table'] == 'order_items') {
+        $stmt = $conn->prepare("DELETE FROM order_items WHERE number=?");
         $stmt->bind_param("i", $_GET['delete']);
     } elseif ($_GET['table'] == 'reviews') {
         $stmt = $conn->prepare("DELETE FROM reviews WHERE review_id=?");
@@ -80,6 +96,7 @@ if (isset($_GET['delete']) && isset($_GET['table'])) {
     }
     $stmt->close();
 }
+
 // 取得資料表資料
 $result = false;
 $rows = [];
@@ -92,6 +109,8 @@ try {
         $result = $conn->query("SELECT * FROM members");
     } elseif ($current_table == 'orders') {
         $result = $conn->query("SELECT * FROM orders");
+    } elseif ($current_table == 'order_items') {
+        $result = $conn->query("SELECT * FROM order_items");
     } elseif ($current_table == 'reviews') {
         $result = $conn->query("SELECT * FROM reviews");
     }
@@ -250,6 +269,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
 			</div>
 		</div><!--/header-bottom-->
 	</header><!--/header-->
+
 	
 	<div class="container">
         <h1>商品管理系統</h1>
@@ -267,9 +287,13 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                 onclick="location.href='?table=orders'"
                 class="<?= $current_table == 'orders' ? 'active' : '' ?>">訂單資訊</button>
             <button
+                onclick="location.href='?table=order_items'"
+                class="<?= $current_table == 'order_items' ? 'active' : '' ?>">訂單項目</button>
+            <button
                 onclick="location.href='?table=reviews'"
                 class="<?= $current_table == 'reviews' ? 'active' : '' ?>">評論資訊</button>
         </div>
+
         <?php if ($current_table == 'product_info'): ?>
             <h2>新增商品</h2>
             <form method="POST">
@@ -309,6 +333,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                     </tr>
                 <?php endforeach; ?>
             </table>
+
             <h2>修改商品</h2>
             <form method="POST" name="update">
                 <input type="hidden" name="table" value="product_info">
@@ -321,6 +346,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                 <input type="text" name="category" id="edit_category" placeholder="類別" required>
                 <input type="submit" name="update" value="更新商品">
             </form>
+
         <?php elseif ($current_table == 'product_img'): ?>
             <h2>新增商品圖片</h2>
             <form method="POST">
@@ -358,6 +384,7 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                 <input type="text" name="img_url" id="edit_img_url" placeholder="圖片URL" required>
                 <input type="submit" name="update" value="更新圖片">
             </form>
+
         <?php elseif ($current_table == 'members'): ?>
             <h2>新增會員</h2>
             <form method="POST">
@@ -412,15 +439,18 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
             <h2>新增訂單</h2>
             <form method="POST">
                 <input type="hidden" name="table" value="orders">
-                <input type="number" name="order_id" placeholder="訂單編號" required>
+                <input type="text" name="order_id" placeholder="訂單編號" required>
                 <input type="text" name="member_id" placeholder="會員編號" required>
                 <input type="text" name="username" placeholder="使用者名稱" required>
                 <input type="date" name="order_date" placeholder="訂單日期" required>
                 <input type="number" name="total_price" placeholder="總金額" required>
                 <input type="text" name="status" placeholder="訂單狀態" required>
+                <input type="text" name="address" placeholder="地址">
+                <input type="text" name="phone" placeholder="電話" required>
+                <input type="text" name="shipping_method" placeholder="配送方式" required>
                 <input type="submit" name="create" value="新增訂單">
             </form>
-            <h2>訂單列表</h2>
+            <<h2>訂單列表</h2>
             <table>
                 <tr>
                     <th>訂單編號</th>
@@ -429,6 +459,9 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                     <th>訂單日期</th>
                     <th>總金額</th>
                     <th>狀態</th>
+                    <th>地址</th>
+                    <th>電話</th>
+                    <th>配送方式</th>
                     <th>操作</th>
                 </tr>
                 <?php foreach ($rows as $row): ?>
@@ -439,6 +472,9 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                         <td><?= htmlspecialchars($row['order_date']); ?></td>
                         <td><?= htmlspecialchars($row['total_price']); ?></td>
                         <td><?= htmlspecialchars($row['status']); ?></td>
+                        <td><?= htmlspecialchars($row['address']); ?></td>
+                        <td><?= htmlspecialchars($row['phone']); ?></td>
+                        <td><?= htmlspecialchars($row['shipping_method']); ?></td>
                         <td>
                             <button onclick='editOrder(<?= json_encode($row); ?>)'>修改</button>
                             <a href="?delete=<?= urlencode($row['order_id']); ?>&table=orders" onclick="return confirm('確定要刪除這個訂單嗎？')">刪除</a>
@@ -449,19 +485,67 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
             <h2>修改訂單</h2>
             <form method="POST" name="update">
                 <input type="hidden" name="table" value="orders">
-                <input type="number" name="order_id" id="edit_order_id" placeholder="訂單編號" readonly required>
+                <input type="text" name="order_id" id="edit_order_id" placeholder="訂單編號" readonly required>
                 <input type="text" name="member_id" id="edit_order_member_id" placeholder="會員編號" required>
                 <input type="text" name="username" id="edit_order_username" placeholder="使用者名稱" required>
                 <input type="date" name="order_date" id="edit_order_date" placeholder="訂單日期" required>
                 <input type="number" name="total_price" id="edit_order_total_price" placeholder="總金額" required>
                 <input type="text" name="status" id="edit_order_status" placeholder="訂單狀態" required>
+                <input type="text" name="address" id="edit_order_address" placeholder="地址" required>
+                <input type="text" name="phone" id="edit_order_phone" placeholder="電話" required>
+                <input type="text" name="shipping_method" id="edit_order_shipping_method" placeholder="配送方式" required>
                 <input type="submit" name="update" value="更新訂單">
             </form>
+        
+        <?php elseif ($current_table == 'order_items'): ?>
+            <h2>新增訂單項目</h2>
+            <form method="POST">
+                <input type="hidden" name="table" value="order_items">
+                <input type="text" name="number" placeholder="項目編號" required>
+                <input type="text" name="order_id" placeholder="訂單編號" required>
+                <input type="text" name="product_id" placeholder="商品編號" required>
+                <input type="number" name="quantity" placeholder="數量" required>
+                <input type="submit" name="create" value="新增訂單項目">
+            </form>
+            <<h2>訂單項目列表</h2>
+            <table>
+                <tr>
+                    <th>項目編號</th>
+                    <th>訂單編號</th>
+                    <th>商品編號</th>
+                    <th>數量</th>
+                    <th>操作</th>
+                </tr>
+                <?php foreach ($rows as $row): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($row['number']); ?></td>
+                        <td><?= htmlspecialchars($row['order_id']); ?></td>
+                        <td><?= htmlspecialchars($row['product_id']); ?></td>
+                        <td><?= htmlspecialchars($row['quantity']); ?></td>
+                        <td>
+                            <button onclick='editOrder_items(<?= json_encode($row); ?>)'>修改</button>
+                            <a href="?delete=<?= urlencode($row['number']); ?>&table=order_items" onclick="return confirm('確定要刪除這個訂單嗎？')">刪除</a>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            </table>
+            <h2>修改訂單項目</h2>
+            <form method="POST" name="update">
+                <input type="hidden" name="table" value="order_items">
+                <input type="number" name="number" id="edit_order_items_number" placeholder="項目編號" readonly required>
+                <input type="text" name="order_id" id="edit_order_items_order_id" placeholder="訂單編號" required>
+                <input type="text" name="product_id" id="edit_order_items_product_id" placeholder="商品編號" required>
+                <input type="number" name="quantity" id="edit_order_items_quantity" placeholder="數量" required>
+                <input type="submit" name="update" value="更新訂單">
+            </form>
+        
         <?php elseif ($current_table == 'reviews'): ?>
             <h2>新增評論</h2>
             <form method="POST">
                 <input type="hidden" name="table" value="reviews">
                 <input type="text" name="review_id" placeholder="評論編號" required>
+                <input type="text" name="order_id" placeholder="訂單編號" required>
+                <input type="text" name="product_id" placeholder="商品編號" required>
                 <input type="text" name="user_id" placeholder="使用者編號" required>
                 <input type="text" name="username" placeholder="使用者名稱" required>
                 <input type="number" name="rating" placeholder="評分" min="1" max="5" required>
@@ -472,6 +556,8 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
             <table>
                 <tr>
                     <th>評論編號</th>
+                    <th>訂單編號</th>
+                    <th>商品編號</th>
                     <th>使用者編號</th>
                     <th>使用者名稱</th>
                     <th>評分</th>
@@ -481,6 +567,8 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                 <?php foreach ($rows as $row): ?>
                     <tr>
                         <td><?= htmlspecialchars($row['review_id']); ?></td>
+                        <td><?= htmlspecialchars($row['order_id']); ?></td>
+                        <td><?= htmlspecialchars($row['product_id']); ?></td>
                         <td><?= htmlspecialchars($row['user_id']); ?></td>
                         <td><?= htmlspecialchars($row['username']); ?></td>
                         <td><?= htmlspecialchars($row['rating']); ?></td>
@@ -496,6 +584,8 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
             <form method="POST" name="update">
                 <input type="hidden" name="table" value="reviews">
                 <input type="text" name="review_id" id="edit_review_id" placeholder="評論編號" readonly required>
+                <input type="text" name="order_id" id="edit_review_order_id" placeholder="訂單編號" required>
+                <input type="text" name="product_id" id="edit_review_product_id" placeholder="商品編號" required>
                 <input type="text" name="user_id" id="edit_review_user_id" placeholder="使用者編號" required>
                 <input type="text" name="username" id="edit_review_username" placeholder="使用者名稱" required>
                 <input type="number" name="rating" id="edit_review_rating" placeholder="評分" min="1" max="5" required>
