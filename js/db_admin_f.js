@@ -71,7 +71,28 @@ function editOrder(orderData) {
         document.getElementById('edit_order_date').value = order.order_date;
         document.getElementById('edit_order_total_price').value = order.total_price;
         document.getElementById('edit_order_status').value = order.status;
-        
+        document.getElementById('edit_order_address').value = order.address;
+        document.getElementById('edit_order_phone').value = order.phone;
+        document.getElementById('edit_order_shipping_method').value = order.shipping_method;
+
+        console.log(order);
+
+        // 滾動到修改表單
+        document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
+    } catch (e) {
+        console.error("解析訂單數據時發生錯誤:", e);
+        alert("無法載入訂單數據，請稍後再試");
+    }
+}
+
+function editOrder_items(order_items_Data) {
+    try {
+        const order_items = typeof order_items_Data === 'string' ? JSON.parse(order_items_Data) : order_items_Data;
+        document.getElementById('edit_order_items_number').value = order_items.number;
+        document.getElementById('edit_order_items_order_id').value = order_items.order_id;
+        document.getElementById('edit_order_items_product_id').value = order_items.product_id;
+        document.getElementById('edit_order_items_quantity').value = order_items.quantity;
+
         // 滾動到修改表單
         document.querySelector('form[name="update"]').scrollIntoView({ behavior: 'smooth' });
     } catch (e) {
@@ -84,6 +105,8 @@ function editReview(reviewData) {
     try {
         const review = typeof reviewData === 'string' ? JSON.parse(reviewData) : reviewData;
         document.getElementById('edit_review_id').value = review.review_id;
+        document.getElementById('edit_review_order_id').value = review.order_id;
+        document.getElementById('edit_review_product_id').value = review.product_id;
         document.getElementById('edit_review_user_id').value = review.user_id;
         document.getElementById('edit_review_username').value = review.username;
         document.getElementById('edit_review_rating').value = review.rating;
