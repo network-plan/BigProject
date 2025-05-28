@@ -92,39 +92,6 @@ mysqli_free_result($result);
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-    <style>
-    .password-form {
-        max-width: 500px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #f8f8f8;
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        display: none;
-    }
-
-    .password-form h3 {
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-
-    .alert {
-        margin-bottom: 15px;
-    }
-
-    .btn-container {
-        text-align: center;
-        margin-top: 20px;
-    }
-
-    .btn-container .btn {
-        margin: 0 5px;
-    }
-    </style>
 </head>
 <!--/head-->
 
