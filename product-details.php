@@ -39,7 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'], $_POST[
     setcookie('cart', json_encode($cart), time() + (7 * 24 * 60 * 60), "/");
 
     // 導回購物車頁面
-    header("Location: cart.php");
+    // header("Location: cart.php");
+    echo "<script>window.history.back();</script>";
+    if (!isset($_SESSION['username'])) {
+        header("Location: login.php");
+        exit();
+    }
     exit();
 }
 
