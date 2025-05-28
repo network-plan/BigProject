@@ -39,7 +39,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['product_id'], $_POST[
     setcookie('cart', json_encode($cart), time() + (7 * 24 * 60 * 60), "/");
 
     // 導回購物車頁面
-    header("Location: cart.php");
+    // header("Location: cart.php");
+    echo "<script>window.history.back();</script>";
+    if (!isset($_SESSION['username'])) {
+        header("Location: login.php");
+        exit();
+    }
     exit();
 }
 
@@ -158,7 +163,7 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                 <?php
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
-                                    echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
+                                    echo "<li><a href=\"historical_orders.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
                                     //取得現在購物車商品數量
                                     $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                     $total_items = 0;
@@ -166,6 +171,7 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                     foreach ($cart as $quantity) {
                                         $total_items += $quantity;
                                     }
+                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車" . " (" . $total_items . ")</a></li>";//若有登入導入到購物車頁面
                                     echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
                                 }else if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin'){
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
@@ -206,7 +212,7 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                         <?php
                                         if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {//若一般會員登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
-                                            echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
+                                            echo "<li><a href=\"historical_orders.php\">歷史訂單</a></li>";
                                             echo "<li><a href=\"cart.php\">購物車</a></li>";
                                         }else{
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
@@ -217,11 +223,11 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                 <?php
                                 //若為一般會員才看的到(評價連結未改)
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin'){
-                                        echo "<li class=\"dropdown\"><a href=\"#\">評價<i class=\"fa fa-angle-down\"></i></a>";
-                                        echo "<ul role=\"menu\" class=\"sub-menu\">";
-                                        echo "    <li><a href=\"blog.html\">商品評價列表</a></li>";
-                                        echo "</ul>";
-                                    echo "</li>";
+                                    //     echo "<li class=\"dropdown\"><a href=\"#\">評價<i class=\"fa fa-angle-down\"></i></a>";
+                                    //     echo "<ul role=\"menu\" class=\"sub-menu\">";
+                                    //     echo "    <li><a href=\"blog.html\">商品評價列表</a></li>";
+                                    //     echo "</ul>";
+                                    // echo "</li>";
                                 }
                                 ?>
                                 <?php
@@ -244,7 +250,8 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                 <div class="col-sm-3">
                     <div class="left-sidebar">
                         <h2>商品分類</h2>
-                        <div class="panel-group category-products" id="accordian"><!--category-productsr-->
+                        <div class="panel-group category-products" id="accordian">
+                            <!--category-productsr-->
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title"><a href="shop.php"><b>全部商品</b></a></h4>
@@ -271,7 +278,8 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="shop.php?category=醬菜類(罐頭食品)"><b>醬菜類(罐頭食品)</b></a></h4>
+                                    <h4 class="panel-title"><a href="shop.php?category=醬菜類(罐頭食品)"><b>醬菜類(罐頭食品)</b></a>
+                                    </h4>
                                 </div>
                             </div>
                         </div>
@@ -287,15 +295,17 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                             <div id="main-carousel" class="carousel slide" data-ride="carousel">
                                 <div class="carousel-inner">
                                     <?php if (!empty($images)): ?>
-                                        <?php foreach ($images as $idx => $img): ?>
-                                            <div class="item <?php echo $idx === 0 ? 'active' : ''; ?>" style="padding-left:0;">
-                                                <img src="<?php echo htmlspecialchars($img); ?>" alt="Product Image" style="object-fit: cover; display: block;">
-                                            </div>
-                                        <?php endforeach; ?>
+                                    <?php foreach ($images as $idx => $img): ?>
+                                    <div class="item <?php echo $idx === 0 ? 'active' : ''; ?>" style="padding-left:0;">
+                                        <img src="<?php echo htmlspecialchars($img); ?>" alt="Product Image"
+                                            style="object-fit: cover; display: block;">
+                                    </div>
+                                    <?php endforeach; ?>
                                     <?php else: ?>
-                                        <div class="item active">
-                                            <img src="images/product-details/no-image.jpg" alt="No image available" style="width:100%; height:auto;">
-                                        </div>
+                                    <div class="item active">
+                                        <img src="images/product-details/no-image.jpg" alt="No image available"
+                                            style="width:100%; height:auto;">
+                                    </div>
                                     <?php endif; ?>
                                 </div>
                                 <!-- Controls -->
@@ -310,17 +320,16 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                             <!-- 縮圖列表 -->
                             <div class="mt-3 text-center">
                                 <?php if (!empty($images)): ?>
-                                    <?php foreach ($images as $idx => $img): ?>
-                                        <img
-                                            src="<?php echo $img; ?>"
-                                            data-target="#main-carousel"
-                                            data-slide-to="<?php echo $idx; ?>"
-                                            style="width:60px; height:60px; object-fit:cover; margin:0 5px; cursor:pointer; border:2px solid #ddd;"
-                                            class="<?php echo $idx === 0 ? 'active-thumb' : ''; ?>"
-                                            alt="thumb-<?php echo $idx; ?>">
-                                    <?php endforeach; ?>
+                                <?php foreach ($images as $idx => $img): ?>
+                                <img src="<?php echo $img; ?>" data-target="#main-carousel"
+                                    data-slide-to="<?php echo $idx; ?>"
+                                    style="width:60px; height:60px; object-fit:cover; margin:0 5px; cursor:pointer; border:2px solid #ddd;"
+                                    class="<?php echo $idx === 0 ? 'active-thumb' : ''; ?>"
+                                    alt="thumb-<?php echo $idx; ?>">
+                                <?php endforeach; ?>
                                 <?php else: ?>
-                                    <img src="images/product-details/no-image.jpg" alt="No image available" style="width:60px; height:60px; object-fit:cover;">
+                                <img src="images/product-details/no-image.jpg" alt="No image available"
+                                    style="width:60px; height:60px; object-fit:cover;">
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -334,15 +343,20 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                 <span>
                                     <span>NTD <?php echo number_format($product['price']); ?></span>
                                 </span>
-                                <hr/> 
-                                <form method="post" action="product-details.php?id=<?php echo urlencode($product['product_id']); ?>" style="display:inline;">
+                                <hr />
+                                <form method="post"
+                                    action="product-details.php?id=<?php echo urlencode($product['product_id']); ?>"
+                                    style="display:inline;">
                                     <div class="cart_quantity_button">
                                         <p>數量： </p>
                                         <a class="cart_quantity_up_pd" href="#"> + </a>
-                                        <input class="cart_quantity_input_pd" type="text" name="quantity" value="1" autocomplete="off" size="2" data-id="1">
+                                        <input class="cart_quantity_input_pd" type="text" name="quantity" value="1"
+                                            autocomplete="off" size="2" data-id="1">
                                         <a class="cart_quantity_down_pd" href="#"> - </a>
-                                        <input type="hidden" name="product_id" value="<?php echo htmlspecialchars($product['product_id']); ?>">
-                                        <button type="submit" class="btn btn-default cart"><i class="fa fa-shopping-cart"></i> 加入購物車</button>
+                                        <input type="hidden" name="product_id"
+                                            value="<?php echo htmlspecialchars($product['product_id']); ?>">
+                                        <button type="submit" class="btn btn-default cart"><i
+                                                class="fa fa-shopping-cart"></i> 加入購物車</button>
                                     </div>
                                 </form>
                                 <p><b>存貨狀態:</b>剩 <?php echo intval($product['stock']); ?> 盒</p>
@@ -367,75 +381,76 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                             <div class="tab-pane fade active in" id="details">
                                 <?php echo nl2br(htmlspecialchars($product['full_description'])); ?>
                             </div>
-                            <div class="tab-pane fade" id="reviews" >
-								<div class="col-sm-12">
-									<div class="review-list">
-										<div class="review-item">
-											<div class="review-header">
-												<span><i class="fa fa-user"></i> 王小明</span><br>
-												<span><i class="fa fa-clock-o"></i> 2024-03-15 14:30</span><br>
-												<span>評價：
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star-o"></i>
-												</span>
-											</div>
-											<div class="review-content">
-												商品品質非常好，包裝精美，送禮很體面。蜂蜜味道純正，木製蜂蜜棒也很實用。
-											</div>
-										</div>
-										<hr>
-										<div class="review-item">
-											<div class="review-header">
-												<span><i class="fa fa-user"></i> 李小華</span><br>
-												<span><i class="fa fa-clock-o"></i> 2024-03-10 09:15</span><br>
-												<span>評價：
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-												</span>
-											</div>
-											<div class="review-content">
-												蜂蜜很香醇，但價格稍貴。整體來說是很好的送禮選擇。
-											</div>
-										</div>
-										<hr>
-										<div class="review-item">
-											<div class="review-header">
-												<span><i class="fa fa-user"></i> 張小美</span><br>
-												<span><i class="fa fa-clock-o"></i> 2024-03-05 16:45</span><br>
-												<span>評價：
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star"></i>
-													<i class="fa fa-star-o"></i>
-													<i class="fa fa-star-o"></i>
-													<i class="fa fa-star-o"></i>
-												</span>
-											</div>
-											<div class="review-content">
-												包裝很精緻，蜂蜜品質優良，送給長輩很受歡迎。
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							
-						</div>
-					</div><!--/category-tab-->
+                            <div class="tab-pane fade" id="reviews">
+                                <div class="col-sm-12">
+                                    <div class="review-list">
+                                        <div class="review-item">
+                                            <div class="review-header">
+                                                <span><i class="fa fa-user"></i> 王小明</span><br>
+                                                <span><i class="fa fa-clock-o"></i> 2024-03-15 14:30</span><br>
+                                                <span>評價：
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star-o"></i>
+                                                </span>
+                                            </div>
+                                            <div class="review-content">
+                                                商品品質非常好，包裝精美，送禮很體面。蜂蜜味道純正，木製蜂蜜棒也很實用。
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="review-item">
+                                            <div class="review-header">
+                                                <span><i class="fa fa-user"></i> 李小華</span><br>
+                                                <span><i class="fa fa-clock-o"></i> 2024-03-10 09:15</span><br>
+                                                <span>評價：
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                </span>
+                                            </div>
+                                            <div class="review-content">
+                                                蜂蜜很香醇，但價格稍貴。整體來說是很好的送禮選擇。
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="review-item">
+                                            <div class="review-header">
+                                                <span><i class="fa fa-user"></i> 張小美</span><br>
+                                                <span><i class="fa fa-clock-o"></i> 2024-03-05 16:45</span><br>
+                                                <span>評價：
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star-o"></i>
+                                                    <i class="fa fa-star-o"></i>
+                                                    <i class="fa fa-star-o"></i>
+                                                </span>
+                                            </div>
+                                            <div class="review-content">
+                                                包裝很精緻，蜂蜜品質優良，送給長輩很受歡迎。
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
                     <!--/category-tab-->
 
-                    <div class="recommended_items">
-                        <!--recommended_items-->
-                        <h2 class="title text-center">推薦產品</h2>
+                </div>
+            </div>
+            <!--/category-tab-->
 
-                        <?php
+            <div class="recommended_items">
+                <!--recommended_items-->
+                <h2 class="title text-center">推薦產品</h2>
+
+                <?php
                         // 直接在PHP中定義推薦產品ID，無需額外資料表
                         // 您可以根據需要自行修改此陣列
                         // 格式: 商品ID => 推薦商品ID陣列
@@ -502,9 +517,9 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                             $totalSlides  = ceil($totalItems / $itemsPerSlide);
                         ?>
 
-                            <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
-                                <div class="carousel-inner">
-                                    <?php
+                <div id="recommended-item-carousel" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <?php
                                     $recommended_products = [];
                                     while ($rec_product = $recommended_result->fetch_assoc()) {
                                         $recommended_products[] = $rec_product;
@@ -519,47 +534,48 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                             if ($index < $totalItems) {
                                                 $rec = $recommended_products[$index];
                                     ?>
-                                                <div class="col-sm-4">
-                                                    <div class="product-image-wrapper">
-                                                        <div class="single-products">
-                                                            <div class="productinfo text-center">
-                                                                <?php if (!empty($rec['main_image'])): ?>
-                                                                    <img src="<?php echo htmlspecialchars($rec['main_image']); ?>" alt="<?php echo htmlspecialchars($rec['product_name']); ?>" />
-                                                                <?php else: ?>
-                                                                    <img src="images/product-details/no-image.jpg" alt="No image available" />
-                                                                <?php endif; ?>
+                        <div class="col-sm-4">
+                            <div class="product-image-wrapper">
+                                <div class="single-products">
+                                    <div class="productinfo text-center">
+                                        <?php if (!empty($rec['main_image'])): ?>
+                                        <img src="<?php echo htmlspecialchars($rec['main_image']); ?>"
+                                            alt="<?php echo htmlspecialchars($rec['product_name']); ?>" />
+                                        <?php else: ?>
+                                        <img src="images/product-details/no-image.jpg" alt="No image available" />
+                                        <?php endif; ?>
 
-                                                                <h2>NTD <?php echo number_format($rec['price']); ?></h2>
-                                                                <p><?php echo htmlspecialchars($rec['product_name']); ?></p><br>
+                                        <h2>NTD <?php echo number_format($rec['price']); ?></h2>
+                                        <p><?php echo htmlspecialchars($rec['product_name']); ?></p><br>
 
-                                                                <!-- 點擊按鈕直接連到商品詳細頁 -->
-                                                                <button type="button" class="btn btn-default add-to-cart"
-                                                                    onclick="location.href='product-details.php?id=<?php echo $rec['product_id']; ?>'">
-                                                                    <i class="fa fa-plus-square"></i> 詳細資料
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                    <?php
+                                        <!-- 點擊按鈕直接連到商品詳細頁 -->
+                                        <button type="button" class="btn btn-default add-to-cart"
+                                            onclick="location.href='product-details.php?id=<?php echo $rec['product_id']; ?>'">
+                                            <i class="fa fa-plus-square"></i> 詳細資料
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <?php
                                             }
                                         }
                                         echo "</div>"; // .item
                                     }
                                     ?>
-                                </div>
+                    </div>
 
-                                <?php if ($totalSlides > 1): ?>
-                                    <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
-                                        <i class="fa fa-angle-left"></i>
-                                    </a>
-                                    <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
-                                        <i class="fa fa-angle-right"></i>
-                                    </a>
-                                <?php endif; ?>
-                            </div>
+                    <?php if ($totalSlides > 1): ?>
+                    <a class="left recommended-item-control" href="#recommended-item-carousel" data-slide="prev">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a class="right recommended-item-control" href="#recommended-item-carousel" data-slide="next">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                    <?php endif; ?>
+                </div>
 
-                        <?php
+                <?php
                         } else {
                             echo "<p class='text-center'>暫無推薦產品</p>";
                         }
@@ -568,12 +584,12 @@ $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                             $recommended_stmt->close();
                         }
                         ?>
-                    </div>
-                    <!--/recommended_items-->
-
-
-                </div>
             </div>
+            <!--/recommended_items-->
+
+
+        </div>
+        </div>
         </div>
     </section>
 
