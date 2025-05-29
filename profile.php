@@ -34,8 +34,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
         $error_message = "新密碼與確認密碼不相符";
     } 
     // 檢查新密碼長度
-    else if (strlen($new_password) < 8) {
-        $error_message = "新密碼至少需要8個字符";
+    else if (strlen($new_password) < 6) {
+        $error_message = "新密碼至少需要6個字符";
     } 
     // 更新密碼
     else {
@@ -50,6 +50,80 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['a
     }
     
     mysqli_free_result($result);
+}
+
+// 處理個人資料修改表單提交
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['action']) && $_POST['action'] == 'update_profile') {
+    $new_username = trim($_POST['new_username']);
+    $new_email = trim($_POST['new_email']);
+    $new_phone = trim($_POST['new_phone']);
+    
+    // 驗證輸入
+    $validation_errors = array();
+    
+    // 驗證客戶名稱
+    if (empty($new_username)) {
+        $validation_errors[] = "客戶名稱不能為空";
+    } else if (strlen($new_username) < 3) {
+        $validation_errors[] = "客戶名稱至少需要4個字符";
+    } else if ($new_username != $username) {
+        // 檢查新用戶名是否已存在
+        $check_username_query = "SELECT username FROM members WHERE username = '$new_username' AND username != '$username'";
+        $check_result = mysqli_query($conn, $check_username_query);
+        if (mysqli_num_rows($check_result) > 0) {
+            $validation_errors[] = "此客戶名稱已被使用";
+        }
+        mysqli_free_result($check_result);
+    }
+    
+    // 驗證電子郵件
+    if (empty($new_email)) {
+        $validation_errors[] = "電子郵件不能為空";
+    } else if (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
+        $validation_errors[] = "請輸入有效的電子郵件格式";
+    } else {
+        // 檢查新郵件是否已存在（排除當前用戶）
+        $current_user_query = "SELECT email FROM members WHERE username = '$username'";
+        $current_user_result = mysqli_query($conn, $current_user_query);
+        $current_user_data = mysqli_fetch_assoc($current_user_result);
+        
+        if ($new_email != $current_user_data['email']) {
+            $check_email_query = "SELECT email FROM members WHERE email = '$new_email' AND username != '$username'";
+            $check_email_result = mysqli_query($conn, $check_email_query);
+            if (mysqli_num_rows($check_email_result) > 0) {
+                $validation_errors[] = "此電子郵件已被使用";
+            }
+            mysqli_free_result($check_email_result);
+        }
+        mysqli_free_result($current_user_result);
+    }
+    
+    // 驗證電話號碼
+    if (empty($new_phone)) {
+        $validation_errors[] = "電話號碼不能為空";
+    } else if (!preg_match('/^[0-9]{10}$/', $new_phone)) {
+        $validation_errors[] = "電話號碼格式不正確（需要10位數字）";
+    }
+    
+    // 如果有驗證錯誤，顯示錯誤訊息
+    if (!empty($validation_errors)) {
+        $error_message = implode("<br>", $validation_errors);
+    } else {
+        // 更新個人資料
+        $update_profile_query = "UPDATE members SET username = '$new_username', email = '$new_email', phone = '$new_phone' WHERE username = '$username'";
+        $update_profile_result = mysqli_query($conn, $update_profile_query);
+        
+        if ($update_profile_result) {
+            // 如果用戶名有變更，需要更新session
+            if ($new_username != $username) {
+                $_SESSION['username'] = $new_username;
+                $username = $new_username;
+            }
+            $success_message = "個人資料已成功更新";
+        } else {
+            $error_message = "個人資料更新失敗: " . mysqli_error($conn);
+        }
+    }
 }
 
 // 獲取用戶信息
@@ -92,6 +166,7 @@ mysqli_free_result($result);
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
+    
 </head>
 <!--/head-->
 
@@ -257,8 +332,38 @@ mysqli_free_result($result);
                                     <span><?php echo htmlspecialchars($user_data['register_date']); ?></span>
                                 </div>
                                 <div class="action-buttons">
-                                    <a href="edit_profile.php" class="btn btn-primary">編輯個人資料</a>
+                                    <button type="button" class="btn btn-primary" onclick="toggleEditForm()">編輯個人資料</button>
                                 </div>
+                            </div>
+
+                            <!-- 個人資料編輯表單 -->
+                            <div id="editForm" class="edit-form">
+                                <h3>編輯個人資料</h3>
+                                <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+                                    <input type="hidden" name="action" value="update_profile">
+                                    <div class="form-group">
+                                        <label for="new_username">客戶名稱</label>
+                                        <input type="text" class="form-control" id="new_username"
+                                            name="new_username" value="<?php echo htmlspecialchars($user_data['username']); ?>" required>
+                                        <small class="form-text text-muted">客戶名稱至少4個字符</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new_email">電子郵件</label>
+                                        <input type="email" class="form-control" id="new_email"
+                                            name="new_email" value="<?php echo htmlspecialchars($user_data['email']); ?>" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="new_phone">電話號碼</label>
+                                        <input type="tel" class="form-control" id="new_phone"
+                                            name="new_phone" value="<?php echo htmlspecialchars($user_data['phone']); ?>" required>
+                                        <small class="form-text text-muted">請輸入10位數字</small>
+                                    </div>
+                                    <div class="btn-container">
+                                        <button type="submit" class="btn btn-primary">更新資料</button>
+                                        <button type="button" class="btn btn-default"
+                                            onclick="toggleEditForm()">取消</button>
+                                    </div>
+                                </form>
                             </div>
 
                             <!-- 密碼修改表單 -->
@@ -275,7 +380,7 @@ mysqli_free_result($result);
                                         <label for="new_password">新密碼</label>
                                         <input type="password" class="form-control" id="new_password"
                                             name="new_password" required>
-                                        <small class="form-text text-muted">密碼至少8個字符</small>
+                                        <small class="form-text text-muted">密碼至少6個字符</small>
                                     </div>
                                     <div class="form-group">
                                         <label for="confirm_password">確認新密碼</label>
@@ -384,31 +489,8 @@ mysqli_free_result($result);
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
-    <script>
-    // 密碼顯示與隱藏功能
-    function togglePassword() {
-        const passwordSpan = document.getElementById('password');
-        const button = event.target;
-
-        if (passwordSpan.textContent === '********') {
-            passwordSpan.textContent = button.getAttribute('data-password');
-            button.textContent = '隱藏';
-        } else {
-            passwordSpan.textContent = '********';
-            button.textContent = '查看';
-        }
-    }
-
-    // 顯示/隱藏密碼修改表單
-    function togglePasswordForm() {
-        const passwordForm = document.getElementById('passwordForm');
-        if (passwordForm.style.display === 'block') {
-            passwordForm.style.display = 'none';
-        } else {
-            passwordForm.style.display = 'block';
-        }
-    }
-    </script>
+    <script src="js/profile.js"></script>
+    
 </body>
 
 </html>
