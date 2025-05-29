@@ -146,17 +146,46 @@ $(document).ready(function() {
         }
         changePrice($(this).closest("tr"), currentValue); // 更新總價
     });
-
+    //輸入框輸入
     $(".cart_quantity_input").change(function(e) {
         e.preventDefault();
         var inputField = $(this);
-        var currentValue = parseInt(inputField.val());
-        // 如果數量小於 1，則設置為 1
-        if (currentValue < 1) {
+        var newValue = parseInt(inputField.val());
+        
+        var productId = inputField.data("id");
+
+        if (isNaN(newValue) || newValue < 1) {// 如果數量小於 1，則設置為 1
             inputField.val(1);
+            newValue = 1;
         }
-        changePrice($(this).closest("tr"), currentValue); // 更新總價
-        updateCartCookieFromDOM();
+
+        // 檢查庫存
+        $.ajax({
+            url: "check_stock.php",  // 根據實際路徑修改
+            method: "POST",
+            data: {
+                oper: "checkStock",
+                product_id: productId,
+                requested_quantity: newValue
+            },
+            dataType: "json",
+            success: function(response) {
+                if (response.success) {
+                    // 更新總價與 cookie
+                    changePrice(inputField.closest("tr"), newValue);
+                    updateCartCookieFromDOM();
+                } else {
+                    alert("庫存不足，最多可購買 " + response.stock + " 件");
+                    var correctedValue = Math.max(1, response.stock);
+                    inputField.val(correctedValue);
+                    changePrice(inputField.closest("tr"), correctedValue);
+                    updateCartCookieFromDOM();
+                }
+            },
+            error: function() {
+                alert("無法驗證庫存，請稍後再試！");
+            }
+        });
     });
 
     //購物車後商品叉叉刪除
@@ -179,9 +208,34 @@ $(document).ready(function() {
         e.preventDefault();  // 防止跳轉到其他頁面
         var inputField = $(this).siblings(".cart_quantity_input");  // 獲取對應的數量輸入框
         var currentValue = parseInt(inputField.val());  // 取得當前的數量
-        inputField.val(currentValue + 1);  // 增加數量
-        changePrice($(this).closest("tr"), currentValue + 1);  // 更新總價
-        updateCartCookieFromDOM();
+        // inputField.val(currentValue + 1);  // 增加數量
+        // changePrice($(this).closest("tr"), currentValue + 1);  // 更新總價
+        // updateCartCookieFromDOM();
+        var productId = inputField.data("id");
+
+        // 發送 AJAX 檢查庫存
+        $.ajax({
+            url: "check_stock.php",
+            method: "POST",
+            data: {
+                oper: "checkStock", // 跟 PHP 對應
+                product_id: productId,
+                requested_quantity: currentValue + 1
+            },
+            dataType: "json",
+            success: function (response) {
+                if (response.success) {
+                    inputField.val(currentValue + 1);
+                    changePrice(inputField.closest("tr"), currentValue + 1);
+                    updateCartCookieFromDOM();
+                } else {
+                    alert("庫存不足！目前最多只能購買 " + response.stock + " 件。");
+                }
+            },
+            error: function () {
+                alert("無法連線至伺服器，請稍後再試！");
+            }
+        });
     });
     $(".cart_quantity_up_pd").click(function(e) {
         e.preventDefault();  // 防止跳轉到其他頁面
