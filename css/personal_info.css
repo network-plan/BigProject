@@ -49,3 +49,42 @@
     .btn-container .btn {
         margin: 0 5px;
     }
+    
+    .edit-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .password-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .btn-container {
+            margin-top: 15px;
+        }
+        .btn-container .btn {
+            margin-right: 10px;
+        }
+        .info-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .info-item label {
+            font-weight: bold;
+            display: inline-block;
+            width: 120px;
+        }
+        .action-buttons {
+            margin-top: 20px;
+        }
+        .action-buttons .btn {
+            margin-right: 10px;
+        }
