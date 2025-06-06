@@ -144,24 +144,50 @@ document.addEventListener('DOMContentLoaded', function() {
     // const registerForm = document.querySelector('.form-box.register form');
 
     // 登入表單驗證
-    loginForm.addEventListener('submit', function(e) {
-        //e.preventDefault();
-        const username = this.querySelector('input[type="text"]').value;
-        const password = this.querySelector('input[type="password"]').value;
+    // loginForm.addEventListener('submit', function(e) {
+    //     //e.preventDefault();
+    //     const username = this.querySelector('input[type="text"]').value;
+    //     const password = this.querySelector('input[type="password"]').value;
         
-        if (username.length < 4 || username.length > 10) {
-            e.preventDefault();
-            alert('使用者名稱必須介於4-10個字之間');
-            return;
-        }
+    //     if (username.length < 4 || username.length > 10) {
+    //         e.preventDefault();
+    //         alert('使用者名稱必須介於4-10個字之間');
+    //         return;
+    //     }
         
-        if (password.length < 6) {
-            e.preventDefault();
-            alert('密碼長度至少需要6個字符');
-            return;
-        }
+    //     if (password.length < 6) {
+    //         e.preventDefault();
+    //         alert('密碼長度至少需要6個字符');
+    //         return;
+    //     }
 
-        console.log('登入表單驗證通過');
+    //     console.log('登入表單驗證通過');
+    // });
+
+
+
+    document.getElementById('login_form').addEventListener('submit', function(e) {
+        e.preventDefault(); // 阻止表單預設送出行為
+
+        const formData = new FormData(this);
+
+        fetch('login_ajax.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('登入成功');
+                window.location.href = 'index.php';
+            } else {
+                alert(data.message); // 顯示錯誤訊息
+            }
+        })
+        .catch(error => {
+            console.error('錯誤:', error);
+            alert('登入失敗，請稍後再試');
+        });
     });
 
     // 註冊表單驗證

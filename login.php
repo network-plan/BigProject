@@ -47,44 +47,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username']))
         echo "<script>alert('發生錯誤: " . $e->getMessage() . "');</script>";
     }
 }
-
-//專門用於登入的處理邏輯
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['login_username'])){
-	
-	// 輸出除錯信息
-	file_put_contents('debug.log', print_r($_POST, true), FILE_APPEND);
-	
-	$username = $_POST['login_username'];
-	$password = $_POST['login_password'];
-
-	// 查詢資料表確認帳號密碼是否存在
-	$stmt = $conn->prepare("SELECT username, password, member_id FROM members WHERE username = ? AND password = ?");
-	$stmt->bind_param("ss", $username, $password);
-	$stmt->execute();
-	$result = $stmt->get_result();
-
-	if ($result->num_rows > 0) {
-		$row = $result->fetch_assoc(); // 取得查詢結果
-		
-		$_SESSION['username'] = $row['username'];
-		$_SESSION['member_id'] = $row['member_id']; 
-		
-		// 檢查是否為管理者
-		if ($row['username'] === 'admin' && $password === 'admin123456') {
-			$_SESSION['role'] = 'admin';
-		} else {
-			$_SESSION['role'] = 'user';
-		}
-
-		setcookie("cart", "", time() - 3600, "/");
-		header("Location: index.php");
-		exit();
-	} else {
-		echo "<script>alert('帳號或密碼錯誤');</script>";
-	}
-
-}
-	
 ?>
 
 <!DOCTYPE html>
