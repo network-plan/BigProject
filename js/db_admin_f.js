@@ -132,3 +132,18 @@ function togglePasswordVisibility() {
         toggleBtn.textContent = '顯示密碼';
     }
 }
+
+// 改變每頁顯示數量
+function changePerPage(perPage) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('per_page', perPage);
+    urlParams.set('page', '1'); // 重置為第一頁
+    window.location.search = urlParams.toString();
+}
+
+// 跳轉到指定頁面
+function goToPage(page) {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('page', page);
+    window.location.search = urlParams.toString();
+}

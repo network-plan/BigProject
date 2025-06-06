@@ -39,11 +39,14 @@ session_start();
     <script src="js/price-range.js"></script>
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
-</head><!--/head-->
+</head>
+<!--/head-->
 
 <body>
-    <header id="header"><!--header-->
-        <div class="header_top"><!--header_top-->
+    <header id="header">
+        <!--header-->
+        <div class="header_top">
+            <!--header_top-->
             <div class="container">
                 <div class="row">
                     <div class="col-sm-6">
@@ -67,9 +70,11 @@ session_start();
                     </div>
                 </div>
             </div>
-        </div><!--/header_top-->
+        </div>
+        <!--/header_top-->
 
-        <div class="header-middle"><!--header-middle-->
+        <div class="header-middle">
+            <!--header-middle-->
             <div class="container">
                 <div class="row">
                     <div class="col-sm-4">
@@ -83,7 +88,7 @@ session_start();
                                 <?php
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
                                     echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
-                                    echo "<li><a href=\"checkout.html\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
+                                    echo "<li><a href=\"historical_orders.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
                                     $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                     $total_items = 0;
                                     // 統計購物車中所有商品的「數量總和」
@@ -104,9 +109,11 @@ session_start();
                     </div>
                 </div>
             </div>
-        </div><!--/header-middle-->
+        </div>
+        <!--/header-middle-->
 
-        <div class="header-bottom"><!--header-bottom-->
+        <div class="header-bottom">
+            <!--header-bottom-->
             <div class="container">
                 <div class="row">
                     <div class="col-sm-9">
@@ -127,7 +134,7 @@ session_start();
                                         <?php
                                         if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {//若一般會員登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
-                                            echo "<li><a href=\"checkout.html\">歷史訂單</a></li>";
+                                            echo "<li><a href=\"historical_orders.php\">歷史訂單</a></li>";
                                             echo "<li><a href=\"cart.php\">購物車</a></li>";
                                         }else{
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
@@ -138,11 +145,11 @@ session_start();
                                 <?php
                                 //若為一般會員才看的到(評價連結未改)
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin'){
-                                        echo "<li class=\"dropdown\"><a href=\"#\">評價<i class=\"fa fa-angle-down\"></i></a>";
-                                        echo "<ul role=\"menu\" class=\"sub-menu\">";
-                                        echo "    <li><a href=\"blog.html\">商品評價列表</a></li>";
-                                        echo "</ul>";
-                                    echo "</li>";
+                                    //     echo "<li class=\"dropdown\"><a href=\"#\">評價<i class=\"fa fa-angle-down\"></i></a>";
+                                    //     echo "<ul role=\"menu\" class=\"sub-menu\">";
+                                    //     echo "    <li><a href=\"blog.html\">商品評價列表</a></li>";
+                                    //     echo "</ul>";
+                                    // echo "</li>";
                                 }
                                 ?>
                                 <?php
@@ -154,10 +161,13 @@ session_start();
                     </div>
                 </div>
             </div>
-        </div><!--/header-bottom-->
-    </header><!--/header-->
+        </div>
+        <!--/header-bottom-->
+    </header>
+    <!--/header-->
 
-    <section id="slider"><!--slider-->
+    <section id="slider">
+        <!--slider-->
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
@@ -212,7 +222,8 @@ session_start();
                 </div>
             </div>
         </div>
-    </section><!--/slider-->
+    </section>
+    <!--/slider-->
 
     <section>
         <div class="container">
@@ -248,7 +259,8 @@ session_start();
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="shop.php?category=醬菜類(罐頭食品)"><b>醬菜類(罐頭食品)</b></a></h4>
+                                    <h4 class="panel-title"><a href="shop.php?category=醬菜類(罐頭食品)"><b>醬菜類(罐頭食品)</b></a>
+                                    </h4>
                                 </div>
                             </div>
                         </div>
@@ -290,7 +302,7 @@ session_start();
                             echo '<img src="' . htmlspecialchars($row['img_url']) . '" alt="" style="width:250px; height:250px;" />';
                             echo '<h2>' . htmlspecialchars($row['price']) . ' NTD</h2>';
                             echo '<p>' . htmlspecialchars($row['product_name']) . '</p>';
-                            // echo '<a href="product-details.php?id=' . urlencode($row['product_id']) . '" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>加入購物車</a>';
+                            //echo '<a href="product-details.php?id=' . urlencode($row['product_id']) . '" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>加入購物車</a>';
                             echo '</div>';
                             echo '</div>';
                             echo '<div class="choose">';
@@ -302,13 +314,15 @@ session_start();
                             echo '</div>';
                         }
                         ?>
-                    </div><!--features_items-->
+                    </div>
+                    <!--features_items-->
                 </div>
             </div>
         </div>
     </section>
 
-    <footer id="footer"><!--Footer-->
+    <footer id="footer">
+        <!--Footer-->
         <div class="footer-top">
             <div class="container">
                 <div class="row">
@@ -385,7 +399,8 @@ session_start();
             </div>
         </div>
 
-    </footer><!--/Footer-->
+    </footer>
+    <!--/Footer-->
 </body>
 
 </html>
