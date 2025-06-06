@@ -1,11 +1,22 @@
-
 <?php
 include('db_connection.php');
 session_start();
-include('check_login.php');//檢查登入
+include('check_login.php'); //檢查登入
 
 // 決定當前操作的資料表
 $current_table = isset($_GET['table']) ? $_GET['table'] : 'product_info';
+
+// 分頁控制參數
+$records_per_page = isset($_GET['per_page']) ? (int)$_GET['per_page'] : 10;
+$current_page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$offset = ($current_page - 1) * $records_per_page;
+
+// 確保每頁記錄數在允許範圍內
+$allowed_per_page = [5, 10, 25, 50, 100];
+if (!in_array($records_per_page, $allowed_per_page)) {
+    $records_per_page = 10;
+}
+
 // 新增記錄
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
     if ($_POST['table'] == 'product_info') {
@@ -22,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['create'])) {
         $stmt->bind_param("ssssisss", $_POST['order_id'], $_POST['member_id'], $_POST['username'], $_POST['order_date'], $_POST['total_price'], $_POST['status'], $_POST['address'], $_POST['phone'], $_POST['shipping_method']);
     } elseif ($_POST['table'] == 'order_items') {
         $stmt = $conn->prepare("INSERT INTO order_items (number, order_id, product_id, quantity) VALUES (?, ?, ?, ?)");
-        $stmt->bind_param("issi",$_POST['number'], $_POST['order_id'], $_POST['product_id'], $_POST['quantity']);
+        $stmt->bind_param("issi", $_POST['number'], $_POST['order_id'], $_POST['product_id'], $_POST['quantity']);
     } elseif ($_POST['table'] == 'reviews') {
         $stmt = $conn->prepare("INSERT INTO reviews (review_id, order_id, product_id, user_id, username, rating, content) VALUES (?, ?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("sssssis", $_POST['review_id'], $_POST['order_id'], $_POST['product_id'], $_POST['user_id'], $_POST['username'], $_POST['rating'], $_POST['content']);
@@ -50,12 +61,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['update'])) {
 
         $stmt = $conn->prepare("UPDATE orders SET member_id=?, username=?, order_date=?, total_price=?, status=?, address=?, phone=?, shipping_method=? WHERE order_id=?");
         $stmt->bind_param("sssisssss", $_POST['member_id'], $_POST['username'], $_POST['order_date'], $_POST['total_price'], $_POST['status'], $_POST['address'], $_POST['phone'], $_POST['shipping_method'], $_POST['order_id']);
-
     } elseif ($_POST['table'] == 'order_items') {
 
         $stmt = $conn->prepare("UPDATE order_items SET  order_id=?, product_id=?, quantity=? WHERE number=?");
         $stmt->bind_param("ssii", $_POST['order_id'], $_POST['product_id'], $_POST['quantity'], $_POST['number']);
-
     } elseif ($_POST['table'] == 'reviews') {
         $stmt = $conn->prepare("UPDATE reviews SET order_id=?, product_id=?, user_id=?, username=?, rating=?, content=? WHERE review_id=?");
         $stmt->bind_param("ssssiss", $_POST['order_id'], $_POST['product_id'], $_POST['user_id'], $_POST['username'], $_POST['rating'], $_POST['content'], $_POST['review_id']);
@@ -100,20 +109,39 @@ if (isset($_GET['delete']) && isset($_GET['table'])) {
 // 取得資料表資料
 $result = false;
 $rows = [];
+$total_records = 0;
+
 try {
+    // 先取得總記錄數
     if ($current_table == 'product_info') {
-        $result = $conn->query("SELECT * FROM product_info");
+        $count_result = $conn->query("SELECT COUNT(*) as total FROM product_info");
+        $result = $conn->query("SELECT * FROM product_info LIMIT $records_per_page OFFSET $offset");
     } elseif ($current_table == 'product_img') {
-        $result = $conn->query("SELECT * FROM product_img");
+        $count_result = $conn->query("SELECT COUNT(*) as total FROM product_img");
+        $result = $conn->query("SELECT * FROM product_img LIMIT $records_per_page OFFSET $offset");
     } elseif ($current_table == 'members') {
-        $result = $conn->query("SELECT * FROM members");
+        $count_result = $conn->query("SELECT COUNT(*) as total FROM members");
+        $result = $conn->query("SELECT * FROM members LIMIT $records_per_page OFFSET $offset");
     } elseif ($current_table == 'orders') {
-        $result = $conn->query("SELECT * FROM orders");
+        $count_result = $conn->query("SELECT COUNT(*) as total FROM orders");
+        $result = $conn->query("SELECT * FROM orders LIMIT $records_per_page OFFSET $offset");
     } elseif ($current_table == 'order_items') {
-        $result = $conn->query("SELECT * FROM order_items");
+        $count_result = $conn->query("SELECT COUNT(*) as total FROM order_items");
+        $result = $conn->query("SELECT * FROM order_items LIMIT $records_per_page OFFSET $offset");
     } elseif ($current_table == 'reviews') {
-        $result = $conn->query("SELECT * FROM reviews");
+        $count_result = $conn->query("SELECT COUNT(*) as total FROM reviews");
+        $result = $conn->query("SELECT * FROM reviews LIMIT $records_per_page OFFSET $offset");
     }
+
+    // 取得總記錄數
+    if ($count_result) {
+        $count_row = $count_result->fetch_assoc();
+        $total_records = $count_row['total'];
+    }
+
+    // 計算總頁數
+    $total_pages = ceil($total_records / $records_per_page);
+
     // 檢查查詢是否成功
     if ($result === false) {
         throw new Exception("查詢資料表失敗: " . $conn->error);
@@ -136,22 +164,23 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
 ?>
 <!DOCTYPE html>
 <html lang="zh">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
     <meta name="author" content="">
     <title>資料庫管理 | 彰化小禮坊</title>
-	<link href="css/db_admin_style.css" rel="stylesheet">
+    <link href="css/db_admin_style.css" rel="stylesheet">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/font-awesome.min.css" rel="stylesheet">
     <link href="css/prettyPhoto.css" rel="stylesheet">
     <link href="css/price-range.css" rel="stylesheet">
     <link href="css/animate.css" rel="stylesheet">
-	<link href="css/main.css" rel="stylesheet">
-	<link href="css/login.css" rel="stylesheet">
-	<link href="css/responsive.css" rel="stylesheet">
-	<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href="css/main.css" rel="stylesheet">
+    <link href="css/login.css" rel="stylesheet">
+    <link href="css/responsive.css" rel="stylesheet">
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <!--[if lt IE 9]>
     <script src="js/html5shiv.js"></script>
     <script src="js/respond.min.js"></script>
@@ -165,88 +194,88 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
 </head><!--/head-->
 
 <body>
-	<header id="header"><!--header-->
-		<div class="header_top"><!--header_top-->
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-6">
-						<div class="contactinfo">
-							<ul class="nav nav-pills">
-								<li><a href="#"><i class="fa fa-phone"></i> 04 1234567</a></li>
-								<li><a href="#"><i class="fa fa-envelope"></i> hello@gm.ncue.edu.tw</a></li>
-							</ul>
-						</div>
-					</div>
-					<div class="col-sm-6">
-						<div class="social-icons pull-right">
-							<ul class="nav navbar-nav">
-								<li><a href=""><i class="fa fa-facebook"></i></a></li>
-								<li><a href=""><i class="fa fa-twitter"></i></a></li>
-								<li><a href=""><i class="fa fa-linkedin"></i></a></li>
-								<li><a href=""><i class="fa fa-dribbble"></i></a></li>
-								<li><a href=""><i class="fa fa-google-plus"></i></a></li>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div><!--/header_top-->
-		
-		<div class="header-middle"><!--header-middle-->
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-4">
-						<div class="logo pull-left">
-							<a href="index.php"><img src="images/home/logo.png" alt="" /></a>
-						</div>
-					</div>
-					<div class="col-sm-8">
-						<div class="shop-menu pull-right">
-							<ul class="nav navbar-nav">
+    <header id="header"><!--header-->
+        <div class="header_top"><!--header_top-->
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="contactinfo">
+                            <ul class="nav nav-pills">
+                                <li><a href="#"><i class="fa fa-phone"></i> 04 1234567</a></li>
+                                <li><a href="#"><i class="fa fa-envelope"></i> hello@gm.ncue.edu.tw</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="social-icons pull-right">
+                            <ul class="nav navbar-nav">
+                                <li><a href=""><i class="fa fa-facebook"></i></a></li>
+                                <li><a href=""><i class="fa fa-twitter"></i></a></li>
+                                <li><a href=""><i class="fa fa-linkedin"></i></a></li>
+                                <li><a href=""><i class="fa fa-dribbble"></i></a></li>
+                                <li><a href=""><i class="fa fa-google-plus"></i></a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--/header_top-->
+
+        <div class="header-middle"><!--header-middle-->
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <div class="logo pull-left">
+                            <a href="index.php"><img src="images/home/logo.png" alt="" /></a>
+                        </div>
+                    </div>
+                    <div class="col-sm-8">
+                        <div class="shop-menu pull-right">
+                            <ul class="nav navbar-nav">
                                 <?php
-                                if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
-                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
-                                    echo "<li><a href=\"historical_orders.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
-                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>";//若有登入導入到購物車頁面
-                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
-                                }else if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin'){
-                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
-                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
-                                }else{//若沒有登入 不管點甚麼都導入到登入頁面
+                                if (isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
+                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>"; //若有登入導入到登出頁面
+                                    echo "<li><a href=\"historical_orders.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>"; //若有登入導入到歷史訂單頁面
+                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車</a></li>"; //若有登入導入到購物車頁面
+                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>"; //顯示會員名稱 點下去即到個人資料頁面
+                                } else if (isset($_SESSION['username']) && $_SESSION['role'] === 'admin') {
+                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>"; //若有登入導入到登出頁面
+                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>"; //顯示會員名稱 點下去即到個人資料頁面
+                                } else { //若沒有登入 不管點甚麼都導入到登入頁面
                                     echo "<li><a href=\"login.php\"><i class=\"fa fa-lock\"></i> 登入</a></li>";
                                 }
                                 ?>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div><!--/header-middle-->
-	
-		<div class="header-bottom"><!--header-bottom-->
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-9">
-						<div class="navbar-header">
-							<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-								<span class="sr-only">Toggle navigation</span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-								<span class="icon-bar"></span>
-							</button>
-						</div>
-						<div class="mainmenu pull-left">
-							<ul class="nav navbar-nav collapse navbar-collapse">
-								<!-- <li><a href="index.html" class="active">Home</a></li> -->
-								<li><a href="index.php" class="active">首頁</a></li>
-								<li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--/header-middle-->
+
+        <div class="header-bottom"><!--header-bottom-->
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-9">
+                        <div class="navbar-header">
+                            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                                <span class="sr-only">Toggle navigation</span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                                <span class="icon-bar"></span>
+                            </button>
+                        </div>
+                        <div class="mainmenu pull-left">
+                            <ul class="nav navbar-nav collapse navbar-collapse">
+                                <!-- <li><a href="index.html" class="active">Home</a></li> -->
+                                <li><a href="index.php" class="active">首頁</a></li>
+                                <li class="dropdown"><a href="#">購物資訊<i class="fa fa-angle-down"></i></a>
                                     <ul role="menu" class="sub-menu">
                                         <?php
-                                        if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {//若一般會員登入導入到對應頁面
+                                        if (isset($_SESSION['username']) && $_SESSION['role'] != 'admin') { //若一般會員登入導入到對應頁面
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
                                             echo "<li><a href=\"historical_orders.php\">歷史訂單</a></li>";
                                             echo "<li><a href=\"cart.php\">購物車</a></li>";
-                                        }else{
+                                        } else {
                                             echo "<li><a href=\"shop.php\">商品</a></li>";
                                         }
                                         ?>
@@ -254,24 +283,24 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                                 </li>
                                 <?php
                                 //若為一般會員才看的到(評價連結未改)
-                                if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin'){
-                                        echo "<li class=\"dropdown\"><a href=\"#\">評價<i class=\"fa fa-angle-down\"></i></a>";
-                                        echo "<ul role=\"menu\" class=\"sub-menu\">";
-                                        echo "    <li><a href=\"blog.html\">商品評價列表</a></li>";
-                                        echo "</ul>";
+                                if (isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
+                                    echo "<li class=\"dropdown\"><a href=\"#\">評價<i class=\"fa fa-angle-down\"></i></a>";
+                                    echo "<ul role=\"menu\" class=\"sub-menu\">";
+                                    echo "    <li><a href=\"blog.html\">商品評價列表</a></li>";
+                                    echo "</ul>";
                                     echo "</li>";
                                 }
                                 ?>
-							</ul>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div><!--/header-bottom-->
-	</header><!--/header-->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!--/header-bottom-->
+    </header><!--/header-->
 
-	
-	<div class="container">
+
+    <div class="container">
         <h1>商品管理系統</h1>
         <div class="table-selector">
             <button
@@ -308,6 +337,21 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                 <input type="submit" name="create" value="新增商品">
             </form>
             <h2>商品列表</h2>
+            <!-- 分頁控制器 -->
+            <div class="pagination-controls">
+                <label for="per_page">每頁顯示:</label>
+                <select id="per_page" onchange="changePerPage(this.value)">
+                    <option value="5" <?= $records_per_page == 5 ? 'selected' : '' ?>>5筆</option>
+                    <option value="10" <?= $records_per_page == 10 ? 'selected' : '' ?>>10筆</option>
+                    <option value="25" <?= $records_per_page == 25 ? 'selected' : '' ?>>25筆</option>
+                    <option value="50" <?= $records_per_page == 50 ? 'selected' : '' ?>>50筆</option>
+                    <option value="100" <?= $records_per_page == 100 ? 'selected' : '' ?>>100筆</option>
+                </select>
+            </div>
+
+            <div class="pagination-info">
+                顯示第 <?= ($offset + 1) ?> - <?= min($offset + $records_per_page, $total_records) ?> 筆，共 <?= $total_records ?> 筆記錄
+            </div>
             <table>
                 <tr>
                     <th>商品編號</th>
@@ -333,6 +377,53 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                     </tr>
                 <?php endforeach; ?>
             </table>
+            <!-- 分頁導航 -->
+            <?php if ($total_pages > 1): ?>
+                <div class="pagination-controls">
+                    <ul class="pagination">
+                        <!-- 上一頁 -->
+                        <?php if ($current_page > 1): ?>
+                            <li><a href="?table=<?= $current_table ?>&page=<?= $current_page - 1 ?>&per_page=<?= $records_per_page ?>">&laquo; 上一頁</a></li>
+                        <?php else: ?>
+                            <li><span class="disabled">&laquo; 上一頁</span></li>
+                        <?php endif; ?>
+
+                        <!-- 頁碼 -->
+                        <?php
+                        $start_page = max(1, $current_page - 2);
+                        $end_page = min($total_pages, $current_page + 2);
+
+                        if ($start_page > 1): ?>
+                            <li><a href="?table=<?= $current_table ?>&page=1&per_page=<?= $records_per_page ?>">1</a></li>
+                            <?php if ($start_page > 2): ?>
+                                <li><span>...</span></li>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                            <?php if ($i == $current_page): ?>
+                                <li><span class="current"><?= $i ?></span></li>
+                            <?php else: ?>
+                                <li><a href="?table=<?= $current_table ?>&page=<?= $i ?>&per_page=<?= $records_per_page ?>"><?= $i ?></a></li>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+
+                        <?php if ($end_page < $total_pages): ?>
+                            <?php if ($end_page < $total_pages - 1): ?>
+                                <li><span>...</span></li>
+                            <?php endif; ?>
+                            <li><a href="?table=<?= $current_table ?>&page=<?= $total_pages ?>&per_page=<?= $records_per_page ?>"><?= $total_pages ?></a></li>
+                        <?php endif; ?>
+
+                        <!-- 下一頁 -->
+                        <?php if ($current_page < $total_pages): ?>
+                            <li><a href="?table=<?= $current_table ?>&page=<?= $current_page + 1 ?>&per_page=<?= $records_per_page ?>">下一頁 &raquo;</a></li>
+                        <?php else: ?>
+                            <li><span class="disabled">下一頁 &raquo;</span></li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
 
             <h2>修改商品</h2>
             <form method="POST" name="update">
@@ -357,6 +448,21 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                 <input type="submit" name="create" value="新增圖片">
             </form>
             <h2>商品圖片列表</h2>
+            <!-- 分頁控制器 -->
+            <div class="pagination-controls">
+                <label for="per_page">每頁顯示:</label>
+                <select id="per_page" onchange="changePerPage(this.value)">
+                    <option value="5" <?= $records_per_page == 5 ? 'selected' : '' ?>>5筆</option>
+                    <option value="10" <?= $records_per_page == 10 ? 'selected' : '' ?>>10筆</option>
+                    <option value="25" <?= $records_per_page == 25 ? 'selected' : '' ?>>25筆</option>
+                    <option value="50" <?= $records_per_page == 50 ? 'selected' : '' ?>>50筆</option>
+                    <option value="100" <?= $records_per_page == 100 ? 'selected' : '' ?>>100筆</option>
+                </select>
+            </div>
+
+            <div class="pagination-info">
+                顯示第 <?= ($offset + 1) ?> - <?= min($offset + $records_per_page, $total_records) ?> 筆，共 <?= $total_records ?> 筆記錄
+            </div>
             <table>
                 <tr>
                     <th>圖片編號</th>
@@ -376,6 +482,53 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                     </tr>
                 <?php endforeach; ?>
             </table>
+            <!-- 分頁導航 -->
+            <?php if ($total_pages > 1): ?>
+                <div class="pagination-controls">
+                    <ul class="pagination">
+                        <!-- 上一頁 -->
+                        <?php if ($current_page > 1): ?>
+                            <li><a href="?table=<?= $current_table ?>&page=<?= $current_page - 1 ?>&per_page=<?= $records_per_page ?>">&laquo; 上一頁</a></li>
+                        <?php else: ?>
+                            <li><span class="disabled">&laquo; 上一頁</span></li>
+                        <?php endif; ?>
+
+                        <!-- 頁碼 -->
+                        <?php
+                        $start_page = max(1, $current_page - 2);
+                        $end_page = min($total_pages, $current_page + 2);
+
+                        if ($start_page > 1): ?>
+                            <li><a href="?table=<?= $current_table ?>&page=1&per_page=<?= $records_per_page ?>">1</a></li>
+                            <?php if ($start_page > 2): ?>
+                                <li><span>...</span></li>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                            <?php if ($i == $current_page): ?>
+                                <li><span class="current"><?= $i ?></span></li>
+                            <?php else: ?>
+                                <li><a href="?table=<?= $current_table ?>&page=<?= $i ?>&per_page=<?= $records_per_page ?>"><?= $i ?></a></li>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+
+                        <?php if ($end_page < $total_pages): ?>
+                            <?php if ($end_page < $total_pages - 1): ?>
+                                <li><span>...</span></li>
+                            <?php endif; ?>
+                            <li><a href="?table=<?= $current_table ?>&page=<?= $total_pages ?>&per_page=<?= $records_per_page ?>"><?= $total_pages ?></a></li>
+                        <?php endif; ?>
+
+                        <!-- 下一頁 -->
+                        <?php if ($current_page < $total_pages): ?>
+                            <li><a href="?table=<?= $current_table ?>&page=<?= $current_page + 1 ?>&per_page=<?= $records_per_page ?>">下一頁 &raquo;</a></li>
+                        <?php else: ?>
+                            <li><span class="disabled">下一頁 &raquo;</span></li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
             <h2>修改圖片</h2>
             <form method="POST" name="update">
                 <input type="hidden" name="table" value="product_img">
@@ -398,6 +551,21 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                 <input type="submit" name="create" value="新增會員">
             </form>
             <h2>會員列表</h2>
+            <!-- 分頁控制器 -->
+            <div class="pagination-controls">
+                <label for="per_page">每頁顯示:</label>
+                <select id="per_page" onchange="changePerPage(this.value)">
+                    <option value="5" <?= $records_per_page == 5 ? 'selected' : '' ?>>5筆</option>
+                    <option value="10" <?= $records_per_page == 10 ? 'selected' : '' ?>>10筆</option>
+                    <option value="25" <?= $records_per_page == 25 ? 'selected' : '' ?>>25筆</option>
+                    <option value="50" <?= $records_per_page == 50 ? 'selected' : '' ?>>50筆</option>
+                    <option value="100" <?= $records_per_page == 100 ? 'selected' : '' ?>>100筆</option>
+                </select>
+            </div>
+
+            <div class="pagination-info">
+                顯示第 <?= ($offset + 1) ?> - <?= min($offset + $records_per_page, $total_records) ?> 筆，共 <?= $total_records ?> 筆記錄
+            </div>
             <table>
                 <tr>
                     <th>會員編號</th>
@@ -421,6 +589,53 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                     </tr>
                 <?php endforeach; ?>
             </table>
+            <!-- 分頁導航 -->
+            <?php if ($total_pages > 1): ?>
+                <div class="pagination-controls">
+                    <ul class="pagination">
+                        <!-- 上一頁 -->
+                        <?php if ($current_page > 1): ?>
+                            <li><a href="?table=<?= $current_table ?>&page=<?= $current_page - 1 ?>&per_page=<?= $records_per_page ?>">&laquo; 上一頁</a></li>
+                        <?php else: ?>
+                            <li><span class="disabled">&laquo; 上一頁</span></li>
+                        <?php endif; ?>
+
+                        <!-- 頁碼 -->
+                        <?php
+                        $start_page = max(1, $current_page - 2);
+                        $end_page = min($total_pages, $current_page + 2);
+
+                        if ($start_page > 1): ?>
+                            <li><a href="?table=<?= $current_table ?>&page=1&per_page=<?= $records_per_page ?>">1</a></li>
+                            <?php if ($start_page > 2): ?>
+                                <li><span>...</span></li>
+                            <?php endif; ?>
+                        <?php endif; ?>
+
+                        <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                            <?php if ($i == $current_page): ?>
+                                <li><span class="current"><?= $i ?></span></li>
+                            <?php else: ?>
+                                <li><a href="?table=<?= $current_table ?>&page=<?= $i ?>&per_page=<?= $records_per_page ?>"><?= $i ?></a></li>
+                            <?php endif; ?>
+                        <?php endfor; ?>
+
+                        <?php if ($end_page < $total_pages): ?>
+                            <?php if ($end_page < $total_pages - 1): ?>
+                                <li><span>...</span></li>
+                            <?php endif; ?>
+                            <li><a href="?table=<?= $current_table ?>&page=<?= $total_pages ?>&per_page=<?= $records_per_page ?>"><?= $total_pages ?></a></li>
+                        <?php endif; ?>
+
+                        <!-- 下一頁 -->
+                        <?php if ($current_page < $total_pages): ?>
+                            <li><a href="?table=<?= $current_table ?>&page=<?= $current_page + 1 ?>&per_page=<?= $records_per_page ?>">下一頁 &raquo;</a></li>
+                        <?php else: ?>
+                            <li><span class="disabled">下一頁 &raquo;</span></li>
+                        <?php endif; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
             <h2>修改會員</h2>
             <form method="POST" name="update">
                 <input type="hidden" name="table" value="members">
@@ -451,242 +666,428 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                 <input type="submit" name="create" value="新增訂單">
             </form>
             <<h2>訂單列表</h2>
-            <table>
-                <tr>
-                    <th>訂單編號</th>
-                    <th>會員編號</th>
-                    <th>使用者名稱</th>
-                    <th>訂單日期</th>
-                    <th>總金額</th>
-                    <th>狀態</th>
-                    <th>地址</th>
-                    <th>電話</th>
-                    <th>配送方式</th>
-                    <th>操作</th>
-                </tr>
-                <?php foreach ($rows as $row): ?>
+                <!-- 分頁控制器 -->
+                <div class="pagination-controls">
+                    <label for="per_page">每頁顯示:</label>
+                    <select id="per_page" onchange="changePerPage(this.value)">
+                        <option value="5" <?= $records_per_page == 5 ? 'selected' : '' ?>>5筆</option>
+                        <option value="10" <?= $records_per_page == 10 ? 'selected' : '' ?>>10筆</option>
+                        <option value="25" <?= $records_per_page == 25 ? 'selected' : '' ?>>25筆</option>
+                        <option value="50" <?= $records_per_page == 50 ? 'selected' : '' ?>>50筆</option>
+                        <option value="100" <?= $records_per_page == 100 ? 'selected' : '' ?>>100筆</option>
+                    </select>
+                </div>
+
+                <div class="pagination-info">
+                    顯示第 <?= ($offset + 1) ?> - <?= min($offset + $records_per_page, $total_records) ?> 筆，共 <?= $total_records ?> 筆記錄
+                </div>
+                <table>
                     <tr>
-                        <td><?= htmlspecialchars($row['order_id']); ?></td>
-                        <td><?= htmlspecialchars($row['member_id']); ?></td>
-                        <td><?= htmlspecialchars($row['username']); ?></td>
-                        <td><?= htmlspecialchars($row['order_date']); ?></td>
-                        <td><?= htmlspecialchars($row['total_price']); ?></td>
-                        <td><?= htmlspecialchars($row['status']); ?></td>
-                        <td><?= htmlspecialchars($row['address']); ?></td>
-                        <td><?= htmlspecialchars($row['phone']); ?></td>
-                        <td><?= htmlspecialchars($row['shipping_method']); ?></td>
-                        <td>
-                            <button onclick='editOrder(<?= json_encode($row); ?>)'>修改</button>
-                            <a href="?delete=<?= urlencode($row['order_id']); ?>&table=orders" onclick="return confirm('確定要刪除這個訂單嗎？')">刪除</a>
-                        </td>
+                        <th>訂單編號</th>
+                        <th>會員編號</th>
+                        <th>使用者名稱</th>
+                        <th>訂單日期</th>
+                        <th>總金額</th>
+                        <th>狀態</th>
+                        <th>地址</th>
+                        <th>電話</th>
+                        <th>配送方式</th>
+                        <th>操作</th>
                     </tr>
-                <?php endforeach; ?>
-            </table>
-            <h2>修改訂單</h2>
-            <form method="POST" name="update">
-                <input type="hidden" name="table" value="orders">
-                <input type="text" name="order_id" id="edit_order_id" placeholder="訂單編號" readonly required>
-                <input type="text" name="member_id" id="edit_order_member_id" placeholder="會員編號" required>
-                <input type="text" name="username" id="edit_order_username" placeholder="使用者名稱" required>
-                <input type="date" name="order_date" id="edit_order_date" placeholder="訂單日期" required>
-                <input type="number" name="total_price" id="edit_order_total_price" placeholder="總金額" required>
-                <input type="text" name="status" id="edit_order_status" placeholder="訂單狀態" required>
-                <input type="text" name="address" id="edit_order_address" placeholder="地址" required>
-                <input type="text" name="phone" id="edit_order_phone" placeholder="電話" required>
-                <input type="text" name="shipping_method" id="edit_order_shipping_method" placeholder="配送方式" required>
-                <input type="submit" name="update" value="更新訂單">
-            </form>
-        
-        <?php elseif ($current_table == 'order_items'): ?>
-            <h2>新增訂單項目</h2>
-            <form method="POST">
-                <input type="hidden" name="table" value="order_items">
-                <input type="text" name="number" placeholder="項目編號" required>
-                <input type="text" name="order_id" placeholder="訂單編號" required>
-                <input type="text" name="product_id" placeholder="商品編號" required>
-                <input type="number" name="quantity" placeholder="數量" required>
-                <input type="submit" name="create" value="新增訂單項目">
-            </form>
-            <<h2>訂單項目列表</h2>
-            <table>
-                <tr>
-                    <th>項目編號</th>
-                    <th>訂單編號</th>
-                    <th>商品編號</th>
-                    <th>數量</th>
-                    <th>操作</th>
-                </tr>
-                <?php foreach ($rows as $row): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row['number']); ?></td>
-                        <td><?= htmlspecialchars($row['order_id']); ?></td>
-                        <td><?= htmlspecialchars($row['product_id']); ?></td>
-                        <td><?= htmlspecialchars($row['quantity']); ?></td>
-                        <td>
-                            <button onclick='editOrder_items(<?= json_encode($row); ?>)'>修改</button>
-                            <a href="?delete=<?= urlencode($row['number']); ?>&table=order_items" onclick="return confirm('確定要刪除這個訂單嗎？')">刪除</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </table>
-            <h2>修改訂單項目</h2>
-            <form method="POST" name="update">
-                <input type="hidden" name="table" value="order_items">
-                <input type="number" name="number" id="edit_order_items_number" placeholder="項目編號" readonly required>
-                <input type="text" name="order_id" id="edit_order_items_order_id" placeholder="訂單編號" required>
-                <input type="text" name="product_id" id="edit_order_items_product_id" placeholder="商品編號" required>
-                <input type="number" name="quantity" id="edit_order_items_quantity" placeholder="數量" required>
-                <input type="submit" name="update" value="更新訂單">
-            </form>
-        
-        <?php elseif ($current_table == 'reviews'): ?>
-            <h2>新增評論</h2>
-            <form method="POST">
-                <input type="hidden" name="table" value="reviews">
-                <input type="text" name="review_id" placeholder="評論編號" required>
-                <input type="text" name="order_id" placeholder="訂單編號" required>
-                <input type="text" name="product_id" placeholder="商品編號" required>
-                <input type="text" name="user_id" placeholder="使用者編號" required>
-                <input type="text" name="username" placeholder="使用者名稱" required>
-                <input type="number" name="rating" placeholder="評分" min="1" max="5" required>
-                <textarea name="content" placeholder="評論內容" required></textarea>
-                <input type="submit" name="create" value="新增評論">
-            </form>
-            <h2>評論列表</h2>
-            <table>
-                <tr>
-                    <th>評論編號</th>
-                    <th>訂單編號</th>
-                    <th>商品編號</th>
-                    <th>使用者編號</th>
-                    <th>使用者名稱</th>
-                    <th>評分</th>
-                    <th>評論內容</th>
-                    <th>操作</th>
-                </tr>
-                <?php foreach ($rows as $row): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($row['review_id']); ?></td>
-                        <td><?= htmlspecialchars($row['order_id']); ?></td>
-                        <td><?= htmlspecialchars($row['product_id']); ?></td>
-                        <td><?= htmlspecialchars($row['user_id']); ?></td>
-                        <td><?= htmlspecialchars($row['username']); ?></td>
-                        <td><?= htmlspecialchars($row['rating']); ?></td>
-                        <td><?= htmlspecialchars($row['content']); ?></td>
-                        <td>
-                            <button onclick='editReview(<?= json_encode($row); ?>)'>修改</button>
-                            <a href="?delete=<?= urlencode($row['review_id']); ?>&table=reviews" onclick="return confirm('確定要刪除這個評論嗎？')">刪除</a>
-                        </td>
-                    </tr>
-                <?php endforeach; ?>
-            </table>
-            <h2>修改評論</h2>
-            <form method="POST" name="update">
-                <input type="hidden" name="table" value="reviews">
-                <input type="text" name="review_id" id="edit_review_id" placeholder="評論編號" readonly required>
-                <input type="text" name="order_id" id="edit_review_order_id" placeholder="訂單編號" required>
-                <input type="text" name="product_id" id="edit_review_product_id" placeholder="商品編號" required>
-                <input type="text" name="user_id" id="edit_review_user_id" placeholder="使用者編號" required>
-                <input type="text" name="username" id="edit_review_username" placeholder="使用者名稱" required>
-                <input type="number" name="rating" id="edit_review_rating" placeholder="評分" min="1" max="5" required>
-                <textarea name="content" id="edit_review_content" placeholder="評論內容" required></textarea>
-                <input type="submit" name="update" value="更新評論">
-            </form>
-            <?php endif; ?>
+                    <?php foreach ($rows as $row): ?>
+                        <tr>
+                            <td><?= htmlspecialchars($row['order_id']); ?></td>
+                            <td><?= htmlspecialchars($row['member_id']); ?></td>
+                            <td><?= htmlspecialchars($row['username']); ?></td>
+                            <td><?= htmlspecialchars($row['order_date']); ?></td>
+                            <td><?= htmlspecialchars($row['total_price']); ?></td>
+                            <td><?= htmlspecialchars($row['status']); ?></td>
+                            <td><?= htmlspecialchars($row['address']); ?></td>
+                            <td><?= htmlspecialchars($row['phone']); ?></td>
+                            <td><?= htmlspecialchars($row['shipping_method']); ?></td>
+                            <td>
+                                <button onclick='editOrder(<?= json_encode($row); ?>)'>修改</button>
+                                <a href="?delete=<?= urlencode($row['order_id']); ?>&table=orders" onclick="return confirm('確定要刪除這個訂單嗎？')">刪除</a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </table>
+                <!-- 分頁導航 -->
+                <?php if ($total_pages > 1): ?>
+                    <div class="pagination-controls">
+                        <ul class="pagination">
+                            <!-- 上一頁 -->
+                            <?php if ($current_page > 1): ?>
+                                <li><a href="?table=<?= $current_table ?>&page=<?= $current_page - 1 ?>&per_page=<?= $records_per_page ?>">&laquo; 上一頁</a></li>
+                            <?php else: ?>
+                                <li><span class="disabled">&laquo; 上一頁</span></li>
+                            <?php endif; ?>
+
+                            <!-- 頁碼 -->
+                            <?php
+                            $start_page = max(1, $current_page - 2);
+                            $end_page = min($total_pages, $current_page + 2);
+
+                            if ($start_page > 1): ?>
+                                <li><a href="?table=<?= $current_table ?>&page=1&per_page=<?= $records_per_page ?>">1</a></li>
+                                <?php if ($start_page > 2): ?>
+                                    <li><span>...</span></li>
+                                <?php endif; ?>
+                            <?php endif; ?>
+
+                            <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                                <?php if ($i == $current_page): ?>
+                                    <li><span class="current"><?= $i ?></span></li>
+                                <?php else: ?>
+                                    <li><a href="?table=<?= $current_table ?>&page=<?= $i ?>&per_page=<?= $records_per_page ?>"><?= $i ?></a></li>
+                                <?php endif; ?>
+                            <?php endfor; ?>
+
+                            <?php if ($end_page < $total_pages): ?>
+                                <?php if ($end_page < $total_pages - 1): ?>
+                                    <li><span>...</span></li>
+                                <?php endif; ?>
+                                <li><a href="?table=<?= $current_table ?>&page=<?= $total_pages ?>&per_page=<?= $records_per_page ?>"><?= $total_pages ?></a></li>
+                            <?php endif; ?>
+
+                            <!-- 下一頁 -->
+                            <?php if ($current_page < $total_pages): ?>
+                                <li><a href="?table=<?= $current_table ?>&page=<?= $current_page + 1 ?>&per_page=<?= $records_per_page ?>">下一頁 &raquo;</a></li>
+                            <?php else: ?>
+                                <li><span class="disabled">下一頁 &raquo;</span></li>
+                            <?php endif; ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
+                <h2>修改訂單</h2>
+                <form method="POST" name="update">
+                    <input type="hidden" name="table" value="orders">
+                    <input type="text" name="order_id" id="edit_order_id" placeholder="訂單編號" readonly required>
+                    <input type="text" name="member_id" id="edit_order_member_id" placeholder="會員編號" required>
+                    <input type="text" name="username" id="edit_order_username" placeholder="使用者名稱" required>
+                    <input type="date" name="order_date" id="edit_order_date" placeholder="訂單日期" required>
+                    <input type="number" name="total_price" id="edit_order_total_price" placeholder="總金額" required>
+                    <input type="text" name="status" id="edit_order_status" placeholder="訂單狀態" required>
+                    <input type="text" name="address" id="edit_order_address" placeholder="地址" required>
+                    <input type="text" name="phone" id="edit_order_phone" placeholder="電話" required>
+                    <input type="text" name="shipping_method" id="edit_order_shipping_method" placeholder="配送方式" required>
+                    <input type="submit" name="update" value="更新訂單">
+                </form>
+
+            <?php elseif ($current_table == 'order_items'): ?>
+                <h2>新增訂單項目</h2>
+                <form method="POST">
+                    <input type="hidden" name="table" value="order_items">
+                    <input type="text" name="number" placeholder="項目編號" required>
+                    <input type="text" name="order_id" placeholder="訂單編號" required>
+                    <input type="text" name="product_id" placeholder="商品編號" required>
+                    <input type="number" name="quantity" placeholder="數量" required>
+                    <input type="submit" name="create" value="新增訂單項目">
+                </form>
+                <<h2>訂單項目列表</h2>
+                    <!-- 分頁控制器 -->
+                    <div class="pagination-controls">
+                        <label for="per_page">每頁顯示:</label>
+                        <select id="per_page" onchange="changePerPage(this.value)">
+                            <option value="5" <?= $records_per_page == 5 ? 'selected' : '' ?>>5筆</option>
+                            <option value="10" <?= $records_per_page == 10 ? 'selected' : '' ?>>10筆</option>
+                            <option value="25" <?= $records_per_page == 25 ? 'selected' : '' ?>>25筆</option>
+                            <option value="50" <?= $records_per_page == 50 ? 'selected' : '' ?>>50筆</option>
+                            <option value="100" <?= $records_per_page == 100 ? 'selected' : '' ?>>100筆</option>
+                        </select>
+                    </div>
+
+                    <div class="pagination-info">
+                        顯示第 <?= ($offset + 1) ?> - <?= min($offset + $records_per_page, $total_records) ?> 筆，共 <?= $total_records ?> 筆記錄
+                    </div>
+                    <table>
+                        <tr>
+                            <th>項目編號</th>
+                            <th>訂單編號</th>
+                            <th>商品編號</th>
+                            <th>數量</th>
+                            <th>操作</th>
+                        </tr>
+                        <?php foreach ($rows as $row): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['number']); ?></td>
+                                <td><?= htmlspecialchars($row['order_id']); ?></td>
+                                <td><?= htmlspecialchars($row['product_id']); ?></td>
+                                <td><?= htmlspecialchars($row['quantity']); ?></td>
+                                <td>
+                                    <button onclick='editOrder_items(<?= json_encode($row); ?>)'>修改</button>
+                                    <a href="?delete=<?= urlencode($row['number']); ?>&table=order_items" onclick="return confirm('確定要刪除這個訂單嗎？')">刪除</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
+                    <!-- 分頁導航 -->
+                    <?php if ($total_pages > 1): ?>
+                        <div class="pagination-controls">
+                            <ul class="pagination">
+                                <!-- 上一頁 -->
+                                <?php if ($current_page > 1): ?>
+                                    <li><a href="?table=<?= $current_table ?>&page=<?= $current_page - 1 ?>&per_page=<?= $records_per_page ?>">&laquo; 上一頁</a></li>
+                                <?php else: ?>
+                                    <li><span class="disabled">&laquo; 上一頁</span></li>
+                                <?php endif; ?>
+
+                                <!-- 頁碼 -->
+                                <?php
+                                $start_page = max(1, $current_page - 2);
+                                $end_page = min($total_pages, $current_page + 2);
+
+                                if ($start_page > 1): ?>
+                                    <li><a href="?table=<?= $current_table ?>&page=1&per_page=<?= $records_per_page ?>">1</a></li>
+                                    <?php if ($start_page > 2): ?>
+                                        <li><span>...</span></li>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+
+                                <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                                    <?php if ($i == $current_page): ?>
+                                        <li><span class="current"><?= $i ?></span></li>
+                                    <?php else: ?>
+                                        <li><a href="?table=<?= $current_table ?>&page=<?= $i ?>&per_page=<?= $records_per_page ?>"><?= $i ?></a></li>
+                                    <?php endif; ?>
+                                <?php endfor; ?>
+
+                                <?php if ($end_page < $total_pages): ?>
+                                    <?php if ($end_page < $total_pages - 1): ?>
+                                        <li><span>...</span></li>
+                                    <?php endif; ?>
+                                    <li><a href="?table=<?= $current_table ?>&page=<?= $total_pages ?>&per_page=<?= $records_per_page ?>"><?= $total_pages ?></a></li>
+                                <?php endif; ?>
+
+                                <!-- 下一頁 -->
+                                <?php if ($current_page < $total_pages): ?>
+                                    <li><a href="?table=<?= $current_table ?>&page=<?= $current_page + 1 ?>&per_page=<?= $records_per_page ?>">下一頁 &raquo;</a></li>
+                                <?php else: ?>
+                                    <li><span class="disabled">下一頁 &raquo;</span></li>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+                    <h2>修改訂單項目</h2>
+                    <form method="POST" name="update">
+                        <input type="hidden" name="table" value="order_items">
+                        <input type="number" name="number" id="edit_order_items_number" placeholder="項目編號" readonly required>
+                        <input type="text" name="order_id" id="edit_order_items_order_id" placeholder="訂單編號" required>
+                        <input type="text" name="product_id" id="edit_order_items_product_id" placeholder="商品編號" required>
+                        <input type="number" name="quantity" id="edit_order_items_quantity" placeholder="數量" required>
+                        <input type="submit" name="update" value="更新訂單">
+                    </form>
+
+                <?php elseif ($current_table == 'reviews'): ?>
+                    <h2>新增評論</h2>
+                    <form method="POST">
+                        <input type="hidden" name="table" value="reviews">
+                        <input type="text" name="review_id" placeholder="評論編號" required>
+                        <input type="text" name="order_id" placeholder="訂單編號" required>
+                        <input type="text" name="product_id" placeholder="商品編號" required>
+                        <input type="text" name="user_id" placeholder="使用者編號" required>
+                        <input type="text" name="username" placeholder="使用者名稱" required>
+                        <input type="number" name="rating" placeholder="評分" min="1" max="5" required>
+                        <textarea name="content" placeholder="評論內容" required></textarea>
+                        <input type="submit" name="create" value="新增評論">
+                    </form>
+                    <h2>評論列表</h2>
+                    <!-- 分頁控制器 -->
+                    <div class="pagination-controls">
+                        <label for="per_page">每頁顯示:</label>
+                        <select id="per_page" onchange="changePerPage(this.value)">
+                            <option value="5" <?= $records_per_page == 5 ? 'selected' : '' ?>>5筆</option>
+                            <option value="10" <?= $records_per_page == 10 ? 'selected' : '' ?>>10筆</option>
+                            <option value="25" <?= $records_per_page == 25 ? 'selected' : '' ?>>25筆</option>
+                            <option value="50" <?= $records_per_page == 50 ? 'selected' : '' ?>>50筆</option>
+                            <option value="100" <?= $records_per_page == 100 ? 'selected' : '' ?>>100筆</option>
+                        </select>
+                    </div>
+
+                    <div class="pagination-info">
+                        顯示第 <?= ($offset + 1) ?> - <?= min($offset + $records_per_page, $total_records) ?> 筆，共 <?= $total_records ?> 筆記錄
+                    </div>
+                    <table>
+                        <tr>
+                            <th>評論編號</th>
+                            <th>訂單編號</th>
+                            <th>商品編號</th>
+                            <th>使用者編號</th>
+                            <th>使用者名稱</th>
+                            <th>評分</th>
+                            <th>評論內容</th>
+                            <th>操作</th>
+                        </tr>
+                        <?php foreach ($rows as $row): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($row['review_id']); ?></td>
+                                <td><?= htmlspecialchars($row['order_id']); ?></td>
+                                <td><?= htmlspecialchars($row['product_id']); ?></td>
+                                <td><?= htmlspecialchars($row['user_id']); ?></td>
+                                <td><?= htmlspecialchars($row['username']); ?></td>
+                                <td><?= htmlspecialchars($row['rating']); ?></td>
+                                <td><?= htmlspecialchars($row['content']); ?></td>
+                                <td>
+                                    <button onclick='editReview(<?= json_encode($row); ?>)'>修改</button>
+                                    <a href="?delete=<?= urlencode($row['review_id']); ?>&table=reviews" onclick="return confirm('確定要刪除這個評論嗎？')">刪除</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </table>
+                    <!-- 分頁導航 -->
+                    <?php if ($total_pages > 1): ?>
+                        <div class="pagination-controls">
+                            <ul class="pagination">
+                                <!-- 上一頁 -->
+                                <?php if ($current_page > 1): ?>
+                                    <li><a href="?table=<?= $current_table ?>&page=<?= $current_page - 1 ?>&per_page=<?= $records_per_page ?>">&laquo; 上一頁</a></li>
+                                <?php else: ?>
+                                    <li><span class="disabled">&laquo; 上一頁</span></li>
+                                <?php endif; ?>
+
+                                <!-- 頁碼 -->
+                                <?php
+                                $start_page = max(1, $current_page - 2);
+                                $end_page = min($total_pages, $current_page + 2);
+
+                                if ($start_page > 1): ?>
+                                    <li><a href="?table=<?= $current_table ?>&page=1&per_page=<?= $records_per_page ?>">1</a></li>
+                                    <?php if ($start_page > 2): ?>
+                                        <li><span>...</span></li>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+
+                                <?php for ($i = $start_page; $i <= $end_page; $i++): ?>
+                                    <?php if ($i == $current_page): ?>
+                                        <li><span class="current"><?= $i ?></span></li>
+                                    <?php else: ?>
+                                        <li><a href="?table=<?= $current_table ?>&page=<?= $i ?>&per_page=<?= $records_per_page ?>"><?= $i ?></a></li>
+                                    <?php endif; ?>
+                                <?php endfor; ?>
+
+                                <?php if ($end_page < $total_pages): ?>
+                                    <?php if ($end_page < $total_pages - 1): ?>
+                                        <li><span>...</span></li>
+                                    <?php endif; ?>
+                                    <li><a href="?table=<?= $current_table ?>&page=<?= $total_pages ?>&per_page=<?= $records_per_page ?>"><?= $total_pages ?></a></li>
+                                <?php endif; ?>
+
+                                <!-- 下一頁 -->
+                                <?php if ($current_page < $total_pages): ?>
+                                    <li><a href="?table=<?= $current_table ?>&page=<?= $current_page + 1 ?>&per_page=<?= $records_per_page ?>">下一頁 &raquo;</a></li>
+                                <?php else: ?>
+                                    <li><span class="disabled">下一頁 &raquo;</span></li>
+                                <?php endif; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+                    <h2>修改評論</h2>
+                    <form method="POST" name="update">
+                        <input type="hidden" name="table" value="reviews">
+                        <input type="text" name="review_id" id="edit_review_id" placeholder="評論編號" readonly required>
+                        <input type="text" name="order_id" id="edit_review_order_id" placeholder="訂單編號" required>
+                        <input type="text" name="product_id" id="edit_review_product_id" placeholder="商品編號" required>
+                        <input type="text" name="user_id" id="edit_review_user_id" placeholder="使用者編號" required>
+                        <input type="text" name="username" id="edit_review_username" placeholder="使用者名稱" required>
+                        <input type="number" name="rating" id="edit_review_rating" placeholder="評分" min="1" max="5" required>
+                        <textarea name="content" id="edit_review_content" placeholder="評論內容" required></textarea>
+                        <input type="submit" name="update" value="更新評論">
+                    </form>
+                <?php endif; ?>
     </div>
 
 
-    
-	
-	<footer id="footer"><!--Footer-->
-		<div class="footer-top">
-			<div class="container">
-				<div class="row">
-					<div class="col-sm-2">
-						<div class="companyinfo">
-							<h2><span>彰化</span>小禮坊</h2>
-							<p>用購買支持在地小農</p>
-						</div>
-					</div>
-					<div class="col-sm-7">
-						<div class="col-sm-3">
-							<div class="video-gallery text-center">
-								<a href="images/home/iframe1.jpg">
-									<div class="iframe-img">
-										<img src="images/home/iframe1.jpg" alt="" />
-									</div>
-								</a>
-								<p>鯨魚魚</p>
-								<h2>01 JULY 2024</h2>
-							</div>
-						</div>
 
-						<div class="col-sm-3">
-							<div class="video-gallery text-center">
-								<a href="images/home/iframe2.jpg">
-									<div class="iframe-img">
-										<img src="images/home/iframe2.jpg" alt="" />
-									</div>
-								</a>
-								<p>南瓜辰</p>
-								<h2>32 DEC 2024</h2>
-							</div>
-						</div>
 
-						<div class="col-sm-3">
-							<div class="video-gallery text-center">
-								<a href="images/home/iframe3.jpg">
-									<div class="iframe-img">
-										<img src="images/home/iframe3.jpg" alt="" />
-									</div>
-								</a>
-								<p>台灣阿虹</p>
-								<h2>06 JUNE 2024</h2>
-							</div>
-						</div>
+    <footer id="footer"><!--Footer-->
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="companyinfo">
+                            <h2><span>彰化</span>小禮坊</h2>
+                            <p>用購買支持在地小農</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="col-sm-3">
+                            <div class="video-gallery text-center">
+                                <a href="images/home/iframe1.jpg">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe1.jpg" alt="" />
+                                    </div>
+                                </a>
+                                <p>鯨魚魚</p>
+                                <h2>01 JULY 2024</h2>
+                            </div>
+                        </div>
 
-						<div class="col-sm-3">
-							<div class="video-gallery text-center">
-								<a href="images/home/iframe4.jpg">
-									<div class="iframe-img">
-										<img src="images/home/iframe4.jpg" alt="" />
-									</div>
-								</a>
-								<p>Rory</p>
-								<h2>30 FEB 2023</h2>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-3">
-						<div class="address">
-							<img src="images/home/map.png" alt="" />
-							<p>Taiwan</p>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="footer-bottom">
-			<div class="container">
-				<div class="row">
-					<p class="pull-left">Copyright © 2025 彰化小禮坊 Inc. All rights reserved.</p>
-					
-				</div>
-			</div>
-		</div>
+                        <div class="col-sm-3">
+                            <div class="video-gallery text-center">
+                                <a href="images/home/iframe2.jpg">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe2.jpg" alt="" />
+                                    </div>
+                                </a>
+                                <p>南瓜辰</p>
+                                <h2>32 DEC 2024</h2>
+                            </div>
+                        </div>
 
-	</footer><!--/Footer-->
-	
+                        <div class="col-sm-3">
+                            <div class="video-gallery text-center">
+                                <a href="images/home/iframe3.jpg">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe3.jpg" alt="" />
+                                    </div>
+                                </a>
+                                <p>台灣阿虹</p>
+                                <h2>06 JUNE 2024</h2>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="video-gallery text-center">
+                                <a href="images/home/iframe4.jpg">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe4.jpg" alt="" />
+                                    </div>
+                                </a>
+                                <p>Rory</p>
+                                <h2>30 FEB 2023</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="address">
+                            <img src="images/home/map.png" alt="" />
+                            <p>Taiwan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <p class="pull-left">Copyright © 2025 彰化小禮坊 Inc. All rights reserved.</p>
+
+                </div>
+            </div>
+        </div>
+
+    </footer><!--/Footer-->
+
 
     <script src="js/db_admin_f.js"></script>
     <script src="js/jquery.js"></script>
-	<script src="js/price-range.js"></script>
+    <script src="js/price-range.js"></script>
     <script src="js/jquery.scrollUp.min.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
-	<script src="js/login.js"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="js/login.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
@@ -697,5 +1098,6 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
     <!-- <script src="//jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
     <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/localization/messages_zh_TW.js "></script> -->
 </body>
+
 </html>
-<?php $conn->close();?>
+<?php $conn->close(); ?>
