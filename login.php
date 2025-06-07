@@ -15,8 +15,8 @@ if (isset($conn)) {
 // 專門用於註冊的處理邏輯
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username'])) {
     try {
-        
-        
+
+
         // 收集表單數據
         $username = $_POST['register_username'];
         $email = $_POST['register_email'];
@@ -24,18 +24,33 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username']))
         $phone = $_POST['register_tel'];
         date_default_timezone_set("Asia/Taipei");
         $register_date = date("Y-m-d H:i:s");
-        
+
+        // 新增：檢查帳號是否已存在
+        $check_stmt = $conn->prepare("SELECT COUNT(*) as count FROM members WHERE username = ?");
+        $check_stmt->bind_param("s", $username);
+        $check_stmt->execute();
+        $check_result = $check_stmt->get_result();
+        $check_row = $check_result->fetch_assoc();
+
+        if ($check_row['count'] > 0) {
+            echo "<script>alert('此帳號已被使用，請選擇其他帳號名稱');</script>";
+            $check_stmt->close();
+            // 不繼續執行註冊邏輯
+        } else {
+            $check_stmt->close();
+        }
+
         // 取得新會員ID
         $stmt_id = $conn->prepare("SELECT COALESCE(MAX(member_id), 0) + 1 AS new_id FROM members");
         $stmt_id->execute();
         $result_id = $stmt_id->get_result();
         $row = $result_id->fetch_assoc();
         $new_member_id = $row['new_id'];
-        
+
         // 寫入資料庫
         $stmt = $conn->prepare("INSERT INTO members (member_id, username, email, password, phone, register_date) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("isssss", $new_member_id, $username, $email, $password, $phone, $register_date);
-        
+
         $success = $stmt->execute();
         if ($success) {
             echo "<script>alert('註冊成功！');</script>";
@@ -348,4 +363,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username']))
 </body>
 
 </html>
-<?php $conn->close();?>
+<?php $conn->close(); ?>

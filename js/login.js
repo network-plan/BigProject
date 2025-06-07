@@ -236,3 +236,55 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
 });
+// 帳號重複檢查功能
+function checkUsernameAvailability(username) {
+    return $.ajax({
+        url: 'check_username.php',
+        type: 'POST',
+        data: { username: username },
+        dataType: 'json'
+    });
+}
+
+// 當註冊帳號輸入框失去焦點時檢查
+$(document).ready(function() {
+    $('#account_input').on('blur', function() {
+        const username = $(this).val().trim();
+        const errorSpan = $(this).siblings('.error-message');
+        
+        if (username.length >= 4) {
+            checkUsernameAvailability(username)
+                .done(function(response) {
+                    if (response.exists) {
+                        errorSpan.text('此帳號已被使用').css('color', 'red').show();
+                        $('#account_input').addClass('error');
+                    } else {
+                        errorSpan.text('帳號可以使用').css('color', 'green').show();
+                        $('#account_input').removeClass('error');
+                    }
+                })
+                .fail(function() {
+                    errorSpan.text('檢查帳號時發生錯誤').css('color', 'red').show();
+                });
+        } else {
+            errorSpan.hide();
+        }
+    });
+
+    // 當用戶重新輸入時清除錯誤訊息
+    $('#account_input').on('input', function() {
+        $(this).siblings('.error-message').hide();
+        $(this).removeClass('error');
+    });
+    
+    // 註冊表單提交前的最終檢查
+    $('#input_form').on('submit', function(e) {
+        const username = $('#account_input').val().trim();
+        
+        if ($('#account_input').hasClass('error')) {
+            e.preventDefault();
+            alert('請選擇不同的帳號名稱');
+            return false;
+        }
+    });
+});
