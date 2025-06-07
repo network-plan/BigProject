@@ -144,24 +144,50 @@ document.addEventListener('DOMContentLoaded', function() {
     // const registerForm = document.querySelector('.form-box.register form');
 
     // 登入表單驗證
-    loginForm.addEventListener('submit', function(e) {
-        //e.preventDefault();
-        const username = this.querySelector('input[type="text"]').value;
-        const password = this.querySelector('input[type="password"]').value;
+    // loginForm.addEventListener('submit', function(e) {
+    //     //e.preventDefault();
+    //     const username = this.querySelector('input[type="text"]').value;
+    //     const password = this.querySelector('input[type="password"]').value;
         
-        if (username.length < 4 || username.length > 10) {
-            e.preventDefault();
-            alert('使用者名稱必須介於4-10個字之間');
-            return;
-        }
+    //     if (username.length < 4 || username.length > 10) {
+    //         e.preventDefault();
+    //         alert('使用者名稱必須介於4-10個字之間');
+    //         return;
+    //     }
         
-        if (password.length < 6) {
-            e.preventDefault();
-            alert('密碼長度至少需要6個字符');
-            return;
-        }
+    //     if (password.length < 6) {
+    //         e.preventDefault();
+    //         alert('密碼長度至少需要6個字符');
+    //         return;
+    //     }
 
-        console.log('登入表單驗證通過');
+    //     console.log('登入表單驗證通過');
+    // });
+
+
+
+    document.getElementById('login_form').addEventListener('submit', function(e) {
+        e.preventDefault(); // 阻止表單預設送出行為
+
+        const formData = new FormData(this);
+
+        fetch('login_ajax.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('登入成功');
+                window.location.href = 'index.php';
+            } else {
+                alert(data.message); // 顯示錯誤訊息
+            }
+        })
+        .catch(error => {
+            console.error('錯誤:', error);
+            alert('登入失敗，請稍後再試');
+        });
     });
 
     // 註冊表單驗證
@@ -209,4 +235,56 @@ document.addEventListener('DOMContentLoaded', function() {
         
     });
     
+});
+// 帳號重複檢查功能
+function checkUsernameAvailability(username) {
+    return $.ajax({
+        url: 'check_username.php',
+        type: 'POST',
+        data: { username: username },
+        dataType: 'json'
+    });
+}
+
+// 當註冊帳號輸入框失去焦點時檢查
+$(document).ready(function() {
+    $('#account_input').on('blur', function() {
+        const username = $(this).val().trim();
+        const errorSpan = $(this).siblings('.error-message');
+        
+        if (username.length >= 4) {
+            checkUsernameAvailability(username)
+                .done(function(response) {
+                    if (response.exists) {
+                        errorSpan.text('此帳號已被使用').css('color', 'red').show();
+                        $('#account_input').addClass('error');
+                    } else {
+                        errorSpan.text('帳號可以使用').css('color', 'green').show();
+                        $('#account_input').removeClass('error');
+                    }
+                })
+                .fail(function() {
+                    errorSpan.text('檢查帳號時發生錯誤').css('color', 'red').show();
+                });
+        } else {
+            errorSpan.hide();
+        }
+    });
+
+    // 當用戶重新輸入時清除錯誤訊息
+    $('#account_input').on('input', function() {
+        $(this).siblings('.error-message').hide();
+        $(this).removeClass('error');
+    });
+    
+    // 註冊表單提交前的最終檢查
+    $('#input_form').on('submit', function(e) {
+        const username = $('#account_input').val().trim();
+        
+        if ($('#account_input').hasClass('error')) {
+            e.preventDefault();
+            alert('請選擇不同的帳號名稱');
+            return false;
+        }
+    });
 });
