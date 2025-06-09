@@ -1,4 +1,4 @@
-/* 评分系统样式 */
+/* 評分系統樣式 */
 .rating-box {
     margin: 10px 0;
 }
@@ -39,7 +39,7 @@
     background: none;
 }
 
-/* 评论表单样式 */
+/* 評論表單樣式 */
 .replay-box {
     margin-bottom: 30px;
 }
@@ -218,7 +218,7 @@
     background-color: #e68a0c;
 }
 
-/* 商品项样式 */
+/* 商品項樣式 */
 .media {
     margin-bottom: 30px;
     padding-bottom: 20px;
@@ -237,7 +237,7 @@
     margin-bottom: 30px;
 }
 
-/* 调整表单内容布局 */
+/* 調整表單内容布局 */
 .review-form-content {
     display: flex;
     flex-direction: column;
@@ -252,18 +252,18 @@
     padding: 0 5px;
 }
 
-/* 确保评分区域正确显示 */
+/* 確保評分區域正確顯示 */
 .rating-area {
     margin-top: 20px;
     padding: 10px 0;
 }
 
-/* 调整按钮样式 */
+/* 按鈕樣式 */
 .review-btn {
     margin: 10px 0;
 }
 
-/* 确保星星从左到右排列 */
+/* 星星從左至右排列 */
 .rating label:nth-child(2) { order: 1; }
 .rating label:nth-child(4) { order: 2; }
 .rating label:nth-child(6) { order: 3; }
@@ -275,3 +275,33 @@
 .rating input:nth-child(5) { order: 3; }
 .rating input:nth-child(7) { order: 4; }
 .rating input:nth-child(9) { order: 5; }
+
+.status-cancelled {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.cancel-order-btn {
+    margin-left: 10px;
+    padding: 5px 15px;
+    font-size: 12px;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-success {
+    color: #3c763d;
+    background-color: #dff0d8;
+    border-color: #d6e9c6;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
