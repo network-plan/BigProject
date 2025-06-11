@@ -29,11 +29,14 @@ session_start();
     <script src="js/bootstrap.min.js"></script>
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
-</head><!--/head-->
+</head>
+<!--/head-->
 
 <body>
-    <header id="header"><!--header-->
-        <div class="header_top"><!--header_top-->
+    <header id="header">
+        <!--header-->
+        <div class="header_top">
+            <!--header_top-->
             <div class="container">
                 <div class="row">
                     <div class="col-sm-6 ">
@@ -57,9 +60,11 @@ session_start();
                     </div>
                 </div>
             </div>
-        </div><!--/header_top-->
+        </div>
+        <!--/header_top-->
 
-        <div class="header-middle"><!--header-middle-->
+        <div class="header-middle">
+            <!--header-middle-->
             <div class="container">
                 <div class="row">
                     <div class="col-sm-4">
@@ -71,21 +76,21 @@ session_start();
                         <div class="shop-menu pull-right">
                             <ul class="nav navbar-nav">
                                 <?php
-                                if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
-                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
-                                    echo "<li><a href=\"historical_orders.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>";//若有登入導入到歷史訂單頁面
+                                if (isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
+                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>"; //若有登入導入到登出頁面
+                                    echo "<li><a href=\"historical_orders.php\"><i class=\"fa fa-crosshairs\"></i> 查看歷史訂單</a></li>"; //若有登入導入到歷史訂單頁面
                                     $cart = isset($_COOKIE['cart']) ? json_decode($_COOKIE['cart'], true) : [];
                                     $total_items = 0;
                                     // 統計購物車中所有商品的「數量總和」
                                     foreach ($cart as $quantity) {
                                         $total_items += $quantity;
                                     }
-                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車" . " (" . $total_items . ")</a></li>";//若有登入導入到購物車頁面
-                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
-                                }else if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin'){
-                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>";//若有登入導入到登出頁面
-                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>";//顯示會員名稱 點下去即到個人資料頁面
-                                }else{//若沒有登入 不管點甚麼都導入到登入頁面
+                                    echo "<li><a href=\"cart.php\"><i class=\"fa fa-shopping-cart\"></i> 購物車" . " (" . $total_items . ")</a></li>"; //若有登入導入到購物車頁面
+                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>"; //顯示會員名稱 點下去即到個人資料頁面
+                                } else if (isset($_SESSION['username']) && $_SESSION['role'] === 'admin') {
+                                    echo "<li><a href=\"logout.php\"><i class=\"fa fa-lock\"></i> 登出</a></li>"; //若有登入導入到登出頁面
+                                    echo "<li><a href=\"profile.php\"><i class=\"fa fa-user\"></i> " . $_SESSION['username'] . "</a></li>"; //顯示會員名稱 點下去即到個人資料頁面
+                                } else { //若沒有登入 不管點甚麼都導入到登入頁面
                                     echo "<li><a href=\"login.php\"><i class=\"fa fa-lock\"></i> 登入</a></li>";
                                 }
                                 ?>
@@ -94,9 +99,11 @@ session_start();
                     </div>
                 </div>
             </div>
-        </div><!--/header-middle-->
+        </div>
+        <!--/header-middle-->
 
-        <div class="header-bottom"><!--header-bottom-->
+        <div class="header-bottom">
+            <!--header-bottom-->
             <div class="container">
                 <div class="row">
                     <div class="col-sm-9">
@@ -113,28 +120,28 @@ session_start();
                             <ul class="nav navbar-nav collapse navbar-collapse">
                                 <li><a href="index.php" class="active">首頁</a></li>
                                 <?php
-                                if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {//若一般會員登入導入到對應頁面
+                                if (isset($_SESSION['username']) && $_SESSION['role'] != 'admin') { //若一般會員登入導入到對應頁面
                                     echo "<li class=\"dropdown\"><a href=\"#\">購物資訊<i class=\"fa fa-angle-down\"></i></a>";
-                                        echo "<ul role=\"menu\" class=\"sub-menu\">";
-                                            echo "<li><a href=\"shop.php\">商品</a></li>";
-                                            echo "<li><a href=\"historical_orders.php\">歷史訂單</a></li>";
-                                            echo "<li><a href=\"cart.php\">購物車</a></li>";
+                                    echo "<ul role=\"menu\" class=\"sub-menu\">";
+                                    echo "<li><a href=\"shop.php\">商品</a></li>";
+                                    echo "<li><a href=\"historical_orders.php\">歷史訂單</a></li>";
+                                    echo "<li><a href=\"cart.php\">購物車</a></li>";
                                     echo "</ul>";
-                                echo "</li>";
-                                }
-                                ?>
-                                <?php
-                                //若為一般會員才看的到(評價連結未改)
-                                if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin'){
-                                        echo "<li class=\"dropdown\"><a href=\"#\">評價<i class=\"fa fa-angle-down\"></i></a>";
-                                        echo "<ul role=\"menu\" class=\"sub-menu\">";
-                                        echo "    <li><a href=\"blog.html\">商品評價列表</a></li>";
-                                        echo "</ul>";
                                     echo "</li>";
                                 }
                                 ?>
                                 <?php
-                                if(isset($_SESSION['username']) && $_SESSION['role'] === 'admin')
+                                //若為一般會員才看的到(評價連結未改)
+                                if (isset($_SESSION['username']) && $_SESSION['role'] != 'admin') {
+                                    //     echo "<li class=\"dropdown\"><a href=\"#\">評價<i class=\"fa fa-angle-down\"></i></a>";
+                                    //     echo "<ul role=\"menu\" class=\"sub-menu\">";
+                                    //     echo "    <li><a href=\"blog.html\">商品評價列表</a></li>";
+                                    //     echo "</ul>";
+                                    // echo "</li>";
+                                }
+                                ?>
+                                <?php
+                                if (isset($_SESSION['username']) && $_SESSION['role'] === 'admin')
                                     echo "<li><a href=\"db_admin.php\">資料庫管理</a></li>" //管理者才看的到這個
                                 ?>
                             </ul>
@@ -151,12 +158,13 @@ session_start();
                     </div>
                 </div>
             </div>
-        </div><!--/header-bottom-->
+        </div>
+        <!--/header-bottom-->
     </header>
 
     <section id="advertisement">
         <div class="container">
-            <img src="images/shop/advertisement.jpg" alt="" />
+            <img src="images/shop/advertisement1.jpg" alt="" />
         </div>
     </section>
 
@@ -166,7 +174,8 @@ session_start();
                 <div class="col-sm-3">
                     <div class="left-sidebar">
                         <h2>商品分類</h2>
-                        <div class="panel-group category-products" id="accordian"><!--category-productsr-->
+                        <div class="panel-group category-products" id="accordian">
+                            <!--category-productsr-->
                             <div class="panel panel-default">
                                 <div class="panel-heading">
                                     <h4 class="panel-title"><a href="shop.php"><b>全部商品</b></a></h4>
@@ -193,7 +202,8 @@ session_start();
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="shop.php?category=醬菜類(罐頭食品)"><b>醬菜類(罐頭食品)</b></a></h4>
+                                    <h4 class="panel-title"><a href="shop.php?category=醬菜類(罐頭食品)"><b>醬菜類(罐頭食品)</b></a>
+                                    </h4>
                                 </div>
                             </div>
                         </div>
@@ -202,11 +212,12 @@ session_start();
                 </div>
 
                 <div class="col-sm-9 padding-right">
-                    <div class="features_items"><!--features_items-->
+                    <div class="features_items">
+                        <!--features_items-->
                         <?php
                         // 獲取分類參數，如果有的話
                         $selected_category = isset($_GET['category']) ? mysqli_real_escape_string($conn, $_GET['category']) : '';
-                        
+
                         // 顯示分類標題
                         if (!empty($selected_category)) {
                             echo '<h2 class="title text-center">' . htmlspecialchars($selected_category) . '</h2>';
@@ -229,15 +240,15 @@ session_start();
                         // 準備查詢條件
                         $where_clause = "";
                         $conditions = array();
-                        
+
                         if (!empty($search_term)) {
                             $conditions[] = "product_info.product_name LIKE '%$search_term%'";
                         }
-                        
+
                         if (!empty($selected_category)) {
                             $conditions[] = "product_info.category = '$selected_category'";
                         }
-                        
+
                         if (!empty($conditions)) {
                             $where_clause = " WHERE " . implode(" AND ", $conditions);
                         }
@@ -268,11 +279,11 @@ session_start();
                         // 顯示搜尋和分類結果計數
                         $filters_applied = false;
                         $filter_message = "";
-                        
+
                         if (!empty($search_term) || !empty($selected_category)) {
                             $filters_applied = true;
                             $filter_message = "搜尋結果：找到 $total_items 項商品";
-                            
+
                             if (!empty($search_term) && !empty($selected_category)) {
                                 $filter_message = "搜尋 '" . htmlspecialchars($search_term) . "' 在分類 '" . htmlspecialchars($selected_category) . "' 的結果：找到 $total_items 項商品";
                             } else if (!empty($search_term)) {
@@ -281,7 +292,7 @@ session_start();
                                 $filter_message = "分類 '" . htmlspecialchars($selected_category) . "' 的結果：找到 $total_items 項商品";
                             }
                         }
-                        
+
                         if ($filters_applied) {
                             echo "<div class='alert alert-info'>" . $filter_message . "</div>";
                         }
@@ -312,21 +323,34 @@ session_start();
                             echo '</div>';
                         }
                         ?>
-                    </div><!--features_items-->
+                    </div>
+                    <!--features_items-->
+
+                    <?php
+                    // 在分頁導航之前，先準備 URL 參數
+                    $url_params = array();
+                    if (!empty($search_term)) {
+                        $url_params[] = 'search=' . urlencode($search_term);
+                    }
+                    if (!empty($selected_category)) {
+                        $url_params[] = 'category=' . urlencode($selected_category);
+                    }
+                    $base_url_params = !empty($url_params) ? '&' . implode('&', $url_params) : '';
+                    ?>
 
                     <!-- 動態生成分頁導航 -->
                     <?php if ($total_pages > 1): ?>
                         <ul class="pagination">
                             <!-- 第一頁按鈕 -->
                             <?php if ($current_page > 1): ?>
-                                <li><a href="?page=1<?php echo !empty($search_term) ? '&search=' . urlencode($search_term) : ''; ?>" title="第一頁"><i class="fa fa-angle-double-left"></i></a></li>
+                                <li><a href="?page=1<?php echo $base_url_params; ?>" title="第一頁"><i class="fa fa-angle-double-left"></i></a></li>
                             <?php else: ?>
                                 <li class="disabled"><a href="#"><i class="fa fa-angle-double-left"></i></a></li>
                             <?php endif; ?>
 
                             <!-- 上一頁連結 -->
                             <?php if ($current_page > 1): ?>
-                                <li><a href="?page=<?php echo $current_page - 1; ?><?php echo !empty($search_term) ? '&search=' . urlencode($search_term) : ''; ?>" title="上一頁">&laquo;</a></li>
+                                <li><a href="?page=<?php echo $current_page - 1; ?><?php echo $base_url_params; ?>" title="上一頁">&laquo;</a></li>
                             <?php else: ?>
                                 <li class="disabled"><a href="#">&laquo;</a></li>
                             <?php endif; ?>
@@ -339,20 +363,20 @@ session_start();
 
                             for ($i = $start_page; $i <= $end_page; $i++): ?>
                                 <li <?php if ($i == $current_page) echo 'class="active"'; ?>>
-                                    <a href="?page=<?php echo $i; ?><?php echo !empty($search_term) ? '&search=' . urlencode($search_term) : ''; ?>"><?php echo $i; ?></a>
+                                    <a href="?page=<?php echo $i; ?><?php echo $base_url_params; ?>"><?php echo $i; ?></a>
                                 </li>
                             <?php endfor; ?>
 
                             <!-- 下一頁連結 -->
                             <?php if ($current_page < $total_pages): ?>
-                                <li><a href="?page=<?php echo $current_page + 1; ?><?php echo !empty($search_term) ? '&search=' . urlencode($search_term) : ''; ?>" title="下一頁">&raquo;</a></li>
+                                <li><a href="?page=<?php echo $current_page + 1; ?><?php echo $base_url_params; ?>" title="下一頁">&raquo;</a></li>
                             <?php else: ?>
                                 <li class="disabled"><a href="#">&raquo;</a></li>
                             <?php endif; ?>
 
                             <!-- 最後一頁按鈕 -->
                             <?php if ($current_page < $total_pages): ?>
-                                <li><a href="?page=<?php echo $total_pages; ?><?php echo !empty($search_term) ? '&search=' . urlencode($search_term) : ''; ?>" title="最後一頁"><i class="fa fa-angle-double-right"></i></a></li>
+                                <li><a href="?page=<?php echo $total_pages; ?><?php echo $base_url_params; ?>" title="最後一頁"><i class="fa fa-angle-double-right"></i></a></li>
                             <?php else: ?>
                                 <li class="disabled"><a href="#"><i class="fa fa-angle-double-right"></i></a></li>
                             <?php endif; ?>
@@ -363,83 +387,7 @@ session_start();
         </div>
     </section>
 
-    <footer id="footer"><!--Footer-->
-        <div class="footer-top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-2">
-                        <div class="companyinfo">
-                            <h2><span>彰化</span>小禮坊</h2>
-                            <p>用購買支持在地小農</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-7">
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe1.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe1.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>鯨魚魚</p>
-                                <h2>01 JULY 2024</h2>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe2.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe2.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>南瓜辰</p>
-                                <h2>17 OCT 2024</h2>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe3.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe3.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>台灣阿虹</p>
-                                <h2>06 JUNE 2024</h2>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe4.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe4.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>Rory</p>
-                                <h2>30 FEB 2023</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="address">
-                            <img src="images/home/map.png" alt="" />
-                            <p>Taiwan</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="container">
-                <div class="row">
-                    <p class="pull-left">Copyright © 2025 彰化小禮坊 Inc. All rights reserved.</p>
-
-                </div>
-            </div>
-        </div>
-    </footer><!--/Footer-->
+    <?php include('footer.php'); ?>
 </body>
 
 </html>

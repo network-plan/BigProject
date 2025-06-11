@@ -39,11 +39,14 @@ session_start();
     <script src="js/price-range.js"></script>
     <script src="js/jquery.prettyPhoto.js"></script>
     <script src="js/main.js"></script>
-</head><!--/head-->
+</head>
+<!--/head-->
 
 <body>
-    <header id="header"><!--header-->
-        <div class="header_top"><!--header_top-->
+    <header id="header">
+        <!--header-->
+        <div class="header_top">
+            <!--header_top-->
             <div class="container">
                 <div class="row">
                     <div class="col-sm-6">
@@ -67,9 +70,11 @@ session_start();
                     </div>
                 </div>
             </div>
-        </div><!--/header_top-->
+        </div>
+        <!--/header_top-->
 
-        <div class="header-middle"><!--header-middle-->
+        <div class="header-middle">
+            <!--header-middle-->
             <div class="container">
                 <div class="row">
                     <div class="col-sm-4">
@@ -104,9 +109,11 @@ session_start();
                     </div>
                 </div>
             </div>
-        </div><!--/header-middle-->
+        </div>
+        <!--/header-middle-->
 
-        <div class="header-bottom"><!--header-bottom-->
+        <div class="header-bottom">
+            <!--header-bottom-->
             <div class="container">
                 <div class="row">
                     <div class="col-sm-9">
@@ -138,11 +145,11 @@ session_start();
                                 <?php
                                 //若為一般會員才看的到(評價連結未改)
                                 if(isset($_SESSION['username']) && $_SESSION['role'] != 'admin'){
-                                        echo "<li class=\"dropdown\"><a href=\"#\">評價<i class=\"fa fa-angle-down\"></i></a>";
-                                        echo "<ul role=\"menu\" class=\"sub-menu\">";
-                                        echo "    <li><a href=\"blog.html\">商品評價列表</a></li>";
-                                        echo "</ul>";
-                                    echo "</li>";
+                                    //     echo "<li class=\"dropdown\"><a href=\"#\">評價<i class=\"fa fa-angle-down\"></i></a>";
+                                    //     echo "<ul role=\"menu\" class=\"sub-menu\">";
+                                    //     echo "    <li><a href=\"blog.html\">商品評價列表</a></li>";
+                                    //     echo "</ul>";
+                                    // echo "</li>";
                                 }
                                 ?>
                                 <?php
@@ -154,10 +161,13 @@ session_start();
                     </div>
                 </div>
             </div>
-        </div><!--/header-bottom-->
-    </header><!--/header-->
+        </div>
+        <!--/header-bottom-->
+    </header>
+    <!--/header-->
 
-    <section id="slider"><!--slider-->
+    <section id="slider">
+        <!--slider-->
         <div class="container">
             <div class="row">
                 <div class="col-sm-12">
@@ -175,8 +185,8 @@ session_start();
                                     <h2>紅薏仁蕎麥</h2>
                                     <p>紅薏仁蕎麥兩盒超值組，養生加倍、優惠加倍，健康生活從每天開始！</p>
                                     <p>ฅ^•ﻌ•^ฅ</p>
-                                    <a href="shop.php">
-                                        <button type="button" class="btn btn-default get">心動價 180 NTD</button>
+                                    <a href="product-details.php?id=P_0056">
+                                        <button type="button" class="btn btn-default get">心動價 160 NTD</button>
                                     </a>
                                 </div>
                                 <div class="col-sm-6">
@@ -190,12 +200,27 @@ session_start();
                                     <h2>紅薏仁蕎麥x雪花片</h2>
                                     <p>紅薏仁蕎麥結合雪花片，營養豐富，口感酥脆，是健康又美味的每日首選！</p>
                                     <p>(=^-ω-^=)</p>
-                                    <a href="product-details.php?id=P_0009">
+                                    <a href="product-details.php?id=P_0057">
                                         <button type="button" class="btn btn-default get">心動價 160 NTD</button>
                                     </a>
                                 </div>
                                 <div class="col-sm-6">
                                     <img src="images/product-details/img2.png" class="girl img-responsive" alt="" />
+                                    <!-- <img src="images/home/pricing.png" class="pricing" alt="" /> -->
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="col-sm-6">
+                                    <h1><span>彰化</span>小禮坊</h1>
+                                    <h2>紅薏仁x水果脆片</h2>
+                                    <p>紅薏仁搭配天然水果脆片，香脆可口，營養滿分，養生與美味一次滿足！</p>
+                                    <p>ฅ^•ﻌ•^ฅ</p>
+                                    <a href="product-details.php?id=P_0058">
+                                        <button type="button" class="btn btn-default get">心動價 160 NTD</button>
+                                    </a>
+                                </div>
+                                <div class="col-sm-6">
+                                    <img src="images/product-details/img1.png" class="girl img-responsive" alt="" />
                                     <!-- <img src="images/home/pricing.png" class="pricing" alt="" /> -->
                                 </div>
                             </div>
@@ -212,7 +237,8 @@ session_start();
                 </div>
             </div>
         </div>
-    </section><!--/slider-->
+    </section>
+    <!--/slider-->
 
     <section>
         <div class="container">
@@ -248,7 +274,8 @@ session_start();
                             </div>
                             <div class="panel panel-default">
                                 <div class="panel-heading">
-                                    <h4 class="panel-title"><a href="shop.php?category=醬菜類(罐頭食品)"><b>醬菜類(罐頭食品)</b></a></h4>
+                                    <h4 class="panel-title"><a href="shop.php?category=醬菜類(罐頭食品)"><b>醬菜類(罐頭食品)</b></a>
+                                    </h4>
                                 </div>
                             </div>
                         </div>
@@ -290,7 +317,7 @@ session_start();
                             echo '<img src="' . htmlspecialchars($row['img_url']) . '" alt="" style="width:250px; height:250px;" />';
                             echo '<h2>' . htmlspecialchars($row['price']) . ' NTD</h2>';
                             echo '<p>' . htmlspecialchars($row['product_name']) . '</p>';
-                            // echo '<a href="product-details.php?id=' . urlencode($row['product_id']) . '" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>加入購物車</a>';
+                            //echo '<a href="product-details.php?id=' . urlencode($row['product_id']) . '" class="btn btn-default add-to-cart"><i class="fa fa-shopping-cart"></i>加入購物車</a>';
                             echo '</div>';
                             echo '</div>';
                             echo '<div class="choose">';
@@ -302,90 +329,13 @@ session_start();
                             echo '</div>';
                         }
                         ?>
-                    </div><!--features_items-->
+                    </div>
+                    <!--features_items-->
                 </div>
             </div>
         </div>
     </section>
-
-    <footer id="footer"><!--Footer-->
-        <div class="footer-top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-2">
-                        <div class="companyinfo">
-                            <h2><span>彰化</span>小禮坊</h2>
-                            <p>用購買支持在地小農</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-7">
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe1.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe1.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>鯨魚魚</p>
-                                <h2>01 JULY 2024</h2>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe2.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe2.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>南瓜辰</p>
-                                <h2>17 OCT 2024</h2>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe3.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe3.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>台灣阿虹</p>
-                                <h2>06 JUNE 2024</h2>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe4.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe4.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>Rory</p>
-                                <h2>30 FEB 2023</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="address">
-                            <img src="images/home/map.png" alt="" />
-                            <p>Taiwan</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="container">
-                <div class="row">
-                    <p class="pull-left">Copyright © 2025 彰化小禮坊 Inc. All rights reserved.</p>
-
-                </div>
-            </div>
-        </div>
-
-    </footer><!--/Footer-->
+    <?php include('footer.php'); ?>
 </body>
 
 </html>

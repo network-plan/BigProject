@@ -14,7 +14,7 @@ if (empty($cart)) {
     exit();
 }
 
-// ===== 1. 產生新的 order_id =====
+//產生新的 order_id
 $result = $conn->query("SELECT order_id FROM orders ORDER BY order_id DESC LIMIT 1");
 if ($row = $result->fetch_assoc()) {
     $last_id = intval(substr($row['order_id'], 3)); // 去掉 ORD 並轉成數字
@@ -24,7 +24,7 @@ if ($row = $result->fetch_assoc()) {
 }
 $order_id = 'ORD' . str_pad($new_id_num, 7, '0', STR_PAD_LEFT); // 格式 ORD0000001
 
-// ===== 2. 插入 orders 表 =====
+//插入 orders 表
 $total_price = intval($_POST['total_price']);
 foreach ($cart as $product_id => $quantity) {
     // 你可能需要查價格
@@ -39,6 +39,7 @@ foreach ($cart as $product_id => $quantity) {
 
 $address = $_POST['address'];
 $phone = $_POST['phone'];
+$shipping_method = "彰化小禮坊商店";
 if($_POST['shipping_method']==="寄送至彰化小禮坊商店  +0元"){
     $shipping_method = "彰化小禮坊商店";
 }else if($_POST['shipping_method']==="宅配到家 +50元"){
@@ -57,7 +58,7 @@ $stmt->bind_param("ssssissss", $order_id, $member_id, $username, $order_date, $t
 $stmt->execute();
 $stmt->close();
 
-// ===== 3. 插入 order_items 表 =====
+//插入 order_items 表
 $stmt = $conn->prepare("INSERT INTO order_items (order_id, product_id, quantity) VALUES (?, ?, ?)");
 foreach ($cart as $product_id => $quantity) {
     $stmt->bind_param("ssi", $order_id, $product_id, $quantity);
@@ -65,10 +66,18 @@ foreach ($cart as $product_id => $quantity) {
 }
 $stmt->close();
 
-// ===== 4. 清空購物車 cookie =====
+// 更新庫存
+$stmt = $conn->prepare("UPDATE product_info SET stock = stock - ? WHERE product_id = ?");
+foreach ($cart as $product_id => $quantity) {
+    $stmt->bind_param("is", $quantity, $product_id);
+    $stmt->execute();
+}
+$stmt->close();
+
+//清空購物車 cookie
 setcookie('cart', '', time() - 3600, '/');
 
-// ===== 5. 回傳成功訊息 =====
+//回傳成功訊息
 echo "<script>alert('訂單已成功送出！'); window.location.href='index.php';</script>";
 
 exit();
