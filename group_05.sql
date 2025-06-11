@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- 主機： 127.0.0.1
--- 產生時間： 2025-06-11 07:19:34
+-- 產生時間： 2025-06-11 15:52:38
 -- 伺服器版本： 10.4.32-MariaDB
 -- PHP 版本： 8.2.12
 
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- 資料庫： `group_05`
 --
+CREATE DATABASE IF NOT EXISTS `group_05` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `group_05`;
 
 -- --------------------------------------------------------
 
