@@ -220,7 +220,7 @@ session_start();
                                     </a>
                                 </div>
                                 <div class="col-sm-6">
-                                    <img src="images/product-details/img1.png" class="girl img-responsive" alt="" />
+                                    <img src="images/product-details/img3.png" class="girl img-responsive" alt="" />
                                     <!-- <img src="images/home/pricing.png" class="pricing" alt="" /> -->
                                 </div>
                             </div>
