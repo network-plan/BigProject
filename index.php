@@ -185,8 +185,8 @@ session_start();
                                     <h2>紅薏仁蕎麥</h2>
                                     <p>紅薏仁蕎麥兩盒超值組，養生加倍、優惠加倍，健康生活從每天開始！</p>
                                     <p>ฅ^•ﻌ•^ฅ</p>
-                                    <a href="shop.php">
-                                        <button type="button" class="btn btn-default get">心動價 180 NTD</button>
+                                    <a href="product-details.php?id=P_0056">
+                                        <button type="button" class="btn btn-default get">心動價 160 NTD</button>
                                     </a>
                                 </div>
                                 <div class="col-sm-6">
@@ -200,12 +200,27 @@ session_start();
                                     <h2>紅薏仁蕎麥x雪花片</h2>
                                     <p>紅薏仁蕎麥結合雪花片，營養豐富，口感酥脆，是健康又美味的每日首選！</p>
                                     <p>(=^-ω-^=)</p>
-                                    <a href="product-details.php?id=P_0009">
+                                    <a href="product-details.php?id=P_0057">
                                         <button type="button" class="btn btn-default get">心動價 160 NTD</button>
                                     </a>
                                 </div>
                                 <div class="col-sm-6">
                                     <img src="images/product-details/img2.png" class="girl img-responsive" alt="" />
+                                    <!-- <img src="images/home/pricing.png" class="pricing" alt="" /> -->
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="col-sm-6">
+                                    <h1><span>彰化</span>小禮坊</h1>
+                                    <h2>紅薏仁x水果脆片</h2>
+                                    <p>紅薏仁搭配天然水果脆片，香脆可口，營養滿分，養生與美味一次滿足！</p>
+                                    <p>ฅ^•ﻌ•^ฅ</p>
+                                    <a href="product-details.php?id=P_0058">
+                                        <button type="button" class="btn btn-default get">心動價 160 NTD</button>
+                                    </a>
+                                </div>
+                                <div class="col-sm-6">
+                                    <img src="images/product-details/img1.png" class="girl img-responsive" alt="" />
                                     <!-- <img src="images/home/pricing.png" class="pricing" alt="" /> -->
                                 </div>
                             </div>
@@ -320,87 +335,7 @@ session_start();
             </div>
         </div>
     </section>
-
-    <footer id="footer">
-        <!--Footer-->
-        <div class="footer-top">
-            <div class="container">
-                <div class="row">
-                    <div class="col-sm-2">
-                        <div class="companyinfo">
-                            <h2><span>彰化</span>小禮坊</h2>
-                            <p>用購買支持在地小農</p>
-                        </div>
-                    </div>
-                    <div class="col-sm-7">
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe1.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe1.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>鯨魚魚</p>
-                                <h2>01 JULY 2024</h2>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe2.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe2.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>南瓜辰</p>
-                                <h2>17 OCT 2024</h2>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe3.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe3.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>台灣阿虹</p>
-                                <h2>06 JUNE 2024</h2>
-                            </div>
-                        </div>
-
-                        <div class="col-sm-3">
-                            <div class="video-gallery text-center">
-                                <a href="images/home/iframe4.jpg">
-                                    <div class="iframe-img">
-                                        <img src="images/home/iframe4.jpg" alt="" />
-                                    </div>
-                                </a>
-                                <p>Rory</p>
-                                <h2>30 FEB 2023</h2>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-sm-3">
-                        <div class="address">
-                            <img src="images/home/map.png" alt="" />
-                            <p>Taiwan</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <div class="container">
-                <div class="row">
-                    <p class="pull-left">Copyright © 2025 彰化小禮坊 Inc. All rights reserved.</p>
-
-                </div>
-            </div>
-        </div>
-
-    </footer>
-    <!--/Footer-->
+    <?php include('footer.php'); ?>
 </body>
 
 </html>
