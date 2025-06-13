@@ -277,14 +277,6 @@ form{
     display: block;
     height: 20px;
 }
-.error-message {
-    display: none;
-    font-size: 12px;
-    margin-top: 5px;
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-}
 
 .input-box {
     position: relative;

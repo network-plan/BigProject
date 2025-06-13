@@ -13,20 +13,46 @@ if (isset($conn)) {
 }
 
 // 專門用於註冊的處理邏輯
+// 專門用於註冊的處理邏輯 (放在 login.php 的 PHP 部分)
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username'])) {
     try {
-
-
-        // 收集表單數據
-        $username = $_POST['register_username'];
-        $email = $_POST['register_email'];
+        // 收集並清理表單數據
+        $username = trim($_POST['register_username']);
+        $email = trim($_POST['register_email']);
         $password = $_POST['register_password'];
-        $phone = $_POST['register_tel'];
+        $phone = trim($_POST['register_tel']);
+        
+        // 設定時區並獲取註冊時間
         date_default_timezone_set("Asia/Taipei");
         $register_date = date("Y-m-d H:i:s");
 
-        // 新增：檢查帳號是否已存在
+        // 伺服器端驗證
+        if (strlen($username) < 4 || strlen($username) > 10) {
+            echo "<script>alert('使用者名稱必須介於4-10個字之間');</script>";
+            goto end_register;
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            echo "<script>alert('請輸入有效的電子郵件地址');</script>";
+            goto end_register;
+        }
+
+        if (strlen($password) < 6) {
+            echo "<script>alert('密碼長度至少需要6個字符');</script>";
+            goto end_register;
+        }
+
+        if (!preg_match('/^09\d{8}$/', $phone)) {
+            echo "<script>alert('請輸入有效的手機號碼');</script>";
+            goto end_register;
+        }
+
+        // 檢查帳號是否已存在
         $check_stmt = $conn->prepare("SELECT COUNT(*) as count FROM members WHERE username = ?");
+        if (!$check_stmt) {
+            throw new Exception("準備查詢語句失敗: " . $conn->error);
+        }
+        
         $check_stmt->bind_param("s", $username);
         $check_stmt->execute();
         $check_result = $check_stmt->get_result();
@@ -35,32 +61,77 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username']))
         if ($check_row['count'] > 0) {
             echo "<script>alert('此帳號已被使用，請選擇其他帳號名稱');</script>";
             $check_stmt->close();
-            // 不繼續執行註冊邏輯
-        } else {
-            $check_stmt->close();
+            goto end_register;
         }
+        $check_stmt->close();
+
+        // 檢查電子郵件是否已存在
+        $check_email_stmt = $conn->prepare("SELECT COUNT(*) as count FROM members WHERE email = ?");
+        if (!$check_email_stmt) {
+            throw new Exception("準備查詢語句失敗: " . $conn->error);
+        }
+        
+        $check_email_stmt->bind_param("s", $email);
+        $check_email_stmt->execute();
+        $email_result = $check_email_stmt->get_result();
+        $email_row = $email_result->fetch_assoc();
+
+        if ($email_row['count'] > 0) {
+            echo "<script>alert('此電子郵件已被註冊');</script>";
+            $check_email_stmt->close();
+            goto end_register;
+        }
+        $check_email_stmt->close();
 
         // 取得新會員ID
         $stmt_id = $conn->prepare("SELECT COALESCE(MAX(member_id), 0) + 1 AS new_id FROM members");
+        if (!$stmt_id) {
+            throw new Exception("準備查詢語句失敗: " . $conn->error);
+        }
+        
         $stmt_id->execute();
         $result_id = $stmt_id->get_result();
         $row = $result_id->fetch_assoc();
         $new_member_id = $row['new_id'];
+        $stmt_id->close();
 
+        // 密碼加密 (建議使用 password_hash)
+        // $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+        // 如果你的系統還沒有準備使用加密，可以暫時保持明文，但建議盡快改為加密
+        
         // 寫入資料庫
         $stmt = $conn->prepare("INSERT INTO members (member_id, username, email, password, phone, register_date) VALUES (?, ?, ?, ?, ?, ?)");
+        if (!$stmt) {
+            throw new Exception("準備插入語句失敗: " . $conn->error);
+        }
+        
         $stmt->bind_param("isssss", $new_member_id, $username, $email, $password, $phone, $register_date);
 
-        $success = $stmt->execute();
-        if ($success) {
-            echo "<script>alert('註冊成功！');</script>";
+        if ($stmt->execute()) {
+            echo "<script>
+                alert('註冊成功！請使用您的帳號密碼登入');
+                // 自動切換到登入面板
+                document.addEventListener('DOMContentLoaded', function() {
+                    const container = document.querySelector('.container_login');
+                    if (container) {
+                        container.classList.remove('active');
+                    }
+                });
+            </script>";
         } else {
-            echo "<script>alert('註冊失敗: " . $stmt->error . "');</script>";
+            throw new Exception("執行插入失敗: " . $stmt->error);
         }
+        
+        $stmt->close();
+
     } catch (Exception $e) {
-        file_put_contents('error.log', $e->getMessage(), FILE_APPEND);
-        echo "<script>alert('發生錯誤: " . $e->getMessage() . "');</script>";
+        // 記錄錯誤到日誌檔
+        error_log("註冊錯誤: " . $e->getMessage(), 3, 'error.log');
+        echo "<script>alert('註冊時發生錯誤，請稍後再試');</script>";
     }
+    
+    end_register:
+    // 標記結束，避免重複處理
 }
 ?>
 
@@ -91,17 +162,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username']))
     <link rel="apple-touch-icon-precomposed" sizes="114x114" href="images/ico/apple-touch-icon-114-precomposed.png">
     <link rel="apple-touch-icon-precomposed" sizes="72x72" href="images/ico/apple-touch-icon-72-precomposed.png">
     <link rel="apple-touch-icon-precomposed" href="images/ico/apple-touch-icon-57-precomposed.png">
-    <script src="js/jquery.js"></script>
-    <script src="js/price-range.js"></script>
-    <script src="js/jquery.scrollUp.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.prettyPhoto.js"></script>
-    <script src="js/main.js"></script>
-    <script src="js/login.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
-    <script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+
 </head>
 <!--/head-->
 
@@ -268,7 +329,108 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['register_username']))
         </div>
     </section>
     <!--/form-->
-    <?php include('footer.php'); ?>
+
+
+    <footer id="footer">
+        <!--Footer-->
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-2">
+                        <div class="companyinfo">
+                            <h2><span>彰化</span>小禮坊</h2>
+                            <p>用購買支持在地小農</p>
+                        </div>
+                    </div>
+                    <div class="col-sm-7">
+                        <div class="col-sm-3">
+                            <div class="video-gallery text-center">
+                                <a href="images/home/iframe1.jpg">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe1.jpg" alt="" />
+                                    </div>
+                                </a>
+                                <p>鯨魚魚</p>
+                                <h2>01 JULY 2024</h2>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="video-gallery text-center">
+                                <a href="images/home/iframe2.jpg">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe2.jpg" alt="" />
+                                    </div>
+                                </a>
+                                <p>南瓜辰</p>
+                                <h2>32 DEC 2024</h2>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="video-gallery text-center">
+                                <a href="images/home/iframe3.jpg">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe3.jpg" alt="" />
+                                    </div>
+                                </a>
+                                <p>台灣阿虹</p>
+                                <h2>06 JUNE 2024</h2>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-3">
+                            <div class="video-gallery text-center">
+                                <a href="images/home/iframe4.jpg">
+                                    <div class="iframe-img">
+                                        <img src="images/home/iframe4.jpg" alt="" />
+                                    </div>
+                                </a>
+                                <p>Rory</p>
+                                <h2>30 FEB 2023</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3">
+                        <div class="address">
+                            <img src="images/home/map.png" alt="" />
+                            <p>Taiwan</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <div class="row">
+                    <p class="pull-left">Copyright © 2025 彰化小禮坊 Inc. All rights reserved.</p>
+
+                </div>
+            </div>
+        </div>
+
+    </footer>
+    <!--/Footer-->
+
+
+
+    <script src="js/jquery.js"></script>
+    <script src="js/price-range.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.prettyPhoto.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/login.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="http://jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+    <!-- <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.14.0/jquery.validate.min.js"></script> -->
+    <!--additional method - for checkbox .. ,require_from_group method ...-->
+    <!-- <script src="//jqueryvalidation.org/files/dist/additional-methods.min.js"></script>
+    <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/localization/messages_zh_TW.js "></script> -->
 </body>
 
 </html>
