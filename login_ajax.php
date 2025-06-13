@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'db_connection.php'; 
+require_once 'db_connection.php'; // 請根據實際位置調整
 
 header('Content-Type: application/json');
 
