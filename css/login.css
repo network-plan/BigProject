@@ -277,14 +277,6 @@ form{
     display: block;
     height: 20px;
 }
-.error-message {
-    display: none;
-    font-size: 12px;
-    margin-top: 5px;
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-}
 
 .input-box {
     position: relative;
@@ -295,3 +287,23 @@ form{
     border-color: #ff4444;
     box-shadow: 0 0 5px rgba(255, 68, 68, 0.3);
 }
+.error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+            display: block;
+            min-height: 15px;
+        }
+        .error-message.success {
+            color: green;
+        }
+        .input-box {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .input-box input.error {
+            border-color: red;
+        }
+        .input-box input.success {
+            border-color: green;
+        }
