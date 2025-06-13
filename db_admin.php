@@ -1005,8 +1005,8 @@ if (!isset($_SESSION['username']) || $_SESSION['role'] != 'admin') {
                         <input type="submit" name="update" value="更新評論">
                     </form>
                 <?php endif; ?>
-            <?php endif; ?>
-        <?php endif; ?>
+            
+        
     </div>
 
     <?php include('footer.php'); ?>
