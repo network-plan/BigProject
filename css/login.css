@@ -21,11 +21,7 @@
     width: 850px;
     height: 550px;
     background: #fff;
-    margin: 0px;
-    margin-left: 100px;
-    margin-right: 100px;
-    margin-top: 20px;
-    margin-bottom: 100px;
+    margin: 20px auto;
     border-radius: 30px;
     box-shadow: 0 0 30px rgba(0, 0, 0, .2);
     overflow: hidden;
@@ -212,60 +208,155 @@ form{
         box-shadow: none;
     }
 
-@media screen and (max-width: 650px){
-    .container_login{ height: calc(100vh - 40px); }
-
-    .form-box{
-        bottom: 0;
-        width: 100%;
-        height: 70%;
+@media screen and (max-width: 768px) {
+    .container_login {
+        width: 95%;
+        height: auto;
+        min-height: auto;
+        margin: 20px auto;
+        display: flex;
+        flex-direction: column;
     }
 
-        .container_login.active .form-box{
-            right: 0;
-            bottom: 30%;
-        }
+    .form-box {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 30px 20px;
+        order: 1;
+    }
 
-    .toggle-box::before{
+    .container_login.active .form-box {
+        right: 0;
+    }
+
+    .toggle-box {
+        order: 2;
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .toggle-box::before {
+        display: none;
+    }
+
+    .toggle-panel {
+        position: relative;
+        width: 100%;
+        height: auto;
+        padding: 20px;
+        background: #84abb7;
+        margin: 0;
+    }
+
+    .toggle-panel.toggle-left,
+    .toggle-panel.toggle-right {
+        position: relative;
         left: 0;
-        top: -270%;
-        width: 100%;
-        height: 300%;
-        border-radius: 20vw;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        transform: none;
     }
 
-        .container_login.active .toggle-box::before{
-            left: 0;
-            top: 70%;
-        }
-
-        .container_login.active .toggle-panel.toggle-left{
-            left: 0;
-            top: -30%;
-        }
-
-    .toggle-panel{ 
-        width: 100%;
-        height: 30%;
+    .container_login.active .toggle-panel.toggle-left {
+        left: 0;
+        top: 0;
     }
-        .toggle-panel.toggle-left{ top: 0; }
-        .toggle-panel.toggle-right{
-            right: 0;
-            bottom: -30%;
-        }
 
-            .container_login.active .toggle-panel.toggle-right{ bottom: 0; }
+    .container_login.active .toggle-panel.toggle-right {
+        right: 0;
+        bottom: 0;
+    }
+
+    .input-box {
+        margin: 20px 0;
+    }
+
+    .input-box input {
+        padding: 12px 40px 12px 15px;
+        font-size: 15px;
+    }
+
+    .error-message {
+        position: relative;
+        bottom: 0;
+        margin-top: 5px;
+        font-size: 12px;
+        display: block;
+        min-height: 20px;
+    }
+
+    .btn {
+        margin-top: 10px;
+        height: 45px;
+        font-size: 16px;
+    }
+
+    .toggle-panel h1 {
+        font-size: 24px;
+        margin-bottom: 15px;
+    }
+
+    .toggle-panel p {
+        font-size: 14px;
+        margin: 10px 0;
+    }
+
+    .toggle-panel .btn {
+        width: 140px;
+        height: 40px;
+        font-size: 14px;
+    }
 }
 
-@media screen and (max-width: 400px){
-    .form-box { padding: 20px; }
+@media screen and (max-width: 480px) {
+    .container_login {
+        margin: 10px auto;
+        border-radius: 15px;
+    }
 
-    .toggle-panel h1{font-size: 30px; }
-}
+    .form-box {
+        padding: 20px 15px;
+    }
 
-.input-box {
-    position: relative;
-    margin: 20px 0;
+    .container_login h1 {
+        font-size: 22px;
+        margin-bottom: 20px;
+    }
+
+    .input-box {
+        margin: 15px 0;
+    }
+
+    .input-box input {
+        padding: 10px 35px 10px 12px;
+        font-size: 14px;
+    }
+
+    .btn {
+        height: 40px;
+        font-size: 14px;
+    }
+
+    .toggle-panel {
+        padding: 15px;
+    }
+
+    .toggle-panel h1 {
+        font-size: 20px;
+    }
+
+    .toggle-panel p {
+        font-size: 13px;
+    }
+
+    .toggle-panel .btn {
+        width: 120px;
+        height: 35px;
+        font-size: 13px;
+    }
 }
 
 .error-message {
